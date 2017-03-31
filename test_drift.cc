@@ -24,10 +24,16 @@ typedef G_t::link_t L_t;
 
 typedef Network<N_t, L_t> Net_t;
 
+void drift(N_t::freq_t & freqs)
+	{
+	}
+
+
 int main()
 	{
 	Net_t net;
 	read_network(cin, net);
 	
 	annotate_rates(net.nodes.begin(), net.nodes.end(), 0.01);
+	annotate_frequencies(net.nodes.begin(), net.nodes.end(), drift);
 	}

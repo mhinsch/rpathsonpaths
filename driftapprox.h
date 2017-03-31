@@ -38,5 +38,11 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 		}
 	}
 
+template<class ITER, class DRIFT_FUNC>
+void annotate_frequencies(const ITER & beg, const ITER & end, DRIFT_FUNC & drift)
+	{
+	for (ITER i=beg; i!=end; i++)
+		annotate_frequencies(*i, drift);
+	}
 
 #endif	// DRIFTAPPROX_H
