@@ -16,6 +16,12 @@ struct DriftNode : public NODE
 template<class NODE, class DRIFT_FUNC>
 void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	{
+	if (node->is_root())
+		{
+		assert(!node->frequencies.empty());
+		return;
+		}
+
 	assert(node->frequencies.empty());
 
 	for (auto * link : node->inputs)
@@ -29,12 +35,14 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 
 		const double prop = link->rate_infd / node->rate_in_infd;
 
-		auto new_freq_in = freq_in;
-		drift(new_freq_in);
+		drift(freq_in);
 
-		auto it_n = node->frequencies.begin();
-		for (auto it_i=new_freq_in.begin(); it_i!=new_freq_in.end(); it_i++,it_n++)
-			*it_n += *it_i * prop;
+		auto it_i = drift.begin();
+		for (auto & freq : node->frequencies)
+			{
+			freq += *it_i * prop;
+			it_i++;
+			}
 		}
 	}
 

@@ -38,19 +38,21 @@ struct Node
 		outputs.push_back(outp);
 		}
 
+	template<bool FORWARD = true>
 	static link_t * find_link(Node * to, cont_t & c)
 		{
 		for (link_t * link : c)
-			if (link->to == to)
+			if ((FORWARD ? link->to : link->from) == to)
 				return link;
 		
 		return 0;
 		}
 
+	template<bool FORWARD = true>
 	static const link_t * find_link(const Node * to, const cont_t & c)
 		{
 		for (const link_t * link : c)
-			if (link->to == to)
+			if ((FORWARD ? link->to : link->from) == to)
 				return link;
 		
 		return 0;
@@ -58,20 +60,39 @@ struct Node
 
 	link_t * find_link_to(Node * to)
 		{
-		return find_link(to, outputs);
+		return find_link<true>(to, outputs);
 		}
 	const link_t * find_link_to(const Node * to) const
 		{
-		return find_link(to, outputs);
+		return find_link<true>(to, outputs);
 		}
 
 	link_t * find_link_from(Node * from)
 		{
-		return find_link(from, inputs);
+		return find_link<false>(from, inputs);
 		}
 	const link_t * find_link_from(const Node * from) const
 		{
-		return find_link(from, inputs);
+		return find_link<false>(from, inputs);
+		}
+
+	bool consistent() const
+		{
+		for (const link_t * link : inputs)
+			{
+			const link_t * l = link->from->find_link_to(this);
+			if (!l || l!=link || l->to != this)
+				return false;
+			}
+
+		for (const link_t * link : outputs)
+			{
+			const link_t * l = link->to->find_link_from(this);
+			if (!l || l!=link || l->from != this)
+				return false;
+			}
+
+		return true;
 		}
 
 	bool is_leaf() const
