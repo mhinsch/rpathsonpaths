@@ -21,7 +21,7 @@ struct Network : public AbstractNetwork
 	void add_link(size_t from, size_t to, double rate)
 		{
 		if (nodes.size() <= std::max(from, to))
-			nodes.resize(std::max(from, to));
+			nodes.resize(std::max(from, to)+1);
 		if (nodes[from] == 0)
 			nodes[from] = new N;
 		if (nodes[to] == 0)
