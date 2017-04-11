@@ -3,25 +3,35 @@
 
 #include <cassert>
 
+/** A link type that keeps track of transfer rates.
+ *
+ * @tparam LINK link type to descend from.
+ */
 template<class LINK>
 struct TranspLink : public LINK
 	{
-	double rate;
-	double rate_infd;
+	double rate;		//!< transfer rate of material.
+	double rate_infd;	//!< transfer rate of infected material.
 
 	using LINK::LINK;
 
-	TranspLink(typename LINK::node_t * f = 0, typename LINK::node_t * t = 0, 
-		double r = 0.0, double ir = -1)
-		: LINK(f, t), rate(r), rate_infd(ir)
+	TranspLink(typename LINK::node_t * from = 0, typename LINK::node_t * to = 0, 
+		double a_rate = 0.0, double a_rate_infd = -1)
+		: LINK(from, to), rate(a_rate), rate_infd(a_rate_infd)
 		{}
 	};
 
 
+/** A node type that keeps track of input and output rates.
+ *
+ * @tparam NODE node type to descend from.
+ */
 template<class NODE>
 struct TranspNode : public NODE
 	{
-	double rate_in, rate_in_infd, d_rate_in_infd;
+	double rate_in;			//!< overall input rate.
+	double rate_in_infd;	//!< overall rate of input of infected material (@a after transmission).
+	double d_rate_in_infd;	//!< 
 	double rate_out_infd;
 
 	using NODE::NODE;
@@ -38,7 +48,7 @@ struct TranspNode : public NODE
 		rate_out_infd = 0;
 		}
 
-	// probability an infected unit coming from this node was newly infected
+	/** Probability an infected unit coming from this node was newly infected. */
 	double prob_newly_infected() const
 		{
 		// delta inf / inf
@@ -46,12 +56,21 @@ struct TranspNode : public NODE
 		}
 	};
 
-/* current implicit assumption:
+/** Calculate overall rate of infected input and proportion of infected material
+ * in NODE node (after transmission) and in its output. 
+ *
+ * @note This function will call itself 
+ * recursively for unprocessed input nodes.
+ *
+ * @note Current implicit assumption:
  * - sources are input-less nodes with rates pre-set
  * - links: rate_infd < 0 <=> haven't been processed yet
  * - nodes: rate_in <= 0 <=> haven't been processed yet
+ * 
+ * @tparam NODE node type.
+ * @param node node to process.
+ * @param transm_rate rate of infection within nodes
  */
-
 template<class NODE>
 void annotate_rates(NODE * node, double transm_rate)
 	{
@@ -98,6 +117,12 @@ void annotate_rates(NODE * node, double transm_rate)
 		}
 	}
 
+/** Annotate rates for a collection of nodes and all their inputs (recursively). 
+ *
+ * @tparam ITER iterator over nodes.
+ * @param beg, end range of nodes to be processed.
+ * @param transm_rate infection rate within nodes.
+ */
 template<class ITER>
 void annotate_rates(const ITER & beg, const ITER & end, double transm_rate)
 	{
@@ -105,7 +130,12 @@ void annotate_rates(const ITER & beg, const ITER & end, double transm_rate)
 		annotate_rates(*i, transm_rate);
 	}
 
-// probability of infected material from n_from to end up in n_to
+/** Probability of infected material from node @a n_from to end up in node @a n_to. 
+ *
+ * @pre Assumes that there is a link from @a n_from to @a n_to.
+ * 
+ * @tparam NODE node type.
+ */
 template<class NODE>
 double prob(NODE * n_from, NODE * n_to) 
 	{

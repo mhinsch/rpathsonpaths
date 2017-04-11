@@ -5,6 +5,7 @@
 
 using std::size_t;
 
+/** Abstract base class for Network. */
 struct AbstractNetwork
 	{
 	virtual void add_link(size_t from, size_t to, double rate) = 0;
@@ -12,12 +13,19 @@ struct AbstractNetwork
 	};
 
 
+/** Network template class. Network keeps track of nodes and edges and provides methods
+ * to construct a network by adding links. Note that Node/Link objects are assumed to be 
+ * owned by Network.
+ * @param N node type.
+ * @param L link type. */
 template<class N, class L>
 struct Network : public AbstractNetwork
 	{
-	std::vector<N *> nodes;
-	std::vector<L *> links;
+	std::vector<N *> nodes;		//!< all nodes in the network
+	std::vector<L *> links;		//!< all edges in the network
 
+
+	/** Add an edge. Source and target nodes have to be specified as indices.*/
 	void add_link(size_t from, size_t to, double rate)
 		{
 		if (nodes.size() <= std::max(from, to))
@@ -32,6 +40,7 @@ struct Network : public AbstractNetwork
 		nodes[to]->add_input(links.back());
 		}
 
+	/** Make node @a s an external source with proportion of infected set to @a prop_infd. */
 	void set_source(size_t s, double prop_infd)
 		{
 		assert(nodes.size() > s && nodes[s] != 0);

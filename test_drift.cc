@@ -32,10 +32,12 @@ typedef Network<N_t, L_t> Net_t;
 struct Drift
 	{
 	vector<double> result;
+	vector<double> scaled;
 	gsl_rng * rng;
+	double theta;
 
-	Drift(size_t size)
-		: result(size)
+	Drift(size_t size, double t)
+		: result(size), theta(t)
 		{
 		rng = gsl_rng_alloc(gsl_rng_default);
 		}
@@ -43,7 +45,13 @@ struct Drift
 	void operator()(const N_t::freq_t & freqs)
 		{
 		assert(result.size() == freqs.size());
-		gsl_ran_dirichlet(rng, freqs.size(), freqs.data(), result.data());
+		scaled.resize(freqs.size());
+
+		size_t i=0;
+		for (auto f : freqs)
+			scaled[i++] = f * theta;
+
+		gsl_ran_dirichlet(rng, scaled.size(), scaled.data(), result.data());
 		}
 
 	vector<double>::const_iterator begin() const
@@ -65,16 +73,26 @@ int main()
 	
 	gsl_rng_env_setup();
 
-	Drift drift(10);
+	Drift drift(4, 10);
 
 	for (auto & n : net.nodes)
 		{
 		assert(n);
 		assert(n->consistent());
 		if (n->is_root())
-			n->frequencies.resize(10, 0.1);
+			n->frequencies.resize(4, 0.25);
 		}
 
 	annotate_rates(net.nodes.begin(), net.nodes.end(), 0.01);
 	annotate_frequencies(net.nodes.begin(), net.nodes.end(), drift);
+
+	size_t i = 0;
+	for (auto n : net.nodes)
+		{
+		assert(n->valid(0.0001));
+		cout << i << "\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		for (auto f : n->frequencies)
+			cout << "\t" << f;
+		cout << "\n";
+		}
 	}

@@ -1,6 +1,9 @@
 #ifndef GENERICGRAPH_H
 #define GENERICGRAPH_H
 
+/** Generic Link type.
+ * @tparam GRAPH helper class that provides the node type.
+ */
 template<class GRAPH>
 struct Link
 	{
@@ -14,6 +17,10 @@ struct Link
 		{}
 	};
 
+/** Generic Node type. Provides simple helper functions related to network topology.
+ * @tparam GRAPH helper class that provides the link type.
+ * @tparam CONT container type to be used to store links.
+ */
 template<class GRAPH, template<class> class CONT>
 struct Node
 	{
@@ -38,6 +45,9 @@ struct Node
 		outputs.push_back(outp);
 		}
 
+	/** Find a link in container @a c that connects to Node @a to.
+	 * @tparam FORWARD whether the link is a forward or a backward link.
+	 */
 	template<bool FORWARD = true>
 	static link_t * find_link(Node * to, cont_t & c)
 		{
@@ -76,13 +86,17 @@ struct Node
 		return find_link<false>(from, inputs);
 		}
 
-	bool consistent() const
-		{
-		for (const link_t * link : inputs)
-			{
-			const link_t * l = link->from->find_link_to(this);
-			if (!l || l!=link || l->to != this)
-				return false;
+	/** Check for network consistency. In particular this checks whether all
+	 * input nodes have the current node as an output and whether all output
+	 * nodes have the current node as an input.
+	 */
+	bool consistent() const 
+		{ 
+		for (const link_t * link : inputs) 
+			{ 
+			const link_t * l = link->from->find_link_to(this); 
+			if (!l || l!=link || l->to != this) 
+				return false; 
 			}
 
 		for (const link_t * link : outputs)
@@ -95,17 +109,19 @@ struct Node
 		return true;
 		}
 
+	/** A leaf node is a node with no outputs. */
 	bool is_leaf() const
 		{
 		return outputs.size() == 0;
 		}
+	/** A root node is a node with no inputs. */
 	bool is_root() const
 		{
 		return inputs.size() == 0;
 		}
 	};
 
-
+/** Helper type binding a node and a link type together. */
 template<template<class> class NODE, template<class> class LINK>
 struct Graph 
 	{

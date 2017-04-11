@@ -11,6 +11,15 @@ struct DriftNode : public NODE
 	using NODE::NODE;
 
 	freq_t frequencies;
+
+	bool valid(typename freq_t::value_type epsilon) const
+		{
+		typename freq_t::value_type sum(0);
+		for (auto f : frequencies)
+			sum += f;
+
+		return sum + epsilon > 1 && sum - epsilon < 1;
+		}
 	};
 
 template<class NODE, class DRIFT_FUNC>
