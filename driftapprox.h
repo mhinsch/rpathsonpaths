@@ -33,6 +33,8 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 
 	assert(node->frequencies.empty());
 
+	const double prop_in_infd = node->rate_in_infd - node->d_rate_in_infd;
+
 	for (auto * link : node->inputs)
 		{
 		const typename NODE::freq_t & freq_in = link->from->frequencies;
@@ -40,9 +42,9 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 			annotate_frequencies(link->from, drift);
 
 		if (node->frequencies.empty())
-			node->frequencies.resize(freq_in.size());
+			node->frequencies.resize(freq_in.size(), 0);
 
-		const double prop = link->rate_infd / node->rate_in_infd;
+		const double prop = link->rate_infd / prop_in_infd;
 
 		drift(freq_in);
 

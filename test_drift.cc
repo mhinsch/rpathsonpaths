@@ -73,26 +73,31 @@ int main()
 	
 	gsl_rng_env_setup();
 
-	Drift drift(4, 10);
+	Drift drift(4, 100000);
 
+	size_t i = 0;
 	for (auto & n : net.nodes)
 		{
 		assert(n);
 		assert(n->consistent());
 		if (n->is_root())
-			n->frequencies.resize(4, 0.25);
+			{
+			n->frequencies.resize(4, 0);
+			n->frequencies[i++] = 1.0;
+			}
 		}
 
 	annotate_rates(net.nodes.begin(), net.nodes.end(), 0.01);
 	annotate_frequencies(net.nodes.begin(), net.nodes.end(), drift);
 
-	size_t i = 0;
+	i = 0;
 	for (auto n : net.nodes)
 		{
-		assert(n->valid(0.0001));
-		cout << i << "\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		cout << i++ << ":\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		
 		for (auto f : n->frequencies)
 			cout << "\t" << f;
 		cout << "\n";
+		//assert(n->valid(0.0001));
 		}
 	}
