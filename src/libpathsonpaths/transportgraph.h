@@ -1,0 +1,152 @@
+#ifndef TRANSPORTGRAPH_H
+#define TRANSPORTGRAPH_H
+
+#include <cassert>
+
+/** A link type that keeps track of transfer rates.
+ *
+ * @tparam LINK link type to descend from.
+ */
+template<class LINK>
+struct TranspLink : public LINK
+	{
+	double rate;		//!< transfer rate of material.
+	double rate_infd;	//!< transfer rate of infected material.
+
+	using LINK::LINK;
+
+	TranspLink(typename LINK::node_t * from = 0, typename LINK::node_t * to = 0, 
+		double a_rate = 0.0, double a_rate_infd = -1)
+		: LINK(from, to), rate(a_rate), rate_infd(a_rate_infd)
+		{}
+	};
+
+
+/** A node type that keeps track of input and output rates.
+ *
+ * @tparam NODE node type to descend from.
+ */
+template<class NODE>
+struct TranspNode : public NODE
+	{
+	double rate_in;			//!< overall input rate.
+	double rate_in_infd;	//!< overall rate of input of infected material (@a after transmission).
+	double d_rate_in_infd;	//!< 
+	double rate_out_infd;
+
+	using NODE::NODE;
+
+	TranspNode()
+		: NODE(), rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
+		{}
+
+	void reset_rates()
+		{
+		rate_in = 0;
+		rate_in_infd = 0;
+		d_rate_in_infd = 0;
+		rate_out_infd = 0;
+		}
+
+	/** Probability an infected unit coming from this node was newly infected. */
+	double prob_newly_infected() const
+		{
+		// delta inf / inf
+		return  d_rate_in_infd / rate_in_infd;
+		}
+	};
+
+/** Calculate overall rate of infected input and proportion of infected material
+ * in NODE node (after transmission) and in its output. 
+ *
+ * @note This function will call itself 
+ * recursively for unprocessed input nodes.
+ *
+ * @note Current implicit assumption:
+ * - sources are input-less nodes with rates pre-set
+ * - links: rate_infd < 0 <=> haven't been processed yet
+ * - nodes: rate_in <= 0 <=> haven't been processed yet
+ * 
+ * @tparam NODE node type.
+ * @param node node to process.
+ * @param transm_rate rate of infection within nodes
+ */
+template<class NODE>
+void annotate_rates(NODE * node, double transm_rate)
+	{
+	// not processed yet
+	// NOTE sources will have this set but *not* the output rate!
+	if (node->rate_in <= 0 && !node->is_root())
+		{
+		// *** input
+
+		for (typename NODE::link_t * link : node->inputs)
+			{
+			if (link->rate_infd < 0)
+				annotate_rates(link->from, transm_rate);
+
+			node->rate_in += link->rate;
+			node->rate_in_infd += link->rate_infd;
+			}
+
+		// *** infection
+		
+		// proportion of input becomes infected
+		node->d_rate_in_infd = transm_rate * (node->rate_in - node->rate_in_infd);
+		node->rate_in_infd += node->d_rate_in_infd;
+		}
+
+	if (node->rate_out_infd <= 0 && !node->is_leaf())
+		{
+		// *** output
+
+		// proportion of infected units
+		const double prop_infd = node->rate_in_infd / node->rate_in;	
+		
+		for (typename NODE::link_t * link : node->outputs)
+			{
+			// if this has been done there's something wrong
+			assert(link->rate_infd < 0);
+			
+			// all outputs have the same proportion of infected units
+			// NOTE could be changed down the line
+			link->rate_infd = link->rate * prop_infd;
+
+			node->rate_out_infd += link->rate_infd;
+			}
+		}
+	}
+
+/** Annotate rates for a collection of nodes and all their inputs (recursively). 
+ *
+ * @tparam ITER iterator over nodes.
+ * @param beg, end range of nodes to be processed.
+ * @param transm_rate infection rate within nodes.
+ */
+template<class ITER>
+void annotate_rates(const ITER & beg, const ITER & end, double transm_rate)
+	{
+	for (ITER i=beg; i!=end; i++)
+		annotate_rates(*i, transm_rate);
+	}
+
+/** Probability of infected material from node @a n_from to end up in node @a n_to. 
+ *
+ * @pre Assumes that there is a link from @a n_from to @a n_to.
+ * 
+ * @tparam NODE node type.
+ */
+template<class NODE>
+double prob(NODE * n_from, NODE * n_to) 
+	{
+	const typename NODE::link_t * link = n_from->find_link_to(n_to);
+	if (link)
+		return link->rate_infd / n_from->rate_out_infd;
+	
+	assert(false);
+	return 0;
+	}
+
+
+
+#endif	// TRANSPORTGRAPH_H
