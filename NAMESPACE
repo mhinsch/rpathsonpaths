@@ -1,0 +1,3 @@
+useDynLib(rpathsonpaths)
+exportPattern("^[[:alpha:]]+")
+import(methods, Rcpp)
