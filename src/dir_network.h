@@ -38,7 +38,7 @@ struct Drift
 		: result(size), theta(t)
 		{ }
 
-	void operator()(const N_t::freq_t & freqs)
+	void operator()(N_t::freq_t & freqs)
 		{
 		assert(result.size() == freqs.size());
 		num_t norm = 0.0;		

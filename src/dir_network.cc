@@ -47,7 +47,7 @@ void print_PopsNetwork(const XPtr<Net_t> & pNet)
 			n.rate_in_infd << "\t" <<
 			n.rate_in;
 		for (auto f : n.frequencies)
-			Rcout << "\t" << n;
+			Rcout << "\t" << f;
 		Rcout << "\n";
 		}
 	Rcout << "\n";

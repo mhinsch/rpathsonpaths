@@ -1,3 +1,9 @@
 useDynLib(rpathsonpaths)
 exportPattern("^[[:alpha:]]+")
 import(methods, Rcpp)
+
+S3method("print", "PopsNetwork")
+S3method("drawIsolates", "PopsNetwork")
+
+S3method("print", "PopsNode")
+S3method("drawIsolates", "PopsNode")

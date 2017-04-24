@@ -10,3 +10,4 @@ Description: One paragraph description of what the package does as one
 License: GPL (>= 2)
 Imports: methods, Rcpp (>= 0.12.9)
 LinkingTo: Rcpp
+SystemRequirements: C++11
