@@ -1,11 +1,11 @@
+#include <vector>
+#include <iostream>
+
 #include "genericgraph.h"
 #include "transportgraph.h"
 #include "driftapprox.h"
 #include "network.h"
 #include "network_io.h"
-
-#include <vector>
-#include <iostream>
 
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
@@ -100,4 +100,21 @@ int main()
 		cout << "\n";
 		//assert(n->valid(0.0001));
 		}
+
+	cout << "cloning...\n";
+
+	i = 0;
+
+	Net_t * second = net.clone();
+	for (auto n : second->nodes)
+		{
+		cout << i++ << ":\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		
+		for (auto f : n->frequencies)
+			cout << "\t" << f;
+		cout << "\n";
+		//assert(n->valid(0.0001));
+		}
+
+	delete second;
 	}
