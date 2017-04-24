@@ -10,6 +10,9 @@ struct AbstractNetwork
 	{
 	virtual void add_link(size_t from, size_t to, double rate) = 0;
 	virtual void set_source(size_t s, double p) = 0;
+	virtual ~AbstractNetwork()
+		{
+		}
 	};
 
 
@@ -48,6 +51,61 @@ struct Network : public AbstractNetwork
 		nodes[s]->rate_in = 1.0;
 		nodes[s]->rate_in_infd = prop_infd;
 		nodes[s]->d_rate_in_infd = 0;
+		}
+
+	size_t find_link(L * l) const
+		{
+		for (size_t i=0; i<links.size(); i++)
+			if (l == links[i])
+				return i;
+
+		return links.size();
+		}
+
+	Network * clone() const
+		{
+		Network * nn = new Network;
+
+		nn->nodes.resize(nodes.size(), 0);
+		nn->links.resize(links.size(), 0);
+
+		// copy all links, pointer will be readjusted later
+		for (size_t i=0; i<links.size(); i++)
+			nn->links[i] = new L(*links[i]);
+
+		for (size_t i=0; i<nodes.size(); i++)
+			{
+			// copy node (pointers and all)
+			N * n = new N(*nodes[i]);
+
+			// re-point input pointers
+			for (auto & l : n->inputs)
+				{
+				// this works because the node still has the old pointers
+				size_t li = find_link(l);
+				assert(li < links.size());
+				// use new link object
+				l = nn->links[li];
+				// point it to this node
+				l->to = n;
+				}
+
+			// re-point output pointers
+			for (auto & l : n->outputs)
+				{
+				// this works because the node still has the old pointers
+				size_t li = find_link(l);
+				assert(li < links.size());
+				// use new link object
+				l = nn->links[li];
+				// point it to this node
+				l->from = n;
+				}
+			
+			nn->nodes[i] = n;
+			}
+
+		return nn;
 		}
 
 	~Network()
