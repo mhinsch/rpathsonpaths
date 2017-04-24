@@ -1,5 +1,6 @@
 #include "dir_network.h"
 
+#include "libpathsonpaths/proportionalpick.h"
 
 XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission)
 	{
@@ -24,7 +25,7 @@ XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission
 	}
 
 
-size_t find_node_id(const N_t * n, const Net_t & net)
+size_t find_node_id(const Node_t * n, const Net_t & net)
 	{
 	for (size_t i=0; i<net.nodes.size(); i++)
 		if (n == net.nodes[i])
@@ -42,7 +43,7 @@ void print_PopsNetwork(const XPtr<Net_t> & pNet)
 	Rcout << "id\tinfected\tinput\talleles...\n";
 	for (size_t i=0; i<net->nodes.size(); i++)
 		{
-		const N_t & n = *net->nodes[i];
+		const Node_t & n = *net->nodes[i];
 		Rcout << i << "\t" <<
 			n.rate_in_infd << "\t" <<
 			n.rate_in;
@@ -61,29 +62,28 @@ void print_PopsNetwork(const XPtr<Net_t> & pNet)
 		Rcout << f << "\t" <<
 			t << "\t" <<
 			l.rate << "\t" <<
-			l.infected << "\n";
+			l.rate_infd << "\n";
 		}
 	}
 
 
-void print_PopsNode(const XPtr<N_t> & pNode)
+void print_PopsNode(const Node_t * n)
 	{
-	N_t * node = pNode.get();
+	}
+
+void print_PopsNode(const XPtr<Node_t> & pNode)
+	{
+	const Node_t * node = pNode.get();
 	
 	print_PopsNode(node);
 	}
 
 
-void print_PopsNode(const Node * n)
+XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, const List iniDist, double theta)
 	{
-	}
-
-
-XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, List iniDist, double theta)
-	{
-	Net_t * net = p_net.get().clone();
+	Net_t * net = pNet->clone();
 	const IntegerVector nodes = iniDist["nodes"];
-	const NumericMatrix freqs = IniDist["frequencies"];
+	const NumericMatrix freqs = iniDist["frequencies"];
 
 	const size_t n_all = freqs.ncol();
 
@@ -97,19 +97,19 @@ XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, List iniDist, double theta
 		if (n > net->nodes.size())
 			stop("Invalid node index in iniDist$nodes!");
 
-		net->nodes[n].frequencies.resize(n_all);
+		net->nodes[n]->frequencies.resize(n_all);
 		for (size_t j=0; j<n_all; j++)
-			net->nodes[n].frequencies[j] = freqs(i, j);
+			net->nodes[n]->frequencies[j] = freqs(i, j);
 		}
 
 	Drift drift(n_all, theta);
-	annotate_frequencies(net.nodes.begin(), net.nodes.end(), drift);
+	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
 	
 	return XPtr<Net_t>(net, true);
 	}
 
 
-XPtr<N_t> getNode_PopsNetwork(const XPtr<Net_t> & pNet, int id)
+XPtr<Node_t> getNode_PopsNetwork(const XPtr<Net_t> & pNet, int id)
 	{
 	Net_t * net = pNet.get();
 	if (!net)
@@ -118,50 +118,60 @@ XPtr<N_t> getNode_PopsNetwork(const XPtr<Net_t> & pNet, int id)
 	if (size_t(id) > net->nodes.size())
 		stop("Invalid node id!");
 	
-	N_t * node = net->nodes[size_t(i)];
+	Node_t * node = net->nodes[size_t(id)];
 
 	// don't GC, since net owns the memory
-	return XPtr<N_t>(node, false);
+	return XPtr<Node_t>(node, false);
 	}
 
 
 struct RRng
 	{
-	double outOf(double mi, double ma)
+	double outOf(double mi, double ma) const
 		{
 		return R::runif(mi, ma);
+		}
+
+	size_t operator()(size_t n) const
+		{
+		size_t r;
+
+		while ((r = R::runif(0, n)) >= n);
+
+		return r;
 		}
 	};
 
 
-void sample_node(const N_t & node, size_t n, vector<size_t> & count)
+void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 	{
 	if (count.size() != node.frequencies.size())
 		stop("Invalid node found!");
 
-	ProportionalPick pick(0.000001, node.frequencies);
+	ProportionalPick<> pick(0.000001, node.frequencies);
+	RRng r;
 
 	for (size_t i=0; i<n; i++)
-		count[pick.pick(RRng())]++;
+		count[pick.pick(r)]++;
 	}
 
 
-IntegerVector drawIsolates_PopsNode(const XPtr<N_t> & pNode, int n)
+IntegerVector drawIsolates_PopsNode(const XPtr<Node_t> & pNode, int n)
 	{
-	N_t * node = pNode.get();
+	const Node_t * node = pNode.get();
 	if (!node)
 		stop("Invalid node object!");
 
 	vector<size_t> count(node->frequencies.size(), 0);
-	sample_node(node, n, count);
+	sample_node(*node, n, count);
 
 	return IntegerVector(count.begin(), count.end());
 	}
 
 
-DataFrame drawIsolates_PopsNetwork(const XPtr<N_t> & pNet, DataFrame samples)
+DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, DataFrame samples)
 	{
-	const Network * net = pNet.get();
+	const Net_t * net = pNet.get();
 	if (!net)
 		stop("Invalid network object!");
 
@@ -169,10 +179,10 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<N_t> & pNet, DataFrame samples)
 	const IntegerVector num = samples["N"];
 	
 	// TODO this relies on all nodes having a full frequencies vector!
-	const size_t n_freq = net->nodes[0].frequencies.size();
-	List data(n+1);
+	const size_t n_freq = net->nodes[0]->frequencies.size();
+	vector<IntegerVector> data(n_freq+1);
 
-	for (size_t i=0; i<n+1; i++)
+	for (size_t i=0; i<n_freq+1; i++)
 		data[i] = IntegerVector(nodes.size());
 
 	CharacterVector namevec;
@@ -187,18 +197,19 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<N_t> & pNet, DataFrame samples)
 		if (n >= net->nodes.size())
 			stop("Invalid node id!");
 
-		sample_node(net->nodes[n], num, count);
+		sample_node(*net->nodes[n], num[i], count);
 
 		for (size_t j=0; j<n_freq; j++)
 			data[j+1][i] = count[j];
 
 		data[0][i] = n;
 
-		name_vec.push_back(namestem + to_string(i));
+		namevec.push_back(namestem + to_string(i));
 		}
 
-	data.attr("names") = namevec;
-	Rcpp::DataFrame dfout(data);
+	List dataf(data.begin(), data.end());
+	dataf.attr("names") = namevec;
+	Rcpp::DataFrame dfout(dataf);
 	return dfout;
 	}
 

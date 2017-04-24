@@ -38,9 +38,9 @@
    Gavin E. Crooks <gec@compbio.berkeley.edu> (2002)
 */
 
-static void ran_dirichlet_small (const gsl_rng * r, const size_t K, const double alpha[], double theta[]);
+//static void ran_dirichlet_small (const gsl_rng * r, const size_t K, const double alpha[], double theta[]);
 
-const vector<double> rdirichlet (const vector<double> & alpha)
+/*const vector<double> rdirichlet (const vector<double> & alpha)
 	{
 	vector<double> ret;
 	double norm = 0.0;
@@ -52,14 +52,14 @@ const vector<double> rdirichlet (const vector<double> & alpha)
 		ret.push_back(R::rgamma (a, 1.0));
 		norm += ret.back();
 		}
-
+*/
 //  if (norm < GSL_SQRT_DBL_MIN)  /* Handle underflow */
 //   {
 //      ran_dirichlet_small (r, K, alpha, theta);
 //      return;
 //    }
 
-
+/*
 	for (double & r : ret)
 		{
 		r /= norm;
@@ -67,7 +67,7 @@ const vector<double> rdirichlet (const vector<double> & alpha)
 
 	return ret;	// RVO (hopefully)
 	}
-
+*/
 
 /* When the values of alpha[] are small, scale the variates to avoid
    underflow so that the result is not 0/0.  Note that the Dirichlet
