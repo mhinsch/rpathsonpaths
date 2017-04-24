@@ -1,32 +1,7 @@
 #ifndef DIR_NETWORK_H
 #define DIR_NETWORK_H
 
-#include "libpathsonpaths/genericgraph.h"
-#include "libpathsonpaths/transportgraph.h"
-#include "libpathsonpaths/driftapprox.h"
-#include "libpathsonpaths/network.h"
-
-#include <vector>
-
-#include <Rcpp.h>
-
-using namespace std;
-using namespace Rcpp;
-
-template<class T>
-using StdVector = vector<T>;
-
-template<class GRAPH>
-using MyVecDriftNode = DriftNode<vector<double>, TranspNode<Node<GRAPH, StdVector> > >;
-
-template<class GRAPH>
-using MyTranspLink = TranspLink<Link<GRAPH> >;
-
-typedef Graph<MyVecDriftNode, MyTranspLink> G_t;
-typedef G_t::node_t Node_t;
-typedef G_t::link_t L_t;
-
-typedef Network<Node_t, L_t> Net_t;
+#include "rpathsonpaths_types.h"
 
 struct Drift
 	{
@@ -62,7 +37,7 @@ struct Drift
 	};
 
 // [[Rcpp::export]]
-XPtr<Net_t> PopsNetwork(List links, List external, double transmission);
+XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission);
 
 // [[Rcpp::export,name=(".printPopsNetwork"]]
 void print_PopsNetwork(const XPtr<Net_t> & pNet);
@@ -80,6 +55,6 @@ XPtr<Node_t> getPopsNode(const XPtr<Net_t> & pNet, int id);
 IntegerVector drawIsolates_PopsNode(const XPtr<Node_t> & pNode, int n);
 
 // [[Rcpp::export(name="drawIsolates.PopsNetwork")]]
-DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, List samples);
+DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, DataFrame samples);
 
 #endif	// DIR_NETWORK_H

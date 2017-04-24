@@ -109,7 +109,7 @@ XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, const List iniDist, double
 	}
 
 
-XPtr<Node_t> getNode_PopsNetwork(const XPtr<Net_t> & pNet, int id)
+XPtr<Node_t> getPopsNode(const XPtr<Net_t> & pNet, int id)
 	{
 	Net_t * net = pNet.get();
 	if (!net)

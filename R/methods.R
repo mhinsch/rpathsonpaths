@@ -1,7 +1,11 @@
-print.PopsNetwork <- function(net, ...){
-	.printPopsNetwork(net)
+print.PopsNetwork <- function(x, ...){
+	.printPopsNetwork(x)
 	}
 
-print.PopsNode <- function(net, ...){
-	.printPopsNode(net)
+print.PopsNode <- function(x, ...){
+	.printPopsNode(x)
+	}
+
+drawIsolates <- function(obj, ...){
+	UseMethod("drawIsolates")
 	}
