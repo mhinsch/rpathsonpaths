@@ -37,7 +37,7 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 
 	for (auto * link : node->inputs)
 		{
-		const typename NODE::freq_t & freq_in = link->from->frequencies;
+		typename NODE::freq_t & freq_in = link->from->frequencies;
 		if (freq_in.empty())
 			annotate_frequencies(link->from, drift);
 
