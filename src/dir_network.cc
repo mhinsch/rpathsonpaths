@@ -4,24 +4,37 @@
 
 XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission)
 	{
+	Net_t * net;
+
 	const IntegerVector inputs = links["inputs"];
 	const NumericVector rates = links["rates"];
 	const IntegerVector outputs = links["outputs"];
 
-	const IntegerVector ext = external["nodes"];
+	const IntegerVector ext_nodes = external["nodes"];
 	const NumericVector ext_rates = external["rates"];
 
-	Net_t * net = new Net_t;
+	net = new Net_t;
 
-	for (size_t i=0; i<inputs.size(); i++)
-		net->add_link(inputs[i], rates[i], outputs[i]);
+	const size_t ni = inputs.size();
+	const size_t ei = external.size();
 
-	for (size_t i=0; i<external.size(); i++)
-		net->set_source(external[i], ext_rates[i]);
+	for (size_t i=0; i<ni; i++)
+		net->add_link(inputs[i], outputs[i], rates[i]);
+
+	for (size_t i=0; i<ei; i++)
+		net->set_source(ext_nodes[i], ext_rates[i]);
+
+	for (const auto & n : net->nodes)
+		if (n == 0)
+			stop("Invalid network, node not set!");
 
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
 
-	return XPtr<Net_t>(net, true);
+	XPtr<Net_t> xptr(net, true);
+
+	xptr.attr("class") = "PopsNetwork";
+
+	return xptr;
 	}
 
 

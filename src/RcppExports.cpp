@@ -19,6 +19,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// print_PopsNetwork
+void print_PopsNetwork(const XPtr<Net_t>& pNet);
+RcppExport SEXP rpathsonpaths_print_PopsNetwork(SEXP pNetSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
+    print_PopsNetwork(pNet);
+    return R_NilValue;
+END_RCPP
+}
+// print_PopsNode
+void print_PopsNode(const XPtr<Node_t>& pNode);
+RcppExport SEXP rpathsonpaths_print_PopsNode(SEXP pNodeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type pNode(pNodeSEXP);
+    print_PopsNode(pNode);
+    return R_NilValue;
+END_RCPP
+}
 // spreadDirichlet
 XPtr<Net_t> spreadDirichlet(const XPtr<Net_t>& pNet, const List iniDist, double theta);
 RcppExport SEXP rpathsonpaths_spreadDirichlet(SEXP pNetSEXP, SEXP iniDistSEXP, SEXP thetaSEXP) {

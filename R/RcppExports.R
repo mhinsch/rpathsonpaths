@@ -19,6 +19,14 @@ PopsNetwork <- function(links, external, transmission) {
     .Call('rpathsonpaths_PopsNetwork', PACKAGE = 'rpathsonpaths', links, external, transmission)
 }
 
+.printPopsNetwork <- function(pNet) {
+    invisible(.Call('rpathsonpaths_print_PopsNetwork', PACKAGE = 'rpathsonpaths', pNet))
+}
+
+.printPopsNode <- function(pNode) {
+    invisible(.Call('rpathsonpaths_print_PopsNode', PACKAGE = 'rpathsonpaths', pNode))
+}
+
 #' @title spreadDirichlet
 #' 
 #' @description Simulate spread of pathogens on the network using a Dirichlet

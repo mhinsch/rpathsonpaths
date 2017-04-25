@@ -53,10 +53,10 @@ struct Drift
 // [[Rcpp::export]]
 XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission);
 
-// [[Rcpp::export,name=(".printPopsNetwork"]]
+// [[Rcpp::export(name=".printPopsNetwork")]]
 void print_PopsNetwork(const XPtr<Net_t> & pNet);
 
-// [[Rcpp::export,name=(".printPopsNode"]]
+// [[Rcpp::export(name=".printPopsNode")]]
 void print_PopsNode(const XPtr<Node_t> & pNode);
 
 //' @title spreadDirichlet
