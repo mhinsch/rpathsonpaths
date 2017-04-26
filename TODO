@@ -1,0 +1,44 @@
+* safety checks
+	* argument consistency
+	* values in bounds
+	* missing values
+	* etc.
+
+* persistence
+	options:
+	* RawVector as memory backend (???)
+		- difficult
+		* decode on reload
+		* how to detect reload
+	* R frontend that keeps a copy of the structure
+		- potentially quite slow
+		* how to detect reload?
+		- duplicate effort
+		- risk of async between R and C++ code
+		+ doable
+	* ignore
+		* avoid crash on session reload!!!
+		- unexpected behaviour
+		+ everybody seems to do it
+
+* plotting
+	* which packages to support?
+	* which should be default?
+
+* data formats for import/export
+	* important formats to support?
+
+* documentation
+	* package docs!
+	* examples
+	* example data (?)
+
+* real node/edge ids (i.e. strings, R objects, etc.)
+
+* node/edge metadata (???)
+
+* individual-based simulations
+	-> lib
+
+* lineage-based approximation
+	-> lib
