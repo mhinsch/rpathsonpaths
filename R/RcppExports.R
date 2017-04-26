@@ -27,6 +27,23 @@ PopsNetwork <- function(links, external, transmission) {
     invisible(.Call('rpathsonpaths_print_PopsNode', PACKAGE = 'rpathsonpaths', pNode))
 }
 
+#' @title setAlleleFreqs
+#' 
+#' @description Pre-set allele frequencies for some nodes.
+#' 
+#' @details Use this function to initialize allele frequencies for some nodes of the network.
+#' 
+#' @param pNet A PopsNetwork object.
+#' @param iniDist Initial distribution of allele frequencies. iniDist has to be 
+#' a list
+#' containing a vector of node IDs (@seealso \code{\link{PopsNetwork}}) as $nodes and
+#' a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
+#' way will be treated as a source only by spreadDirichlet.
+#' @return A new PopsNetwork object.
+setAlleleFreqs <- function(pNet, iniDist) {
+    .Call('rpathsonpaths_setAlleleFreqs', PACKAGE = 'rpathsonpaths', pNet, iniDist)
+}
+
 #' @title spreadDirichlet
 #' 
 #' @description Simulate spread of pathogens on the network using a Dirichlet
@@ -39,16 +56,17 @@ PopsNetwork <- function(links, external, transmission) {
 #' approximated by drawing a set of allele frequencies from a Dirichlet distribution.
 #' 
 #' @param pNet A PopsNetwork object.
-#' @param iniDist Initial distribution of allele frequencies. iniDist has to be a list
-#' containing a vector of node IDs (@seealso \code{\link{PopsNetwork}}) as $nodes and
-#' a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
-#' way will be treated as a source only.
 #' @param theta Scale parameter of the Dirichlet distribution. At each node the Dirichlet
 #' distribution the new allele frequencies ar drawn from is parameterized by the old
 #' frequencies multiplied by theta.
+#' @param iniDist Initial distribution of allele frequencies (optional). iniDist has to be 
+#' a list
+#' containing a vector of node IDs (@seealso \code{\link{PopsNetwork}}) as $nodes and
+#' a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
+#' way will be treated as a source only.
 #' @return A new PopsNetwork object with allele frequencies set for each node.
-spreadDirichlet <- function(pNet, iniDist, theta) {
-    .Call('rpathsonpaths_spreadDirichlet', PACKAGE = 'rpathsonpaths', pNet, iniDist, theta)
+spreadDirichlet <- function(pNet, theta, iniDist = NULL) {
+    .Call('rpathsonpaths_spreadDirichlet', PACKAGE = 'rpathsonpaths', pNet, theta, iniDist)
 }
 
 #' @title getPopsNode

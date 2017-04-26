@@ -7,13 +7,13 @@
 using namespace Rcpp;
 
 // PopsNetwork
-XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission);
+XPtr<Net_t> PopsNetwork(const DataFrame& links, const DataFrame& external, double transmission);
 RcppExport SEXP rpathsonpaths_PopsNetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type links(linksSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type external(externalSEXP);
+    Rcpp::traits::input_parameter< const DataFrame& >::type links(linksSEXP);
+    Rcpp::traits::input_parameter< const DataFrame& >::type external(externalSEXP);
     Rcpp::traits::input_parameter< double >::type transmission(transmissionSEXP);
     rcpp_result_gen = Rcpp::wrap(PopsNetwork(links, external, transmission));
     return rcpp_result_gen;
@@ -39,16 +39,28 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// spreadDirichlet
-XPtr<Net_t> spreadDirichlet(const XPtr<Net_t>& pNet, const List iniDist, double theta);
-RcppExport SEXP rpathsonpaths_spreadDirichlet(SEXP pNetSEXP, SEXP iniDistSEXP, SEXP thetaSEXP) {
+// setAlleleFreqs
+XPtr<Net_t> setAlleleFreqs(const XPtr<Net_t>& pNet, const List& iniDist);
+RcppExport SEXP rpathsonpaths_setAlleleFreqs(SEXP pNetSEXP, SEXP iniDistSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    Rcpp::traits::input_parameter< const List >::type iniDist(iniDistSEXP);
+    Rcpp::traits::input_parameter< const List& >::type iniDist(iniDistSEXP);
+    rcpp_result_gen = Rcpp::wrap(setAlleleFreqs(pNet, iniDist));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spreadDirichlet
+XPtr<Net_t> spreadDirichlet(const XPtr<Net_t>& pNet, double theta, Nullable<List> iniDist);
+RcppExport SEXP rpathsonpaths_spreadDirichlet(SEXP pNetSEXP, SEXP thetaSEXP, SEXP iniDistSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(spreadDirichlet(pNet, iniDist, theta));
+    Rcpp::traits::input_parameter< Nullable<List> >::type iniDist(iniDistSEXP);
+    rcpp_result_gen = Rcpp::wrap(spreadDirichlet(pNet, theta, iniDist));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -77,13 +89,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // drawIsolates_PopsNetwork
-DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t>& pNet, DataFrame samples);
+DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t>& pNet, const DataFrame& samples);
 RcppExport SEXP rpathsonpaths_drawIsolates_PopsNetwork(SEXP pNetSEXP, SEXP samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type samples(samplesSEXP);
+    Rcpp::traits::input_parameter< const DataFrame& >::type samples(samplesSEXP);
     rcpp_result_gen = Rcpp::wrap(drawIsolates_PopsNetwork(pNet, samples));
     return rcpp_result_gen;
 END_RCPP

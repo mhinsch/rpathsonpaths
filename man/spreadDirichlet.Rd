@@ -4,19 +4,20 @@
 \alias{spreadDirichlet}
 \title{spreadDirichlet}
 \usage{
-spreadDirichlet(pNet, iniDist, theta)
+spreadDirichlet(pNet, theta, iniDist = NULL)
 }
 \arguments{
 \item{pNet}{A PopsNetwork object.}
 
-\item{iniDist}{Initial distribution of allele frequencies. iniDist has to be a list
-containing a vector of node IDs (@seealso \code{\link{PopsNetwork}}) as $nodes and
-a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
-way will be treated as a source only.}
-
 \item{theta}{Scale parameter of the Dirichlet distribution. At each node the Dirichlet
 distribution the new allele frequencies ar drawn from is parameterized by the old
 frequencies multiplied by theta.}
+
+\item{iniDist}{Initial distribution of allele frequencies (optional). iniDist has to be 
+a list
+containing a vector of node IDs (@seealso \code{\link{PopsNetwork}}) as $nodes and
+a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
+way will be treated as a source only.}
 }
 \value{
 A new PopsNetwork object with allele frequencies set for each node.

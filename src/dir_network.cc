@@ -2,7 +2,16 @@
 
 #include "libpathsonpaths/proportionalpick.h"
 
-XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission)
+template<class T>
+XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
+	{
+	XPtr<T> xptr(obj, GC);
+	xptr.attr("class") = class_name;
+	return xptr;
+	}
+
+
+XPtr<Net_t> PopsNetwork(const DataFrame & links, const DataFrame & external, double transmission)
 	{
 	Net_t * net;
 
@@ -30,11 +39,7 @@ XPtr<Net_t> PopsNetwork(DataFrame links, DataFrame external, double transmission
 
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
 
-	XPtr<Net_t> xptr(net, true);
-
-	xptr.attr("class") = "PopsNetwork";
-
-	return xptr;
+	return make_S3XPtr(net, "PopsNetwork");
 	}
 
 
@@ -92,11 +97,10 @@ void print_PopsNode(const XPtr<Node_t> & pNode)
 	}
 
 
-XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, const List iniDist, double theta)
+void _setAlleleFreqs(Net_t * net, const List & ini)
 	{
-	Net_t * net = pNet->clone();
-	const IntegerVector nodes = iniDist["nodes"];
-	const NumericMatrix freqs = iniDist["frequencies"];
+	const IntegerVector nodes = ini["nodes"];
+	const NumericMatrix freqs = ini["frequencies"];
 
 	const size_t n_all = freqs.ncol();
 
@@ -104,21 +108,51 @@ XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, const List iniDist, double
 		stop("Invalid parameter 'iniDist': "
 		"number of rows in $frequencies and number of elements in $nodes need to be equal!");
 	
+	for (auto n : net->nodes)
+		n->frequencies.clear();
+
 	for (size_t i=0; i<nodes.size(); i++)
 		{
 		const size_t n = nodes[i];
 		if (n > net->nodes.size())
 			stop("Invalid node index in iniDist$nodes!");
 
-		net->nodes[n]->frequencies.resize(n_all);
+		net->nodes[n]->frequencies.resize(n_all, 0);
+
 		for (size_t j=0; j<n_all; j++)
+			{
+			//Rcout << "setting: " << i << ", " << j << "\n";
 			net->nodes[n]->frequencies[j] = freqs(i, j);
+			}
 		}
 
-	Drift drift(n_all, theta);
+	}
+
+XPtr<Net_t> setAlleleFreqs(const XPtr<Net_t> & pNet, const List & iniDist)
+	{
+	Net_t * net = pNet->clone();
+
+	_setAlleleFreqs(net, iniDist);
+
+	return make_S3XPtr(net, "PopsNetwork", true);
+	}
+
+XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, double theta, Nullable<List> iniDist)
+	{
+	Net_t * net = pNet->clone();
+
+	if (! iniDist.isNull())
+		_setAlleleFreqs(net, iniDist.as());
+
+	if (!net->nodes.size())
+		stop("Error: empty network!");
+
+	const size_t n_all = net->nodes[0]->frequencies.size();
+
+	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
 	
-	return XPtr<Net_t>(net, true);
+	return make_S3XPtr(net, "PopsNetwork", true);
 	}
 
 
@@ -134,7 +168,7 @@ XPtr<Node_t> getPopsNode(const XPtr<Net_t> & pNet, int id)
 	Node_t * node = net->nodes[size_t(id)];
 
 	// don't GC, since net owns the memory
-	return XPtr<Node_t>(node, false);
+	return make_S3XPtr(node, "PopsNode", false);
 	}
 
 
@@ -182,7 +216,7 @@ IntegerVector drawIsolates_PopsNode(const XPtr<Node_t> & pNode, int n)
 	}
 
 
-DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, DataFrame samples)
+DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & samples)
 	{
 	const Net_t * net = pNet.get();
 	if (!net)
@@ -201,6 +235,8 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, DataFrame samples)
 	CharacterVector namevec;
 	namevec.push_back("node");
 	string namestem = "allele_";
+	for (size_t i=0; i<n_freq; i++)
+		namevec.push_back(namestem + to_string(i));
 
 	vector<size_t> count(n_freq, 0);
 
@@ -215,9 +251,9 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, DataFrame samples)
 		for (size_t j=0; j<n_freq; j++)
 			data[j+1][i] = count[j];
 
-		data[0][i] = n;
+		fill(count.begin(), count.end(), 0);
 
-		namevec.push_back(namestem + to_string(i));
+		data[0][i] = n;
 		}
 
 	List dataf(data.begin(), data.end());
