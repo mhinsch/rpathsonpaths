@@ -31,18 +31,17 @@ typedef Network<N_t, L_t> Net_t;
 
 struct Drift
 	{
-	vector<double> result;
 	vector<double> scaled;
 	gsl_rng * rng;
 	double theta;
 
 	Drift(size_t size, double t)
-		: result(size), theta(t)
+		: theta(t)
 		{
 		rng = gsl_rng_alloc(gsl_rng_default);
 		}
 
-	void operator()(const N_t::freq_t & freqs)
+	void operator()(const N_t::freq_t & freqs, N_t::freq_t & result)
 		{
 		assert(result.size() == freqs.size());
 		scaled.resize(freqs.size());
@@ -52,16 +51,6 @@ struct Drift
 			scaled[i++] = f * theta;
 
 		gsl_ran_dirichlet(rng, scaled.size(), scaled.data(), result.data());
-		}
-
-	vector<double>::const_iterator begin() const
-		{
-		return result.begin();
-		}
-	
-	vector<double>::const_iterator end() const
-		{
-		return result.end();
 		}
 	};
 

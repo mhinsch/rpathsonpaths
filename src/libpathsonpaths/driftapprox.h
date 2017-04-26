@@ -26,34 +26,38 @@ template<class NODE, class DRIFT_FUNC>
 void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	{
 	if (node->is_root())
-		{
-		assert(!node->frequencies.empty());
 		return;
-		}
 
-	assert(node->frequencies.empty());
+	// non-empty list indicates already processed
+	if (!node->frequencies.empty())
+		return;
 
 	const double prop_in_infd = node->rate_in_infd - node->d_rate_in_infd;
 
+	// this is not very elegant, but I can't think of a better way to do it
+	// without creating lots of little vectors all the time
+	static typename NODE::freq_t res;
+
 	for (auto * link : node->inputs)
 		{
-		typename NODE::freq_t & freq_in = link->from->frequencies;
-		if (freq_in.empty())
+		if (link->from->frequencies.empty())
 			annotate_frequencies(link->from, drift);
 
+		const typename NODE::freq_t & freq_in = link->from->frequencies;
+		res.resize(freq_in.size());
+
+		drift(freq_in, res);
+		// NOTE: any recursive calls will invalidate res!
+
+		// has to go here, otherwise we won't know size
 		if (node->frequencies.empty())
 			node->frequencies.resize(freq_in.size(), 0);
 
 		const double prop = link->rate_infd / prop_in_infd;
 
-		drift(freq_in);
-
-		auto it_i = drift.begin();
-		for (auto & freq : node->frequencies)
-			{
-			freq += *it_i * prop;
-			it_i++;
-			}
+		auto f_iter = node->frequencies.begin();
+		for (const auto r : res)
+			 *f_iter++ += r * prop;
 		}
 	}
 
