@@ -24,9 +24,9 @@ using MyTranspLink = TranspLink<Link<GRAPH> >;
 
 typedef Graph<MyVecDriftNode, MyTranspLink> G_t;
 typedef G_t::node_t Node_t;
-typedef G_t::link_t L_t;
+typedef G_t::link_t Link_t;
 
-typedef Network<Node_t, L_t> Net_t;
+typedef Network<Node_t, Link_t> Net_t;
 
 
 #endif	// RPATHSONPATHS_TYPES_H

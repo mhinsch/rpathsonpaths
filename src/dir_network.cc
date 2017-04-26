@@ -43,16 +43,6 @@ XPtr<Net_t> PopsNetwork(const DataFrame & links, const DataFrame & external, dou
 	}
 
 
-size_t find_node_id(const Node_t * n, const Net_t & net)
-	{
-	for (size_t i=0; i<net.nodes.size(); i++)
-		if (n == net.nodes[i])
-			return i;
-
-	return ~size_t(0);
-	}
-
-
 void print_PopsNetwork(const XPtr<Net_t> & pNet)
 	{
 	const Net_t * net = pNet.get();
@@ -74,9 +64,9 @@ void print_PopsNetwork(const XPtr<Net_t> & pNet)
 	Rcout << "from\tto\trate\tinfected\n";
 	for (size_t i=0; i<net->links.size(); i++)
 		{
-		L_t & l = *net->links[i];
-		size_t f = find_node_id(l.from, *net);
-		size_t t = find_node_id(l.to, *net);
+		Link_t & l = *net->links[i];
+		size_t f = net->find_node_id(l.from);
+		size_t t = net->find_node_id(l.to);
 		Rcout << f << "\t" <<
 			t << "\t" <<
 			l.rate << "\t" <<
@@ -193,7 +183,7 @@ struct RRng
 void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 	{
 	if (count.size() != node.frequencies.size())
-		stop("Invalid node found!");
+		stop("Invalid number of alleles in node!");
 
 	ProportionalPick<> pick(0.000001, node.frequencies);
 	RRng r;
@@ -225,8 +215,10 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & s
 	const IntegerVector nodes = samples["nodes"];
 	const IntegerVector num = samples["N"];
 	
-	// TODO this relies on all nodes having a full frequencies vector!
 	const size_t n_freq = net->nodes[0]->frequencies.size();
+	if (!n_freq)
+		stop("Empty node detected!");
+
 	vector<IntegerVector> data(n_freq+1);
 
 	for (size_t i=0; i<n_freq+1; i++)
@@ -258,7 +250,45 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & s
 
 	List dataf(data.begin(), data.end());
 	dataf.attr("names") = namevec;
-	Rcpp::DataFrame dfout(dataf);
+	DataFrame dfout(dataf);
 	return dfout;
 	}
+
+DataFrame edgeList(const XPtr<Net_t> & pNet)
+	{
+	const Net_t * net = pNet.get();
+
+	StringVector from;
+	StringVector to;
+	NumericVector rates;
+	NumericVector rates_i;
+
+	const size_t n_nodes = net->nodes.size();
+
+	for (const Link_t * l : net->links)
+		{
+		if (!l)
+			stop("Missing link detected!");
+
+		const size_t f = net->find_node_id(l->from);
+		const size_t t = net->find_node_id(l->to);
+
+		if (f==n_nodes || t==n_nodes)
+			stop("Invalid link!");
+
+		from.push_back(to_string(f));
+		to.push_back(to_string(t));
+		rates.push_back(l->rate);
+		rates_i.push_back(l->rate_infd);
+		}
+
+	return DataFrame::create(
+		Named("from") = from,
+		Named("to") = to,
+		Named("rates") = rates,
+		Named("rates_infected") = rates_i);
+	}
+
+
+
 

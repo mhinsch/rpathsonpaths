@@ -110,3 +110,16 @@ drawIsolates.PopsNetwork <- function(pNet, samples) {
     .Call('rpathsonpaths_drawIsolates_PopsNetwork', PACKAGE = 'rpathsonpaths', pNet, samples)
 }
 
+#' @title egdeList
+#'
+#' @description Get a list of edges in a dataframe.
+#'
+#' @description This function returns a list of the edges in the network in a format
+#' that is suitable for plotting with e.g. iGraph.
+#'
+#' @param pNet A PopsNet object.
+#' @return A dataframe with from, to, rates and rates_infected.
+edgeList <- function(pNet) {
+    .Call('rpathsonpaths_edgeList', PACKAGE = 'rpathsonpaths', pNet)
+}
+
