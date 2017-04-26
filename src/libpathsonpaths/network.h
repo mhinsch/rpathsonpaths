@@ -62,6 +62,15 @@ struct Network : public AbstractNetwork
 		return links.size();
 		}
 
+	size_t find_node_id(const N * n) const
+		{
+		for (size_t i=0; i<nodes.size(); i++)
+			if (n == nodes[i])
+				return i;
+
+		return nodes.size();
+		}
+
 	Network * clone() const
 		{
 		Network * nn = new Network;
