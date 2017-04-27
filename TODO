@@ -21,9 +21,6 @@
 		- unexpected behaviour
 		+ everybody seems to do it
 
-* plotting
-	* which packages to support?
-	* which should be default?
 
 * data formats for import/export
 	* important formats to support?
@@ -32,10 +29,6 @@
 	* package docs!
 	* examples
 	* example data (?)
-
-* real node/edge ids (i.e. strings, R objects, etc.)
-
-* node/edge metadata (???)
 
 * individual-based simulations
 	-> lib

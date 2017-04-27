@@ -123,3 +123,16 @@ edgeList <- function(pNet) {
     .Call('rpathsonpaths_edgeList', PACKAGE = 'rpathsonpaths', pNet)
 }
 
+#' @title nodeList
+#'
+#' @description Get a list of nodes in a dataframe.
+#'
+#' @description This function returns a list of the nodes in the network in a format
+#' that is suitable for plotting with e.g. iGraph.
+#'
+#' @param pNet A PopsNet object.
+#' @return A dataframe with id and rate_infected.
+nodeList <- function(pNet) {
+    .Call('rpathsonpaths_nodeList', PACKAGE = 'rpathsonpaths', pNet)
+}
+

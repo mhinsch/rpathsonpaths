@@ -289,6 +289,23 @@ DataFrame edgeList(const XPtr<Net_t> & pNet)
 		Named("rates_infected") = rates_i);
 	}
 
+DataFrame nodeList(const XPtr<Net_t> & pNet)
+	{
+	const Net_t * net = pNet.get();
+
+	StringVector id;
+	NumericVector inf;
+
+	for (size_t i=0; i<net->nodes.size(); i++)
+		{
+		const Node_t * n = net->nodes[i];
+
+		id.push_back(to_string(i));
+		inf.push_back(n->rate_in_infd);
+		}
+
+	return DataFrame::create(Named("id") = id, Named("infected") = inf);
+	}
 
 
 

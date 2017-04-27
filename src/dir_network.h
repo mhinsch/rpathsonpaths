@@ -139,5 +139,16 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & s
 // [[Rcpp::export]]
 DataFrame edgeList(const XPtr<Net_t> & pNet);
 
+//' @title nodeList
+//'
+//' @description Get a list of nodes in a dataframe.
+//'
+//' @description This function returns a list of the nodes in the network in a format
+//' that is suitable for plotting with e.g. iGraph.
+//'
+//' @param pNet A PopsNet object.
+//' @return A dataframe with id and rate_infected.
+// [[Rcpp::export]]
+DataFrame nodeList(const XPtr<Net_t> & pNet);
 
 #endif	// DIR_NETWORK_H

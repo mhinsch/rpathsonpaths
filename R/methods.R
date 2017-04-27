@@ -16,6 +16,7 @@ plot.PopsNetwork <- function(x, ...){
 	}
 
 	edges <- edgeList(x)
-	graph <- igraph::graph_from_data_frame(edges)
+	nodes <- nodeList(x)
+	graph <- igraph::graph_from_data_frame(edges, TRUE, nodes)
 	igraph::plot.igraph(graph)
 	}
