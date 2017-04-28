@@ -10,9 +10,12 @@ RCPP:
 README:
 	${RSCRIPT} -e 'library(rmarkdown); render("README.Rmd", output_format="github_document")'
 
-roxygen: RCPP
+roxygen: RCPP vignettes
 	@mkdir -p man
 	${RSCRIPT} -e "library(roxygen2); roxygenize()"
+
+vignettes: 
+	${RSCRIPT} -e 'library(rmarkdown); render("vignettes/overview.Rmd")'
 
 install: roxygen README
 	R CMD INSTALL .
