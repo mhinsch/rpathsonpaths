@@ -6,6 +6,28 @@
 
 using namespace Rcpp;
 
+// sources
+IntegerVector sources(const DataFrame& edgeList);
+RcppExport SEXP rpathsonpaths_sources(SEXP edgeListSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame& >::type edgeList(edgeListSEXP);
+    rcpp_result_gen = Rcpp::wrap(sources(edgeList));
+    return rcpp_result_gen;
+END_RCPP
+}
+// colourNetwork
+IntegerVector colourNetwork(const DataFrame& edgeList);
+RcppExport SEXP rpathsonpaths_colourNetwork(SEXP edgeListSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame& >::type edgeList(edgeListSEXP);
+    rcpp_result_gen = Rcpp::wrap(colourNetwork(edgeList));
+    return rcpp_result_gen;
+END_RCPP
+}
 // PopsNetwork
 XPtr<Net_t> PopsNetwork(const DataFrame& links, const DataFrame& external, double transmission);
 RcppExport SEXP rpathsonpaths_PopsNetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {

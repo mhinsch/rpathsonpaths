@@ -1,17 +1,17 @@
-#' Test file for conversions
+#' @title epicToEdgelist
+#'
+#' @details Extract an edgelist suitable for PopsNetwork from an epicontacts object.
+#' Note that this will set all rates to 1.
 #'
 #' @param x An \code{epicontacts} object.
-#'
-#' @export
 #'
 #' @examples
 #' if (require("outbreaks") && require("epicontacts")) {
 #'  x <- make_epicontacts(linelist = mers_korea_2015$linelist,
 #'                        contacts = mers_korea_2015$contacts)
-#'
-#' 
+#'  edgelist <- epicToEdgelist(x)
 #' }
-convert <- function(x) {
+epicToEdgelist <- function(x) {
     if (!inherits(x, "epicontacts")) {
         stop("x is not an epicontacts object")
     }
@@ -29,5 +29,4 @@ convert <- function(x) {
     names(out) <- c("inputs", "outputs", "rates")
 
     return(out)
-    
 }

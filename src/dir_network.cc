@@ -10,6 +10,92 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	return xptr;
 	}
 
+IntegerVector sources(const DataFrame & edgeList)
+	{
+	const IntegerVector from = edgeList[0];
+	const IntegerVector to = edgeList[1];
+	
+	vector<bool> is_sink;
+
+	for (auto i : to)
+		{
+		if (i >= is_sink.size())
+			is_sink.resize(i, false);
+		is_sink[i] = true;
+		}
+
+	set<int> scs;
+
+	for (auto i : from)
+		{
+		if (i >= is_sink.size() || !is_sink[i])
+			scs.insert(i);
+		}
+	
+	IntegerVector res(scs.begin(), scs.end());
+	return res;
+	}
+
+
+IntegerVector colourNetwork(const DataFrame & edgeList)
+	{
+	const IntegerVector from = edgeList[0];
+	const IntegerVector to = edgeList[1];
+
+	// colour of nodes
+	vector<int> colour;
+
+	int next_col = 1;
+
+	for (size_t i=0; i<from.size(); i++)
+		{
+		const size_t f = from[i], t = to[i];
+
+		if (max(f, t) >= colour.size())
+			colour.resize(max(f, t), 0);
+
+		if (colour[f] == colour[t])
+			{
+			// not coloured yet, colour them
+			if (colour[f] == 0)
+				{
+				colour[f] = next_col++;
+				colour[t] = colour[f];
+				}
+			// otherwise they are the same colour which is also fine
+			}
+		else
+			{
+			// one of them is not coloured => take the other one's colour
+			if (colour[f] == 0)
+				{
+				colour[f] = colour[t];
+				continue;
+				}
+			if (colour[t] == 0)
+				{
+				colour[t] = colour[f];
+				continue;
+				}
+			// two different colours, have to change all instances of one of them
+			const int oldc = colour[t];
+			const int newc = colour[f];
+
+			for (int & c : colour)
+				if (c == oldc)
+					c = newc;
+			}
+		}
+
+	IntegerVector res(from.size());
+
+	// assign colours to edges
+	for (size_t i=0; i<from.size(); i++)
+		res[i] = colour[from[i]];
+
+	return res;
+	}
+
 
 XPtr<Net_t> PopsNetwork(const DataFrame & links, const DataFrame & external, double transmission)
 	{

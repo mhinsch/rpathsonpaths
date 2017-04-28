@@ -25,6 +25,35 @@ struct Drift
 		}
 	};
 
+
+
+//' @title sources
+//'
+//' @description Get a list of source nodes from a network.
+//'
+//' @details Extract a list of source nodes, i.e. nodes that do not have an 
+//' input, from a network.
+//'
+//' @param edgeList A dataframe containing a list of edges.
+//'
+//' @return An integer vector containg the ids of all source nodes in the network.
+// [[Rcpp::export]]
+IntegerVector sources(const DataFrame & edgeList);
+
+//' @title colourNetwork
+//'
+//' @description Identify separate sub-networks.
+//'
+//' @details This function identifies completely separate sub-networks in a network
+//' described as an edge list.
+//'
+//' @param edgeList A dataframe containing a list of edges.
+//'
+//' @return An integer vector with the sub-network id of each edge. Note that id's start at
+//' 1 and are not guaranteed to be contiguous.
+// [[Rcpp::export]]
+IntegerVector colourNetwork(const DataFrame & edgeList);
+	
 //' @title PopsNetwork 
 //'
 //' @description Create a PopsNetwork object.
