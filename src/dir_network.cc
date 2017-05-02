@@ -10,10 +10,10 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	return xptr;
 	}
 
-IntegerVector sources(const DataFrame & edgeList)
+IntegerVector sources(const DataFrame & edge_list)
 	{
-	const IntegerVector from = edgeList[0];
-	const IntegerVector to = edgeList[1];
+	const IntegerVector from = edge_list[0];
+	const IntegerVector to = edge_list[1];
 	
 	vector<bool> is_sink;
 
@@ -37,10 +37,10 @@ IntegerVector sources(const DataFrame & edgeList)
 	}
 
 
-IntegerVector colourNetwork(const DataFrame & edgeList)
+IntegerVector colour_network(const DataFrame & edge_list)
 	{
-	const IntegerVector from = edgeList[0];
-	const IntegerVector to = edgeList[1];
+	const IntegerVector from = edge_list[0];
+	const IntegerVector to = edge_list[1];
 
 	// colour of nodes
 	vector<int> colour;
@@ -97,7 +97,7 @@ IntegerVector colourNetwork(const DataFrame & edgeList)
 	}
 
 
-XPtr<Net_t> PopsNetwork(const DataFrame & links, const DataFrame & external, double transmission)
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission)
 	{
 	Net_t * net;
 
@@ -125,13 +125,13 @@ XPtr<Net_t> PopsNetwork(const DataFrame & links, const DataFrame & external, dou
 
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
 
-	return make_S3XPtr(net, "PopsNetwork");
+	return make_S3XPtr(net, "popsnetwork");
 	}
 
 
-void print_PopsNetwork(const XPtr<Net_t> & pNet)
+void print_popsnetwork(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = pNet.get();
+	const Net_t * net = p_net.get();
 
 	Rcout << "Nodes:\n\n";
 	Rcout << "id\tinfected\tinput\talleles...\n";
@@ -161,19 +161,19 @@ void print_PopsNetwork(const XPtr<Net_t> & pNet)
 	}
 
 
-void print_PopsNode(const Node_t * n)
+void print_popsnode(const Node_t * n)
 	{
 	}
 
-void print_PopsNode(const XPtr<Node_t> & pNode)
+void print_popsnode(const XPtr<Node_t> & p_node)
 	{
-	const Node_t * node = pNode.get();
+	const Node_t * node = p_node.get();
 	
-	print_PopsNode(node);
+	print_popsnode(node);
 	}
 
 
-void _setAlleleFreqs(Net_t * net, const List & ini)
+void _set_allele_freqs(Net_t * net, const List & ini)
 	{
 	const IntegerVector nodes = ini["nodes"];
 	const NumericMatrix freqs = ini["frequencies"];
@@ -204,21 +204,21 @@ void _setAlleleFreqs(Net_t * net, const List & ini)
 
 	}
 
-XPtr<Net_t> setAlleleFreqs(const XPtr<Net_t> & pNet, const List & iniDist)
+XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	{
-	Net_t * net = pNet->clone();
+	Net_t * net = p_net->clone();
 
-	_setAlleleFreqs(net, iniDist);
+	_set_allele_freqs(net, iniDist);
 
-	return make_S3XPtr(net, "PopsNetwork", true);
+	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
-XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, double theta, Nullable<List> iniDist)
+XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
 	{
-	Net_t * net = pNet->clone();
+	Net_t * net = p_net->clone();
 
 	if (! iniDist.isNull())
-		_setAlleleFreqs(net, iniDist.as());
+		_set_allele_freqs(net, iniDist.as());
 
 	if (!net->nodes.size())
 		stop("Error: empty network!");
@@ -228,13 +228,13 @@ XPtr<Net_t> spreadDirichlet(const XPtr<Net_t> & pNet, double theta, Nullable<Lis
 	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
 	
-	return make_S3XPtr(net, "PopsNetwork", true);
+	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
 
-XPtr<Node_t> getPopsNode(const XPtr<Net_t> & pNet, int id)
+XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, int id)
 	{
-	Net_t * net = pNet.get();
+	Net_t * net = p_net.get();
 	if (!net)
 		stop("Invalid network object!");
 
@@ -244,7 +244,7 @@ XPtr<Node_t> getPopsNode(const XPtr<Net_t> & pNet, int id)
 	Node_t * node = net->nodes[size_t(id)];
 
 	// don't GC, since net owns the memory
-	return make_S3XPtr(node, "PopsNode", false);
+	return make_S3XPtr(node, "popsnode", false);
 	}
 
 
@@ -279,9 +279,9 @@ void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 	}
 
 
-IntegerVector drawIsolates_PopsNode(const XPtr<Node_t> & pNode, int n)
+IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 	{
-	const Node_t * node = pNode.get();
+	const Node_t * node = p_node.get();
 	if (!node)
 		stop("Invalid node object!");
 
@@ -292,9 +292,9 @@ IntegerVector drawIsolates_PopsNode(const XPtr<Node_t> & pNode, int n)
 	}
 
 
-DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & samples)
+DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
-	const Net_t * net = pNet.get();
+	const Net_t * net = p_net.get();
 	if (!net)
 		stop("Invalid network object!");
 
@@ -340,9 +340,9 @@ DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t> & pNet, const DataFrame & s
 	return dfout;
 	}
 
-DataFrame edgeList(const XPtr<Net_t> & pNet)
+DataFrame edge_list(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = pNet.get();
+	const Net_t * net = p_net.get();
 
 	StringVector from;
 	StringVector to;
@@ -375,9 +375,9 @@ DataFrame edgeList(const XPtr<Net_t> & pNet)
 		Named("rates_infected") = rates_i);
 	}
 
-DataFrame nodeList(const XPtr<Net_t> & pNet)
+DataFrame node_list(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = pNet.get();
+	const Net_t * net = p_net.get();
 
 	StringVector id;
 	NumericVector inf;

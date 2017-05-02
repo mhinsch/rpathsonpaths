@@ -4,10 +4,10 @@
 \alias{sources}
 \title{sources}
 \usage{
-sources(edgeList)
+sources(edge_list)
 }
 \arguments{
-\item{edgeList}{A dataframe containing a list of edges.}
+\item{edge_list}{A dataframe containing a list of edges.}
 }
 \value{
 An integer vector containg the ids of all source nodes in the network.

@@ -56,15 +56,15 @@ include for examples infections in migrating animals.
 
 The most important functions include:
 
-- **`PopsNetwork`**: create a network object from an edgelist (describing the transport graph) and a list of external sources.
+- **`popsnetwork`**: create a network object from an edgelist (describing the transport graph) and a list of external sources.
 
-- **`setAlleleFreq`**: set the population composition in source nodes.
+- **`set_allele_freq`**: set the population composition in source nodes.
 
-- **`spreadDirichlet`**: simulate spread of genetic material on the network using a Dirichlet distribution to approximate genetic drift.
+- **`spread_dirichlet`**: simulate spread of genetic material on the network using a Dirichlet distribution to approximate genetic drift.
 
-- **`drawIsolates`**: draw a number of random individuals from a set of nodes using the simulated allele frequencies.
+- **`draw_isolates`**: draw a number of random individuals from a set of nodes using the simulated allele frequencies.
 
-- **`plot`**: plot a *PopsNetwork* object (currently uses *igraph*, but more backends are planned).
+- **`plot`**: plot a *popsnetwork* object (currently uses *igraph*, but more backends are planned).
 
 
 <br>
@@ -91,11 +91,11 @@ ext <- data.frame(nodes=c(0, 5), rates=c(0.5, 0.5))
 
 ```
 
-Now we can create a *PopsNetwork* object:
+Now we can create a *popsnetwork* object:
 
 ```{r, popsnetwork}
 
-netraw <- PopsNetwork(edgelist, ext, 0.1)
+netraw <- popsnetwork(edgelist, ext, 0.1)
 netraw
 plot(netraw)
 
@@ -108,18 +108,18 @@ We set up the initial populations of the source nodes:
 
 ```{r, inipop}
 freqs <- matrix(c(0.1, 0.4, 0.3, 0.1, 0.2, 0.2, 0.4, 0.3), ncol=4, nrow=2)
-netini <- setAlleleFreqs(netraw, list(nodes=c(0, 5), frequencies=freqs))
+netini <- set_allele_freqs(netraw, list(nodes=c(0, 5), frequencies=freqs))
 netini
 
 ```
 
-Now we are ready to simulate spread of genetic material in the network. Note that every call to spreadDirichlet
+Now we are ready to simulate spread of genetic material in the network. Note that every call to spread_dirichlet
 will generally produce a different allele frequency distribution.
 
 ```{r, dirichlet}
-netdir1 <- spreadDirichlet(netini, 1.7)
+netdir1 <- spread_dirichlet(netini, 1.7)
 netdir1
-netdir2 <- spreadDirichlet(netini, 1.7)
+netdir2 <- spread_dirichlet(netini, 1.7)
 netdir2
 ```
 
@@ -130,8 +130,8 @@ Finally we can draw samples from our simulated population.
 
 ```{r, isolates}
 samplconf <- data.frame(nodes=c(2, 4), N=c(10, 10))
-drawIsolates(netdir1, samplconf)
-drawIsolates(netdir2, samplconf)
+draw_isolates(netdir1, samplconf)
+draw_isolates(netdir2, samplconf)
 
 ```
 

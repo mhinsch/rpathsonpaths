@@ -7,140 +7,140 @@
 using namespace Rcpp;
 
 // sources
-IntegerVector sources(const DataFrame& edgeList);
-RcppExport SEXP rpathsonpaths_sources(SEXP edgeListSEXP) {
+IntegerVector sources(const DataFrame& edge_list);
+RcppExport SEXP rpathsonpaths_sources(SEXP edge_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame& >::type edgeList(edgeListSEXP);
-    rcpp_result_gen = Rcpp::wrap(sources(edgeList));
+    Rcpp::traits::input_parameter< const DataFrame& >::type edge_list(edge_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(sources(edge_list));
     return rcpp_result_gen;
 END_RCPP
 }
-// colourNetwork
-IntegerVector colourNetwork(const DataFrame& edgeList);
-RcppExport SEXP rpathsonpaths_colourNetwork(SEXP edgeListSEXP) {
+// colour_network
+IntegerVector colour_network(const DataFrame& edge_list);
+RcppExport SEXP rpathsonpaths_colour_network(SEXP edge_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const DataFrame& >::type edgeList(edgeListSEXP);
-    rcpp_result_gen = Rcpp::wrap(colourNetwork(edgeList));
+    Rcpp::traits::input_parameter< const DataFrame& >::type edge_list(edge_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(colour_network(edge_list));
     return rcpp_result_gen;
 END_RCPP
 }
-// PopsNetwork
-XPtr<Net_t> PopsNetwork(const DataFrame& links, const DataFrame& external, double transmission);
-RcppExport SEXP rpathsonpaths_PopsNetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {
+// popsnetwork
+XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission);
+RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const DataFrame& >::type links(linksSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type external(externalSEXP);
     Rcpp::traits::input_parameter< double >::type transmission(transmissionSEXP);
-    rcpp_result_gen = Rcpp::wrap(PopsNetwork(links, external, transmission));
+    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission));
     return rcpp_result_gen;
 END_RCPP
 }
-// print_PopsNetwork
-void print_PopsNetwork(const XPtr<Net_t>& pNet);
-RcppExport SEXP rpathsonpaths_print_PopsNetwork(SEXP pNetSEXP) {
+// print_popsnetwork
+void print_popsnetwork(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_print_popsnetwork(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    print_PopsNetwork(pNet);
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    print_popsnetwork(p_net);
     return R_NilValue;
 END_RCPP
 }
-// print_PopsNode
-void print_PopsNode(const XPtr<Node_t>& pNode);
-RcppExport SEXP rpathsonpaths_print_PopsNode(SEXP pNodeSEXP) {
+// print_popsnode
+void print_popsnode(const XPtr<Node_t>& p_node);
+RcppExport SEXP rpathsonpaths_print_popsnode(SEXP p_nodeSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type pNode(pNodeSEXP);
-    print_PopsNode(pNode);
+    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
+    print_popsnode(p_node);
     return R_NilValue;
 END_RCPP
 }
-// setAlleleFreqs
-XPtr<Net_t> setAlleleFreqs(const XPtr<Net_t>& pNet, const List& iniDist);
-RcppExport SEXP rpathsonpaths_setAlleleFreqs(SEXP pNetSEXP, SEXP iniDistSEXP) {
+// set_allele_freqs
+XPtr<Net_t> set_allele_freqs(const XPtr<Net_t>& p_net, const List& ini_dist);
+RcppExport SEXP rpathsonpaths_set_allele_freqs(SEXP p_netSEXP, SEXP ini_distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    Rcpp::traits::input_parameter< const List& >::type iniDist(iniDistSEXP);
-    rcpp_result_gen = Rcpp::wrap(setAlleleFreqs(pNet, iniDist));
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    Rcpp::traits::input_parameter< const List& >::type ini_dist(ini_distSEXP);
+    rcpp_result_gen = Rcpp::wrap(set_allele_freqs(p_net, ini_dist));
     return rcpp_result_gen;
 END_RCPP
 }
-// spreadDirichlet
-XPtr<Net_t> spreadDirichlet(const XPtr<Net_t>& pNet, double theta, Nullable<List> iniDist);
-RcppExport SEXP rpathsonpaths_spreadDirichlet(SEXP pNetSEXP, SEXP thetaSEXP, SEXP iniDistSEXP) {
+// spread_dirichlet
+XPtr<Net_t> spread_dirichlet(const XPtr<Net_t>& p_net, double theta, Nullable<List> ini_dist);
+RcppExport SEXP rpathsonpaths_spread_dirichlet(SEXP p_netSEXP, SEXP thetaSEXP, SEXP ini_distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< Nullable<List> >::type iniDist(iniDistSEXP);
-    rcpp_result_gen = Rcpp::wrap(spreadDirichlet(pNet, theta, iniDist));
+    Rcpp::traits::input_parameter< Nullable<List> >::type ini_dist(ini_distSEXP);
+    rcpp_result_gen = Rcpp::wrap(spread_dirichlet(p_net, theta, ini_dist));
     return rcpp_result_gen;
 END_RCPP
 }
-// getPopsNode
-XPtr<Node_t> getPopsNode(const XPtr<Net_t>& pNet, int id);
-RcppExport SEXP rpathsonpaths_getPopsNode(SEXP pNetSEXP, SEXP idSEXP) {
+// get_popsnode
+XPtr<Node_t> get_popsnode(const XPtr<Net_t>& p_net, int id);
+RcppExport SEXP rpathsonpaths_get_popsnode(SEXP p_netSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< int >::type id(idSEXP);
-    rcpp_result_gen = Rcpp::wrap(getPopsNode(pNet, id));
+    rcpp_result_gen = Rcpp::wrap(get_popsnode(p_net, id));
     return rcpp_result_gen;
 END_RCPP
 }
-// drawIsolates_PopsNode
-IntegerVector drawIsolates_PopsNode(const XPtr<Node_t>& pNode, int n);
-RcppExport SEXP rpathsonpaths_drawIsolates_PopsNode(SEXP pNodeSEXP, SEXP nSEXP) {
+// draw_isolates_popsnode
+IntegerVector draw_isolates_popsnode(const XPtr<Node_t>& p_node, int n);
+RcppExport SEXP rpathsonpaths_draw_isolates_popsnode(SEXP p_nodeSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type pNode(pNodeSEXP);
+    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(drawIsolates_PopsNode(pNode, n));
+    rcpp_result_gen = Rcpp::wrap(draw_isolates_popsnode(p_node, n));
     return rcpp_result_gen;
 END_RCPP
 }
-// drawIsolates_PopsNetwork
-DataFrame drawIsolates_PopsNetwork(const XPtr<Net_t>& pNet, const DataFrame& samples);
-RcppExport SEXP rpathsonpaths_drawIsolates_PopsNetwork(SEXP pNetSEXP, SEXP samplesSEXP) {
+// draw_isolates_popsnetwork
+DataFrame draw_isolates_popsnetwork(const XPtr<Net_t>& p_net, const DataFrame& samples);
+RcppExport SEXP rpathsonpaths_draw_isolates_popsnetwork(SEXP p_netSEXP, SEXP samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type samples(samplesSEXP);
-    rcpp_result_gen = Rcpp::wrap(drawIsolates_PopsNetwork(pNet, samples));
+    rcpp_result_gen = Rcpp::wrap(draw_isolates_popsnetwork(p_net, samples));
     return rcpp_result_gen;
 END_RCPP
 }
-// edgeList
-DataFrame edgeList(const XPtr<Net_t>& pNet);
-RcppExport SEXP rpathsonpaths_edgeList(SEXP pNetSEXP) {
+// edge_list
+DataFrame edge_list(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_edge_list(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    rcpp_result_gen = Rcpp::wrap(edgeList(pNet));
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    rcpp_result_gen = Rcpp::wrap(edge_list(p_net));
     return rcpp_result_gen;
 END_RCPP
 }
-// nodeList
-DataFrame nodeList(const XPtr<Net_t>& pNet);
-RcppExport SEXP rpathsonpaths_nodeList(SEXP pNetSEXP) {
+// node_list
+DataFrame node_list(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_node_list(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type pNet(pNetSEXP);
-    rcpp_result_gen = Rcpp::wrap(nodeList(pNet));
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    rcpp_result_gen = Rcpp::wrap(node_list(p_net));
     return rcpp_result_gen;
 END_RCPP
 }

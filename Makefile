@@ -7,7 +7,7 @@ all: install
 RCPP:
 	${RSCRIPT} -e 'library(Rcpp); compileAttributes(".")'
 
-README:
+README.md: README.Rmd
 	${RSCRIPT} -e 'library(rmarkdown); render("README.Rmd", output_format="github_document")'
 
 roxygen: RCPP vignettes
@@ -17,10 +17,10 @@ roxygen: RCPP vignettes
 vignettes: 
 	${RSCRIPT} -e 'library(rmarkdown); render("vignettes/overview.Rmd")'
 
-install: roxygen README
+install: roxygen README.md
 	R CMD INSTALL .
 
-build: roxygen README
+build: roxygen README.md
 	R CMD build .
 
 check: build

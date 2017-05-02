@@ -1,4 +1,4 @@
-#' @title epicToEdgelist
+#' @title epic_to_edge_list
 #'
 #' @details Extract an edgelist suitable for PopsNetwork from an epicontacts object.
 #' Note that this will set all rates to 1.
@@ -9,9 +9,9 @@
 #' if (require("outbreaks") && require("epicontacts")) {
 #'  x <- make_epicontacts(linelist = mers_korea_2015$linelist,
 #'                        contacts = mers_korea_2015$contacts)
-#'  edgelist <- epicToEdgelist(x)
+#'  edgelist <- epic_to_edge_list(x)
 #' }
-epicToEdgelist <- function(x) {
+epic_to_edge_list <- function(x) {
     if (!inherits(x, "epicontacts")) {
         stop("x is not an epicontacts object")
     }
