@@ -5,8 +5,8 @@
 #'
 #' @description Get a list of source nodes from a network.
 #'
-#' @details Extract a list of source nodes, i.e. nodes that do not have an 
-#' input, from a network.
+#' @details Extract a list of source nodes, i.e. nodes that do not have any
+#' inputs, from a network.
 #'
 #' @param edge_list A dataframe containing a list of edges.
 #'

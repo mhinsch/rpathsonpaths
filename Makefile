@@ -4,23 +4,22 @@ RSCRIPT = Rscript --no-init-file
 all: install
 
 
-RCPP:
+R/RcppExports.R: src/dir_network.h
 	${RSCRIPT} -e 'library(Rcpp); compileAttributes(".")'
 
 README.md: README.Rmd
 	${RSCRIPT} -e 'library(rmarkdown); render("README.Rmd", output_format="github_document")'
 
-roxygen: RCPP vignettes
-	@mkdir -p man
+man/popsnetwork.Rd: R/RcppExports.R vignettes
 	${RSCRIPT} -e "library(roxygen2); roxygenize()"
 
 vignettes: 
 	${RSCRIPT} -e 'library(rmarkdown); render("vignettes/overview.Rmd")'
 
-install: roxygen README.md
+install: man/popsnetwork.Rd 
 	R CMD INSTALL .
 
-build: roxygen README.md
+build: man/popsnetwork.Rd README.md
 	R CMD build .
 
 check: build

@@ -16,6 +16,6 @@ An integer vector containg the ids of all source nodes in the network.
 Get a list of source nodes from a network.
 }
 \details{
-Extract a list of source nodes, i.e. nodes that do not have an 
-input, from a network.
+Extract a list of source nodes, i.e. nodes that do not have any
+inputs, from a network.
 }
