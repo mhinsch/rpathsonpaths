@@ -206,7 +206,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	{
-	Net_t * net = p_net->clone();
+	Net_t * net = new Net_t(*p_net.checked_get());
 
 	_set_allele_freqs(net, iniDist);
 
@@ -215,7 +215,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
 	{
-	Net_t * net = p_net->clone();
+	Net_t * net = new Net_t(*p_net.checked_get());
 
 	if (! iniDist.isNull())
 		_set_allele_freqs(net, iniDist.as());
