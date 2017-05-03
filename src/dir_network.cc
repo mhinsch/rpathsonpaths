@@ -131,7 +131,7 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, dou
 
 void print_popsnetwork(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = p_net.get();
+	const Net_t * net = p_net.checked_get();
 
 	Rcout << "Nodes:\n\n";
 	Rcout << "id\tinfected\tinput\talleles...\n";
@@ -167,7 +167,7 @@ void print_popsnode(const Node_t * n)
 
 void print_popsnode(const XPtr<Node_t> & p_node)
 	{
-	const Node_t * node = p_node.get();
+	const Node_t * node = p_node.checked_get();
 	
 	print_popsnode(node);
 	}
@@ -234,7 +234,7 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 
 XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, int id)
 	{
-	Net_t * net = p_net.get();
+	Net_t * net = p_net.checked_get();
 	if (!net)
 		stop("Invalid network object!");
 
@@ -281,7 +281,7 @@ void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 
 IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 	{
-	const Node_t * node = p_node.get();
+	const Node_t * node = p_node.checked_get();
 	if (!node)
 		stop("Invalid node object!");
 
@@ -294,7 +294,7 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
-	const Net_t * net = p_net.get();
+	const Net_t * net = p_net.checked_get();
 	if (!net)
 		stop("Invalid network object!");
 
@@ -342,7 +342,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 
 DataFrame edge_list(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = p_net.get();
+	const Net_t * net = p_net.checked_get();
 
 	StringVector from;
 	StringVector to;
@@ -377,7 +377,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 
 DataFrame node_list(const XPtr<Net_t> & p_net)
 	{
-	const Net_t * net = p_net.get();
+	const Net_t * net = p_net.checked_get();
 
 	StringVector id;
 	NumericVector inf;
