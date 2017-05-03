@@ -27,6 +27,18 @@ struct Network : public AbstractNetwork
 	std::vector<N *> nodes;		//!< all nodes in the network
 	std::vector<L *> links;		//!< all edges in the network
 
+	Network() = default;
+
+	Network(const Network & other)
+		{
+		other.clone_into(*this);
+		}
+
+	const Network & operator=(Network tmp)
+		{
+		swap(tmp.nodes, this->nodes);
+		swap(tmp.links, this->links);
+		}
 
 	/** Add an edge. Source and target nodes have to be specified as indices.*/
 	void add_link(size_t from, size_t to, double rate)
@@ -71,16 +83,23 @@ struct Network : public AbstractNetwork
 		return nodes.size();
 		}
 
-	Network * clone() const
-		{
-		Network * nn = new Network;
 
-		nn->nodes.resize(nodes.size(), 0);
-		nn->links.resize(links.size(), 0);
+	~Network()
+		{
+		for (N * n : nodes)
+			delete n;
+		for (L * l : links)
+			delete l;
+		}
+
+	void clone_into(Network & nn) const
+		{
+		nn.nodes.resize(nodes.size(), 0);
+		nn.links.resize(links.size(), 0);
 
 		// copy all links, pointer will be readjusted later
 		for (size_t i=0; i<links.size(); i++)
-			nn->links[i] = new L(*links[i]);
+			nn.links[i] = new L(*links[i]);
 
 		for (size_t i=0; i<nodes.size(); i++)
 			{
@@ -94,7 +113,7 @@ struct Network : public AbstractNetwork
 				size_t li = find_link(l);
 				assert(li < links.size());
 				// use new link object
-				l = nn->links[li];
+				l = nn.links[li];
 				// point it to this node
 				l->to = n;
 				}
@@ -106,23 +125,13 @@ struct Network : public AbstractNetwork
 				size_t li = find_link(l);
 				assert(li < links.size());
 				// use new link object
-				l = nn->links[li];
+				l = nn.links[li];
 				// point it to this node
 				l->from = n;
 				}
 			
-			nn->nodes[i] = n;
+			nn.nodes[i] = n;
 			}
-
-		return nn;
-		}
-
-	~Network()
-		{
-		for (N * n : nodes)
-			delete n;
-		for (L * l : links)
-			delete l;
 		}
 	};
 
