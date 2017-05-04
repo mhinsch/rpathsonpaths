@@ -4,7 +4,8 @@
 #include "libpathsonpaths/genericgraph.h"
 #include "libpathsonpaths/transportgraph.h"
 #include "libpathsonpaths/driftapprox.h"
-#include "libpathsonpaths/network.h"
+
+#include "rnetwork.h"
 
 #include <vector>
 
@@ -26,7 +27,7 @@ typedef Graph<MyVecDriftNode, MyTranspLink> G_t;
 typedef G_t::node_t Node_t;
 typedef G_t::link_t Link_t;
 
-typedef Network<Node_t, Link_t> Net_t;
+typedef RNetwork<Node_t, Link_t> Net_t;
 
 
 #endif	// RPATHSONPATHS_TYPES_H

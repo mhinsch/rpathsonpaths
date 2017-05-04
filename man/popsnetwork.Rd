@@ -4,7 +4,7 @@
 \alias{popsnetwork}
 \title{popsnetwork}
 \usage{
-popsnetwork(links, external, transmission)
+popsnetwork(links, external, transmission = 0)
 }
 \arguments{
 \item{links}{A dataframe describing all edges in the graph in the columns 

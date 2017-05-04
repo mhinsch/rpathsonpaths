@@ -44,7 +44,7 @@ colour_network <- function(edge_list) {
 #' and $rates.
 #' @param transmission Rate of infection within nodes.
 #' @return A popsnetwork object.
-popsnetwork <- function(links, external, transmission) {
+popsnetwork <- function(links, external, transmission = 0.0) {
     .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission)
 }
 

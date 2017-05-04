@@ -69,7 +69,7 @@ IntegerVector colour_network(const DataFrame & edge_list);
 //' @param transmission Rate of infection within nodes.
 //' @return A popsnetwork object.
 // [[Rcpp::export]]
-XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission);
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0);
 
 // [[Rcpp::export(name=".printpopsnetwork")]]
 void print_popsnetwork(const XPtr<Net_t> & p_net);

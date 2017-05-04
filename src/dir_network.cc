@@ -10,6 +10,7 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	return xptr;
 	}
 
+// TODO factors
 IntegerVector sources(const DataFrame & edge_list)
 	{
 	const IntegerVector from = edge_list[0];
@@ -36,7 +37,7 @@ IntegerVector sources(const DataFrame & edge_list)
 	return res;
 	}
 
-
+// TODO factors
 IntegerVector colour_network(const DataFrame & edge_list)
 	{
 	const IntegerVector from = edge_list[0];
@@ -97,27 +98,86 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	}
 
 
-XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission)
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
+	double transmission)
 	{
-	Net_t * net;
+	Net_t * net = new Net_t;
 
 	const IntegerVector inputs = links["inputs"];
-	const NumericVector rates = links["rates"];
 	const IntegerVector outputs = links["outputs"];
+	// this could be done slightly more efficiently but this looks way nicer
+	const NumericVector rates = links.containsElementNamed("rates") ? links["rates"] :
+		NumericVector(inputs.size(), 1.0);
 
 	const IntegerVector ext_nodes = external["nodes"];
 	const NumericVector ext_rates = external["rates"];
 
-	net = new Net_t;
+	// *** plain integer vector: use ids as raw indices
+	if (inputs.attr("class") == "integer")
+		{
+		const size_t ni = inputs.size();
+		for (size_t i=0; i<ni; i++)
+			net->add_link(inputs[i], outputs[i], rates[i]);
 
-	const size_t ni = inputs.size();
-	const size_t ei = external.size();
+		if (ext_nodes.attr("class") != "integer")
+			stop("Inputs, outputs and external nodes have to be of the same type!");
 
-	for (size_t i=0; i<ni; i++)
-		net->add_link(inputs[i], outputs[i], rates[i]);
+		const size_t ei = external.size();
 
-	for (size_t i=0; i<ei; i++)
-		net->set_source(ext_nodes[i], ext_rates[i]);
+		for (size_t i=0; i<ei; i++)
+			net->set_source(ext_nodes[i], ext_rates[i]);
+		}
+	// factor: indices probably differ between input and output, therefore we build
+	// our own index
+	else if (inputs.attr("class") == "factor")
+		{
+		const StringVector i_levels = inputs.attr("levels");
+		const StringVector o_levels = outputs.attr("levels");
+		
+		for (size_t i=0; i<inputs.size(); i++)
+			{
+			// R is 1-based but Rcpp is 0-based
+			const auto i_name = i_levels(inputs(i)-1);
+			const auto o_name = o_levels(outputs(i)-1);
+			
+			// gives <iterator, insert succeded>
+			const auto i_i = net->lev2idx.emplace(i_name, net->lev2idx.size());
+			// insertion succeeded => new name => new node
+			if (i_i.second)
+				net->idx2lev.push_back(string(i_name));
+			// index[name]
+			const size_t i_idx = i_i.first->second;
+			
+			// *** same for output
+			const auto o_i = net->lev2idx.emplace(o_name, net->lev2idx.size());
+			if (o_i.second)
+				net->idx2lev.push_back(string(o_name));
+
+			const size_t o_idx = o_i.first->second;
+
+			net->add_link(i_idx, o_idx, rates[i]);
+			}
+
+		if (net->nodes.size() != net->idx2lev.size())
+			stop("Something went wrong, mismatch between nodes and levels!");
+
+		if (ext_nodes.attr("class") != "factor")
+			stop("Inputs, outputs and external nodes have to be of the same type!");
+
+		const StringVector e_levels = ext_nodes.attr("levels");
+
+		for (size_t i=0; i<ext_nodes.size(); i++)
+			{
+			// find node with name
+			const auto it = net->lev2idx.find(string(e_levels(ext_nodes(i)-1)));
+			if (it == net->lev2idx.end())
+				stop("Unknown node in 'external'!");
+			
+			net->set_source(it->second, ext_rates(i));
+			}
+		}
+	else
+		stop("List of nodes has to be either integers or factors!");
 
 	for (const auto & n : net->nodes)
 		if (n == 0)
@@ -128,6 +188,13 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, dou
 	return make_S3XPtr(net, "popsnetwork");
 	}
 
+void print_node_id(const Net_t * net, size_t i)
+	{
+	if (net->idx2lev.size())
+		Rcout << net->idx2lev[i];
+	else
+		Rcout << i;
+	}
 
 void print_popsnetwork(const XPtr<Net_t> & p_net)
 	{
@@ -138,7 +205,7 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 	for (size_t i=0; i<net->nodes.size(); i++)
 		{
 		const Node_t & n = *net->nodes[i];
-		Rcout << i << "\t" <<
+		print_node_id(net, i); Rcout  << "\t" <<
 			n.rate_in_infd << "\t" <<
 			n.rate_in;
 		for (auto f : n.frequencies)
@@ -153,8 +220,8 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 		Link_t & l = *net->links[i];
 		size_t f = net->find_node_id(l.from);
 		size_t t = net->find_node_id(l.to);
-		Rcout << f << "\t" <<
-			t << "\t" <<
+		print_node_id(net, f); Rcout  << "\t";
+		print_node_id(net, t); Rcout << "\t" <<
 			l.rate << "\t" <<
 			l.rate_infd << "\n";
 		}
@@ -204,6 +271,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	}
 
+// TODO factors
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
@@ -213,6 +281,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
+// TODO factors
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
@@ -231,7 +300,7 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
-
+// TODO factor
 XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, int id)
 	{
 	Net_t * net = p_net.checked_get();
@@ -292,6 +361,7 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 	}
 
 
+// TODO factors
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
 	const Net_t * net = p_net.checked_get();
@@ -340,6 +410,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 	return dfout;
 	}
 
+// TODO factors
 DataFrame edge_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
@@ -375,6 +446,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 		Named("rates_infected") = rates_i);
 	}
 
+// TODO factors
 DataFrame node_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
