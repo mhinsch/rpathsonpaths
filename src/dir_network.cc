@@ -10,38 +10,125 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	return xptr;
 	}
 
-// TODO factors
+// collect a map of factor names to indices from an R factor
+vector<size_t> adapt_factor(const IntegerVector & factors, vector<string> & names, 
+	unordered_map<string, size_t> & idxs)
+	{
+	vector<size_t> nodes;
+
+	const StringVector levels = factor.attr("levels");
+
+	for (size_t f : factors)
+		{
+		// take into account 1-based indexing in R
+		const auto name = levels(f-1);
+
+		// try inserting
+		const auto ins_it = idxs.emplace(name, names.size());
+		// success => name was new => new node
+		if (ins_it.second)
+			names.push_back(string(name));
+
+		nodes.push_back(ins_it.first->second);
+		}
+
+	return nodes;
+	}
+
+// wrap an R edge list in order to allow for somewhat sane handling of factors
+class EdgeList
+	{
+	Oconst IntegerVector & _from_raw, & _to_raw;
+	vector<size_t> _from, _to
+	vector<string> _names;
+	unordered_map<string, size_t> _idxs;
+
+	size_t _f;
+
+public:
+	EdgeList(const IntegerVector & from, const IntegerVector & to)
+		: _from_raw(from), _to_raw(to)
+		{
+		_f = int(from.inherits("factor")) + to.inherits("factor");
+
+		if (_f && _f!=2)
+			stop("Both node lists have to be of the same type!");
+
+		if (_f)
+			{
+			_from = adapt_factor(from, _names, _idxs);
+			_to = adapt_factor(to, _names, _idxs);
+			}
+		}
+
+	const vector<string> & names() const
+		{
+		return _names;
+		}
+
+	bool factor() const
+		{
+		return _f;
+		}
+
+	size_t from(size_t i) const
+		{
+		_f ? _from[i] : _from_raw(i);
+		}
+
+	size_t to(size_t i) const
+		{
+		_f ? _to[i] : _to_raw(i);
+		}
+	};
+
 IntegerVector sources(const DataFrame & edge_list)
 	{
 	const IntegerVector from = edge_list[0];
 	const IntegerVector to = edge_list[1];
-	
+
+	EdgeList el(from, to);
+
 	vector<bool> is_sink;
 
-	for (auto i : to)
+	for (size_t i=0; i<from.size(); i++)
 		{
-		if (i >= is_sink.size())
-			is_sink.resize(i, false);
-		is_sink[i] = true;
+		const size_t n = el.from(i);
+		if (n >= is_sink.size())
+			is_sink.resize(n, false);
+		is_sink[n] = true;
 		}
 
-	set<int> scs;
+	set<size_t> scs;
 
-	for (auto i : from)
+	for (size_t i=0, i<to.size(); i++)
 		{
-		if (i >= is_sink.size() || !is_sink[i])
-			scs.insert(i);
+		const size_t n = el.to(i);
+		if (n >= is_sink.size() || !is_sink[n])
+			scs.insert(n);
 		}
-	
-	IntegerVector res(scs.begin(), scs.end());
+
+	IntegerVector res;
+
+	for (size_t i : scs)
+		res.push_back(i+1);
+
+	if (el.factor())
+		{
+		res.attr("class") = factor;
+		res.attr("levels") = as<StringVector>(el.names());
+		}
+
 	return res;
 	}
 
-// TODO factors
+
 IntegerVector colour_network(const DataFrame & edge_list)
 	{
 	const IntegerVector from = edge_list[0];
 	const IntegerVector to = edge_list[1];
+
+	EdgeList el(from, to);
 
 	// colour of nodes
 	vector<int> colour;
@@ -50,7 +137,7 @@ IntegerVector colour_network(const DataFrame & edge_list)
 
 	for (size_t i=0; i<from.size(); i++)
 		{
-		const size_t f = from[i], t = to[i];
+		const size_t f = el.from(i), t = el.to(i);
 
 		if (max(f, t) >= colour.size())
 			colour.resize(max(f, t), 0);
@@ -92,7 +179,7 @@ IntegerVector colour_network(const DataFrame & edge_list)
 
 	// assign colours to edges
 	for (size_t i=0; i<from.size(); i++)
-		res[i] = colour[from[i]];
+		res[i] = colour[el.from(i)];
 
 	return res;
 	}
@@ -112,24 +199,15 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	const IntegerVector ext_nodes = external["nodes"];
 	const NumericVector ext_rates = external["rates"];
 
-	// *** plain integer vector: use ids as raw indices
-	if (inputs.attr("class") == "integer")
-		{
-		const size_t ni = inputs.size();
-		for (size_t i=0; i<ni; i++)
-			net->add_link(inputs[i], outputs[i], rates[i]);
+	const int f = int(inputs.inherits("factor")) + outputs.inherits("factor") + 
+		ext_nodes.inherits("factor");
 
-		if (ext_nodes.attr("class") != "integer")
-			stop("Inputs, outputs and external nodes have to be of the same type!");
+	if (f!=0 && f!=3)
+		stop("All node lists have to be of the same type!");
 
-		const size_t ei = external.size();
-
-		for (size_t i=0; i<ei; i++)
-			net->set_source(ext_nodes[i], ext_rates[i]);
-		}
 	// factor: indices probably differ between input and output, therefore we build
 	// our own index
-	else if (inputs.attr("class") == "factor")
+	if (f)
 		{
 		const StringVector i_levels = inputs.attr("levels");
 		const StringVector o_levels = outputs.attr("levels");
@@ -161,9 +239,6 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		if (net->nodes.size() != net->idx2lev.size())
 			stop("Something went wrong, mismatch between nodes and levels!");
 
-		if (ext_nodes.attr("class") != "factor")
-			stop("Inputs, outputs and external nodes have to be of the same type!");
-
 		const StringVector e_levels = ext_nodes.attr("levels");
 
 		for (size_t i=0; i<ext_nodes.size(); i++)
@@ -177,7 +252,16 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 			}
 		}
 	else
-		stop("List of nodes has to be either integers or factors!");
+		{
+		const size_t ni = inputs.size();
+		for (size_t i=0; i<ni; i++)
+			net->add_link(inputs[i], outputs[i], rates[i]);
+
+		const size_t ei = external.size();
+
+		for (size_t i=0; i<ei; i++)
+			net->set_source(ext_nodes[i], ext_rates[i]);
+		}
 
 	for (const auto & n : net->nodes)
 		if (n == 0)
