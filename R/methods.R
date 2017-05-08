@@ -12,7 +12,7 @@ draw_isolates <- function(obj, ...){
 
 plot.popsnetwork <- function(x, ...){
 	if (!requireNamespace("igraph")){
-		stop("This function require the iGraph package.")
+		stop("This function requires the iGraph package.")
 	}
 
 	edges <- edge_list(x)

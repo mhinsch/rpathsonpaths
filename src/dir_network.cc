@@ -2,6 +2,8 @@
 
 #include "libpathsonpaths/proportionalpick.h"
 
+#include <algorithm>
+
 template<class T>
 XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	{
@@ -11,14 +13,14 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	}
 
 // collect a map of factor names to indices from an R factor
-vector<size_t> adapt_factor(const IntegerVector & factors, vector<string> & names, 
+vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names, 
 	unordered_map<string, size_t> & idxs)
 	{
 	vector<size_t> nodes;
 
 	const StringVector levels = factor.attr("levels");
 
-	for (size_t f : factors)
+	for (size_t f : factor)
 		{
 		// take into account 1-based indexing in R
 		const auto name = levels(f-1);
@@ -35,11 +37,12 @@ vector<size_t> adapt_factor(const IntegerVector & factors, vector<string> & name
 	return nodes;
 	}
 
+
 // wrap an R edge list in order to allow for somewhat sane handling of factors
 class EdgeList
 	{
-	Oconst IntegerVector & _from_raw, & _to_raw;
-	vector<size_t> _from, _to
+	const IntegerVector & _from_raw, & _to_raw;
+	vector<size_t> _from, _to;
 	vector<string> _names;
 	unordered_map<string, size_t> _idxs;
 
@@ -61,9 +64,21 @@ public:
 			}
 		}
 
-	const vector<string> & names() const
+	vector<string> & names() 
 		{
 		return _names;
+		}
+
+	void print()
+		{
+		for (size_t i=0; i<_from_raw.size(); i++)
+			Rcout << _from_raw(i) << " ";
+		Rcout << "\n";
+		}
+
+	unordered_map<string, size_t> & idxs()
+		{
+		return _idxs;
 		}
 
 	bool factor() const
@@ -73,12 +88,21 @@ public:
 
 	size_t from(size_t i) const
 		{
-		_f ? _from[i] : _from_raw(i);
+		return _f ? _from[i] : _from_raw(i);
 		}
 
 	size_t to(size_t i) const
 		{
-		_f ? _to[i] : _to_raw(i);
+		return _f ? _to[i] : _to_raw(i);
+		}
+
+	size_t index(const string & name) const
+		{
+		return _idxs.at(name);
+		}
+	const string & name(size_t idx) const
+		{
+		return _names[idx];
 		}
 	};
 
@@ -91,32 +115,34 @@ IntegerVector sources(const DataFrame & edge_list)
 
 	vector<bool> is_sink;
 
-	for (size_t i=0; i<from.size(); i++)
+	for (size_t i=0; i<to.size(); i++)
 		{
-		const size_t n = el.from(i);
+		const size_t n = el.to(i);
 		if (n >= is_sink.size())
-			is_sink.resize(n, false);
+			is_sink.resize(n+1, false);
 		is_sink[n] = true;
 		}
 
 	set<size_t> scs;
 
-	for (size_t i=0, i<to.size(); i++)
+	for (size_t i=0; i<from.size(); i++)
 		{
-		const size_t n = el.to(i);
+		const size_t n = el.from(i);
 		if (n >= is_sink.size() || !is_sink[n])
 			scs.insert(n);
 		}
 
-	IntegerVector res;
+	IntegerVector res(scs.size());
 
-	for (size_t i : scs)
-		res.push_back(i+1);
+	// EdgeList uses 0-base so we might have to rescale here
+	size_t i = 0;
+	for (size_t s : scs)
+		res(i++) = el.factor() ? s+1 : s;
 
 	if (el.factor())
 		{
-		res.attr("class") = factor;
-		res.attr("levels") = as<StringVector>(el.names());
+		res.attr("class") = "factor";
+		res.attr("levels") = el.names();
 		}
 
 	return res;
@@ -140,7 +166,7 @@ IntegerVector colour_network(const DataFrame & edge_list)
 		const size_t f = el.from(i), t = el.to(i);
 
 		if (max(f, t) >= colour.size())
-			colour.resize(max(f, t), 0);
+			colour.resize(max(f, t)+1, 0);
 
 		if (colour[f] == colour[t])
 			{
@@ -205,63 +231,25 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	if (f!=0 && f!=3)
 		stop("All node lists have to be of the same type!");
 
-	// factor: indices probably differ between input and output, therefore we build
-	// our own index
-	if (f)
+	EdgeList el(inputs, outputs);
+
+	const size_t ni = inputs.size();
+	for (size_t i=0; i<ni; i++)
+		net->add_link(el.from(i), el.to(i), rates(i));
+
+	if (el.factor())
 		{
-		const StringVector i_levels = inputs.attr("levels");
-		const StringVector o_levels = outputs.attr("levels");
-		
-		for (size_t i=0; i<inputs.size(); i++)
-			{
-			// R is 1-based but Rcpp is 0-based
-			const auto i_name = i_levels(inputs(i)-1);
-			const auto o_name = o_levels(outputs(i)-1);
-			
-			// gives <iterator, insert succeded>
-			const auto i_i = net->lev2idx.emplace(i_name, net->lev2idx.size());
-			// insertion succeeded => new name => new node
-			if (i_i.second)
-				net->idx2lev.push_back(string(i_name));
-			// index[name]
-			const size_t i_idx = i_i.first->second;
-			
-			// *** same for output
-			const auto o_i = net->lev2idx.emplace(o_name, net->lev2idx.size());
-			if (o_i.second)
-				net->idx2lev.push_back(string(o_name));
-
-			const size_t o_idx = o_i.first->second;
-
-			net->add_link(i_idx, o_idx, rates[i]);
-			}
-
-		if (net->nodes.size() != net->idx2lev.size())
-			stop("Something went wrong, mismatch between nodes and levels!");
-
-		const StringVector e_levels = ext_nodes.attr("levels");
-
+		StringVector e_levels = ext_nodes.attr("levels");
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			{
-			// find node with name
-			const auto it = net->lev2idx.find(string(e_levels(ext_nodes(i)-1)));
-			if (it == net->lev2idx.end())
-				stop("Unknown node in 'external'!");
-			
-			net->set_source(it->second, ext_rates(i));
-			}
+			net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), ext_rates[i]);
+
+		swap(el.idxs(), net->id_by_name);
+		swap(el.names(), net->name_by_id);
+		// !!! el is empty below this line !!!
 		}
 	else
-		{
-		const size_t ni = inputs.size();
-		for (size_t i=0; i<ni; i++)
-			net->add_link(inputs[i], outputs[i], rates[i]);
-
-		const size_t ei = external.size();
-
-		for (size_t i=0; i<ei; i++)
+		for (size_t i=0; i<ext_nodes.size(); i++)
 			net->set_source(ext_nodes[i], ext_rates[i]);
-		}
 
 	for (const auto & n : net->nodes)
 		if (n == 0)
@@ -274,8 +262,8 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 
 void print_node_id(const Net_t * net, size_t i)
 	{
-	if (net->idx2lev.size())
-		Rcout << net->idx2lev[i];
+	if (net->name_by_id.size())
+		Rcout << net->name_by_id[i];
 	else
 		Rcout << i;
 	}
@@ -333,29 +321,30 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	if (nodes.size() != freqs.nrow())
 		stop("Invalid parameter 'iniDist': "
-		"number of rows in $frequencies and number of elements in $nodes need to be equal!");
+		"number of rows in $frequencies and number of elements in $nodes have to be equal!");
 	
 	for (auto n : net->nodes)
 		n->frequencies.clear();
 
+	const bool f = nodes.inherits("factor");
+
+	StringVector levels = f ? nodes.attr("levels") : StringVector();
+
 	for (size_t i=0; i<nodes.size(); i++)
 		{
-		const size_t n = nodes[i];
+		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] :
+			nodes[i];
 		if (n > net->nodes.size())
 			stop("Invalid node index in iniDist$nodes!");
 
 		net->nodes[n]->frequencies.resize(n_all, 0);
 
 		for (size_t j=0; j<n_all; j++)
-			{
-			//Rcout << "setting: " << i << ", " << j << "\n";
 			net->nodes[n]->frequencies[j] = freqs(i, j);
-			}
 		}
-
 	}
 
-// TODO factors
+
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
@@ -365,7 +354,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
-// TODO factors
+
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
@@ -384,17 +373,32 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
-// TODO factor
-XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, int id)
+size_t id_from_SEXP(const Net_t & net, SEXP id)
+	{
+	switch (TYPEOF(id))
+		{
+	case INTSXP:
+		return as<int>(id);
+	case STRSXP:
+		return net.id_by_name.at(as<string>(id));
+	default:
+		stop("Node id has to be integer or string!");
+		}
+	}
+
+
+XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id)
 	{
 	Net_t * net = p_net.checked_get();
 	if (!net)
 		stop("Invalid network object!");
 
-	if (size_t(id) > net->nodes.size())
+	const size_t n_id = id_from_SEXP(*net, id);
+
+	if (n_id > net->nodes.size())
 		stop("Invalid node id!");
 	
-	Node_t * node = net->nodes[size_t(id)];
+	Node_t * node = net->nodes[n_id];
 
 	// don't GC, since net owns the memory
 	return make_S3XPtr(node, "popsnode", false);
@@ -445,7 +449,6 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 	}
 
 
-// TODO factors
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
 	const Net_t * net = p_net.checked_get();
@@ -454,27 +457,27 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 
 	const IntegerVector nodes = samples["nodes"];
 	const IntegerVector num = samples["N"];
-	
+	const bool f = nodes.inherits("factor");
+	const StringVector levels = f ? nodes.attr("levels") : StringVector();
+
 	const size_t n_freq = net->nodes[0]->frequencies.size();
 	if (!n_freq)
 		stop("Empty node detected!");
 
-	vector<IntegerVector> data(n_freq+1);
+// *** prepare return data
 
+	vector<IntegerVector> data(n_freq+1);
 	for (size_t i=0; i<n_freq+1; i++)
 		data[i] = IntegerVector(nodes.size());
 
-	CharacterVector namevec;
-	namevec.push_back("node");
-	string namestem = "allele_";
-	for (size_t i=0; i<n_freq; i++)
-		namevec.push_back(namestem + to_string(i));
+// *** generate data
 
 	vector<size_t> count(n_freq, 0);
 
 	for (size_t i=0; i<nodes.size(); i++)
 		{
-		const size_t n = nodes[i];
+		const size_t n = f ? net->id_by_name.at(string(levels[nodes[i]-1])):
+			nodes[i];
 		if (n >= net->nodes.size())
 			stop("Invalid node id!");
 
@@ -488,26 +491,44 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 		data[0][i] = n;
 		}
 
-	List dataf(data.begin(), data.end());
+// *** construct dataframe and return
+
+	CharacterVector namevec(n_freq+1, "");
+	namevec[0] = "node";
+	string namestem = "allele_";
+	for (size_t i=0; i<n_freq; i++)
+		namevec[i+1] = namestem + to_string(i);
+
+	List dataf(n_freq+1);
+	dataf(0) = nodes;
+	for (size_t i=0; i<n_freq; i++)
+		dataf(i+1) = data[i];
 	dataf.attr("names") = namevec;
-	DataFrame dfout(dataf);
-	return dfout;
+
+	return DataFrame(dataf);
 	}
 
-// TODO factors
+
 DataFrame edge_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
 
-	StringVector from;
-	StringVector to;
-	NumericVector rates;
-	NumericVector rates_i;
+	const size_t n_links = net->links.size();
+
+	StringVector from(n_links);
+	StringVector to(n_links);
+	NumericVector rates(n_links);
+	NumericVector rates_i(n_links);
+
+	// do we have names?
+	const bool is_factor = net->name_by_id.size();
 
 	const size_t n_nodes = net->nodes.size();
 
-	for (const Link_t * l : net->links)
+	for (size_t i=0; i<net->links.size(); i++)
 		{
+		const auto * l = net->links[i];
+
 		if (!l)
 			stop("Missing link detected!");
 
@@ -517,10 +538,10 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 		if (f==n_nodes || t==n_nodes)
 			stop("Invalid link!");
 
-		from.push_back(to_string(f));
-		to.push_back(to_string(t));
-		rates.push_back(l->rate);
-		rates_i.push_back(l->rate_infd);
+		from[i] = is_factor ? net->name_by_id[f] : to_string(f);
+		to[i] = is_factor ? net->name_by_id[t] : to_string(t);
+		rates[i] = l->rate;
+		rates_i[i] = l->rate_infd;
 		}
 
 	return DataFrame::create(
@@ -530,20 +551,22 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 		Named("rates_infected") = rates_i);
 	}
 
-// TODO factors
+
 DataFrame node_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
 
-	StringVector id;
-	NumericVector inf;
+	StringVector id(net->nodes.size());
+	NumericVector inf(net->nodes.size());
+
+	const bool is_factor = net->name_by_id.size();
 
 	for (size_t i=0; i<net->nodes.size(); i++)
 		{
 		const Node_t * n = net->nodes[i];
 
-		id.push_back(to_string(i));
-		inf.push_back(n->rate_in_infd);
+		id[i] = is_factor ? net->name_by_id[i] : to_string(i);
+		inf[i] = n->rate_in_infd;
 		}
 
 	return DataFrame::create(Named("id") = id, Named("infected") = inf);

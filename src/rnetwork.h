@@ -11,9 +11,9 @@ template<class N, class L>
 struct RNetwork : public Network<N, L>
 	{
 	//! map factor levels to internal node index
-	unordered_map<string, size_t> lev2idx;
+	unordered_map<string, size_t> id_by_name;
 	//! factor level of each of our nodes
-	vector<string> idx2lev;
+	vector<string> name_by_id;
 	};
 
 

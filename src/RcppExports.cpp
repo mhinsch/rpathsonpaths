@@ -87,13 +87,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_popsnode
-XPtr<Node_t> get_popsnode(const XPtr<Net_t>& p_net, int id);
+XPtr<Node_t> get_popsnode(const XPtr<Net_t>& p_net, SEXP id);
 RcppExport SEXP rpathsonpaths_get_popsnode(SEXP p_netSEXP, SEXP idSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    Rcpp::traits::input_parameter< int >::type id(idSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
     rcpp_result_gen = Rcpp::wrap(get_popsnode(p_net, id));
     return rcpp_result_gen;
 END_RCPP

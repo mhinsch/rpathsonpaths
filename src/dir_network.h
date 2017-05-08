@@ -126,7 +126,7 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' @param id The id of the node to return.
 //' @return A popsnode object.
 // [[Rcpp::export(name="get_popsnode")]]
-XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, int id);
+XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id);
 
 //' @title draw_isolates.popsnode
 //'
