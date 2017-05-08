@@ -69,16 +69,24 @@ public:
 		return _names;
 		}
 
-	void print()
-		{
-		for (size_t i=0; i<_from_raw.size(); i++)
-			Rcout << _from_raw(i) << " ";
-		Rcout << "\n";
-		}
-
 	unordered_map<string, size_t> & idxs()
 		{
 		return _idxs;
+		}
+
+	size_t n_nodes() const
+		{
+		if (_f)
+			return _names.size();
+
+		size_t n = 0;
+		for (size_t i=0; i<_from_raw.size(); i++)
+			{
+			n = max(n, _from_raw[i]);
+			n = max(n, _to_raw[i]);
+			}
+
+		return n;
 		}
 
 	bool factor() const
@@ -106,13 +114,8 @@ public:
 		}
 	};
 
-IntegerVector sources(const DataFrame & edge_list)
+set<size_t> find_sources(const EdgeList & el)
 	{
-	const IntegerVector from = edge_list[0];
-	const IntegerVector to = edge_list[1];
-
-	EdgeList el(from, to);
-
 	vector<bool> is_sink;
 
 	for (size_t i=0; i<to.size(); i++)
@@ -131,6 +134,18 @@ IntegerVector sources(const DataFrame & edge_list)
 		if (n >= is_sink.size() || !is_sink[n])
 			scs.insert(n);
 		}
+
+	return scs;
+	}
+
+IntegerVector sources(const DataFrame & edge_list)
+	{
+	const IntegerVector from = edge_list[0];
+	const IntegerVector to = edge_list[1];
+
+	EdgeList el(from, to);
+
+	const set<size_t> scs = find_sources(el);
 
 	IntegerVector res(scs.size());
 
@@ -210,6 +225,50 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	return res;
 	}
 
+
+bool has_cycles(const vector<vector<size_t>> & net, size_t cur)
+	{
+	static vector<bool> visited;
+	static vector<bool> done(net.size(), false);
+
+	// this will detect cycles, but if we want to return them we'll need a stack
+	visited[cur] = true;
+	done[cur] = true;
+
+	for (size_t i : net[cur])
+		{
+		if (visited[i])
+			return true;
+
+		if (!done[i])
+			if (find_cycles(net, i))
+				return true;
+		}
+
+	visited[cur] = false;
+	return false;
+	}
+
+bool cycles(const DataFrame & edgelist)
+	{
+	const IntegerVector from = edge_list[0];
+	const IntegerVector to = edge_list[1];
+
+	EdgeList el(from, to);
+
+	const set<size_t> scs = find_sources(el);
+	const size_t n_nodes = el.b_nodes();
+
+	vector<vector<size_t> > outputs(n_nodes);
+	for (size_t i=0; i<from.size(); i++)
+		outputs[el.from(i)].push_back(el.to(i));
+
+	for (size_t i : scs)
+		if (has_cycles(outputs, i))
+			return true;
+
+	return false;
+	}
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
 	double transmission)
