@@ -41,15 +41,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // popsnetwork
-XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission);
-RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {
+XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, bool checks);
+RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP checksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const DataFrame& >::type links(linksSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type external(externalSEXP);
     Rcpp::traits::input_parameter< double >::type transmission(transmissionSEXP);
-    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission));
+    Rcpp::traits::input_parameter< bool >::type checks(checksSEXP);
+    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission, checks));
     return rcpp_result_gen;
 END_RCPP
 }

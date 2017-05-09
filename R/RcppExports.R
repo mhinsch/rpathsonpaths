@@ -73,9 +73,11 @@ cycles <- function(edge_list, record = FALSE) {
 #' @param external A dataframe describing external inputs into the network as $nodes
 #' and $rates.
 #' @param transmission Rate of infection within nodes.
+#' @param checks Perform some basic integrity checks on input data (currently looks for cycles
+#' and disconnected sub-networks).
 #' @return A popsnetwork object.
-popsnetwork <- function(links, external, transmission = 0.0) {
-    .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission)
+popsnetwork <- function(links, external, transmission = 0.0, checks = FALSE) {
+    .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission, checks)
 }
 
 .printpopsnetwork <- function(p_net) {

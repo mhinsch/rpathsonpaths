@@ -151,8 +151,23 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
-	double transmission)
+	double transmission, bool checks)
 	{
+	if (checks)
+		{
+		if (as<bool>(cycles(links)))
+			stop("Cycles in network detected!");
+
+		IntegerVector subn = colour_network(links);
+		if (subn.size() == 0)
+			stop("Empty network!");
+		const int col = subn[0];
+
+		for (int c : subn)
+			if (c != col)
+				stop("More than one network in data!");
+		}
+
 	Net_t * net = new Net_t;
 
 	const IntegerVector inputs = links(0);
@@ -161,8 +176,14 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	const NumericVector rates = links.size() > 2 ? links(2) :
 		NumericVector(inputs.size(), 1.0);
 
+	if (inputs.size() == 0)
+		stop("Empty network!");
+
 	const IntegerVector ext_nodes = external(0);
 	const NumericVector ext_rates = external(1);
+
+	if (ext_nodes.size() == 0)
+		stop("No external inputs provided!");
 
 	const int f = int(inputs.inherits("factor")) + outputs.inherits("factor") + 
 		ext_nodes.inherits("factor");

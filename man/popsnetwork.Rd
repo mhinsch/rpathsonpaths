@@ -4,7 +4,7 @@
 \alias{popsnetwork}
 \title{popsnetwork}
 \usage{
-popsnetwork(links, external, transmission = 0)
+popsnetwork(links, external, transmission = 0, checks = FALSE)
 }
 \arguments{
 \item{links}{A dataframe describing all edges in the graph as well as transfer rates
@@ -15,6 +15,9 @@ two columns all rates are assumed to be 1.}
 and $rates.}
 
 \item{transmission}{Rate of infection within nodes.}
+
+\item{checks}{Perform some basic integrity checks on input data (currently looks for cycles
+and disconnected sub-networks).}
 }
 \value{
 A popsnetwork object.

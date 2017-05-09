@@ -77,9 +77,11 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' @param external A dataframe describing external inputs into the network as $nodes
 //' and $rates.
 //' @param transmission Rate of infection within nodes.
+//' @param checks Perform some basic integrity checks on input data (currently looks for cycles
+//' and disconnected sub-networks).
 //' @return A popsnetwork object.
 // [[Rcpp::export]]
-XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0);
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, bool checks=false);
 
 // [[Rcpp::export(name=".printpopsnetwork")]]
 void print_popsnetwork(const XPtr<Net_t> & p_net);
