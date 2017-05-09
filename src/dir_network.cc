@@ -1,152 +1,16 @@
 #include "dir_network.h"
 
-#include "libpathsonpaths/proportionalpick.h"
+#include "net_util.h"
+#include "rcpp_util.h"
+#include "rnet_util.h"
 
 #include <algorithm>
 
-template<class T>
-XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
-	{
-	XPtr<T> xptr(obj, GC);
-	xptr.attr("class") = class_name;
-	return xptr;
-	}
-
-// collect a map of factor names to indices from an R factor
-vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names, 
-	unordered_map<string, size_t> & idxs)
-	{
-	vector<size_t> nodes;
-
-	const StringVector levels = factor.attr("levels");
-
-	for (size_t f : factor)
-		{
-		// take into account 1-based indexing in R
-		const auto name = levels(f-1);
-
-		// try inserting
-		const auto ins_it = idxs.emplace(name, names.size());
-		// success => name was new => new node
-		if (ins_it.second)
-			names.push_back(string(name));
-
-		nodes.push_back(ins_it.first->second);
-		}
-
-	return nodes;
-	}
-
-
-// wrap an R edge list in order to allow for somewhat sane handling of factors
-class EdgeList
-	{
-	const IntegerVector & _from_raw, & _to_raw;
-	vector<size_t> _from, _to;
-	vector<string> _names;
-	unordered_map<string, size_t> _idxs;
-
-	size_t _f;
-
-public:
-	EdgeList(const IntegerVector & from, const IntegerVector & to)
-		: _from_raw(from), _to_raw(to)
-		{
-		_f = int(from.inherits("factor")) + to.inherits("factor");
-
-		if (_f && _f!=2)
-			stop("Both node lists have to be of the same type!");
-
-		if (_f)
-			{
-			_from = adapt_factor(from, _names, _idxs);
-			_to = adapt_factor(to, _names, _idxs);
-			}
-		}
-
-	vector<string> & names() 
-		{
-		return _names;
-		}
-
-	unordered_map<string, size_t> & idxs()
-		{
-		return _idxs;
-		}
-
-	size_t n_nodes() const
-		{
-		if (_f)
-			return _names.size();
-
-		size_t n = 0;
-		for (size_t i=0; i<_from_raw.size(); i++)
-			{
-			n = max(n, size_t(_from_raw[i]));
-			n = max(n, size_t(_to_raw[i]));
-			}
-
-		return n+1;
-		}
-
-	size_t n_edges() const
-		{
-		return _from_raw.size();
-		}
-
-	bool factor() const
-		{
-		return _f;
-		}
-
-	size_t from(size_t i) const
-		{
-		return _f ? _from[i] : _from_raw(i);
-		}
-
-	size_t to(size_t i) const
-		{
-		return _f ? _to[i] : _to_raw(i);
-		}
-
-	size_t index(const string & name) const
-		{
-		return _idxs.at(name);
-		}
-	const string & name(size_t idx) const
-		{
-		return _names[idx];
-		}
-	};
-
-set<size_t> find_sources(const EdgeList & el)
-	{
-	vector<bool> is_sink;
-
-	for (size_t i=0; i<el.n_edges(); i++)
-		{
-		const size_t n = el.to(i);
-		if (n >= is_sink.size())
-			is_sink.resize(n+1, false);
-		is_sink[n] = true;
-		}
-
-	set<size_t> scs;
-
-	for (size_t i=0; i<el.n_edges(); i++)
-		{
-		const size_t n = el.from(i);
-		if (n >= is_sink.size() || !is_sink[n])
-			scs.insert(n);
-		}
-
-	return scs;
-	}
 
 IntegerVector sources(const DataFrame & edge_list)
 	{
-	const IntegerVector from = edge_list[0];
-	const IntegerVector to = edge_list[1];
+	const IntegerVector from = edge_list(0);
+	const IntegerVector to = edge_list(1);
 
 	EdgeList el(from, to);
 
@@ -171,8 +35,8 @@ IntegerVector sources(const DataFrame & edge_list)
 
 IntegerVector colour_network(const DataFrame & edge_list)
 	{
-	const IntegerVector from = edge_list[0];
-	const IntegerVector to = edge_list[1];
+	const IntegerVector from = edge_list(0);
+	const IntegerVector to = edge_list(1);
 
 	EdgeList el(from, to);
 
@@ -231,60 +95,6 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	}
 
 
-struct Cycles
-	{
-	const vector<vector<size_t>> & net;
-	vector<bool> visited;
-	vector<bool> done;
-	vector<size_t> stack;
-	vector<vector<size_t>> res;
-
-	Cycles(const vector<vector<size_t>> & network)
-		: net(network), visited(network.size(), false), done(network.size(), false)
-		{}
-
-	bool has_cycles(size_t cur)
-		{
-		visited[cur] = true;
-		done[cur] = true;
-
-		for (size_t i : net[cur])
-			{
-			if (visited[i])
-				return true;
-
-			if (!done[i])
-				if (has_cycles(i))
-					return true;
-			}
-
-		visited[cur] = false;
-		return false;
-		}
-
-	void find_cycles(size_t cur)
-		{
-		stack.push_back(cur);
-		done[cur] = true;
-
-		for (size_t i : net[cur])
-			{
-			const auto f = find(stack.begin(), stack.end(), i);
-			if (f != stack.end())
-				{
-				res.push_back(vector<size_t>(f, stack.end()));
-				continue;
-				}
-
-			if (!done[i])
-				find_cycles(i);
-			}
-
-		stack.pop_back();
-		}
-	};
-
-
 SEXP cycles(const DataFrame & edge_list, bool record)
 	{
 	const IntegerVector from = edge_list(0);
@@ -295,12 +105,14 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 	const set<size_t> scs = find_sources(el);
 	const size_t n_nodes = el.n_nodes();
 
+	// convert edge list to table
 	vector<vector<size_t> > outputs(n_nodes);
 	for (size_t i=0; i<from.size(); i++)
 		outputs[el.from(i)].push_back(el.to(i));
 
 	Cycles cycles(outputs);
 
+	// user wants a list of cycles
 	if (record)
 		{
 		for (size_t i : scs)
@@ -326,6 +138,7 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 		return res;
 		}
+	// yes or no is fine
 	else
 		{
 		for (size_t i : scs)
@@ -342,14 +155,14 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	{
 	Net_t * net = new Net_t;
 
-	const IntegerVector inputs = links["inputs"];
-	const IntegerVector outputs = links["outputs"];
+	const IntegerVector inputs = links(0);
+	const IntegerVector outputs = links(1);
 	// this could be done slightly more efficiently but this looks way nicer
-	const NumericVector rates = links.containsElementNamed("rates") ? links["rates"] :
+	const NumericVector rates = links.size() > 2 ? links(3) :
 		NumericVector(inputs.size(), 1.0);
 
-	const IntegerVector ext_nodes = external["nodes"];
-	const NumericVector ext_rates = external["rates"];
+	const IntegerVector ext_nodes = external(0);
+	const NumericVector ext_rates = external(1);
 
 	const int f = int(inputs.inherits("factor")) + outputs.inherits("factor") + 
 		ext_nodes.inherits("factor");
@@ -369,6 +182,7 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		for (size_t i=0; i<ext_nodes.size(); i++)
 			net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), ext_rates[i]);
 
+		// TODO not pretty, should be done better
 		swap(el.idxs(), net->id_by_name);
 		swap(el.names(), net->name_by_id);
 		// !!! el is empty below this line !!!
@@ -381,18 +195,12 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		if (n == 0)
 			stop("Invalid network, node not set!");
 
+	// TODO maybe factor out, make constructor only build the net
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
 
 	return make_S3XPtr(net, "popsnetwork");
 	}
 
-void print_node_id(const Net_t * net, size_t i)
-	{
-	if (net->name_by_id.size())
-		Rcout << net->name_by_id[i];
-	else
-		Rcout << i;
-	}
 
 void print_popsnetwork(const XPtr<Net_t> & p_net)
 	{
@@ -426,48 +234,11 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 	}
 
 
-void print_popsnode(const Node_t * n)
-	{
-	}
-
 void print_popsnode(const XPtr<Node_t> & p_node)
 	{
 	const Node_t * node = p_node.checked_get();
 	
 	print_popsnode(node);
-	}
-
-
-void _set_allele_freqs(Net_t * net, const List & ini)
-	{
-	const IntegerVector nodes = ini["nodes"];
-	const NumericMatrix freqs = ini["frequencies"];
-
-	const size_t n_all = freqs.ncol();
-
-	if (nodes.size() != freqs.nrow())
-		stop("Invalid parameter 'iniDist': "
-		"number of rows in $frequencies and number of elements in $nodes have to be equal!");
-	
-	for (auto n : net->nodes)
-		n->frequencies.clear();
-
-	const bool f = nodes.inherits("factor");
-
-	StringVector levels = f ? nodes.attr("levels") : StringVector();
-
-	for (size_t i=0; i<nodes.size(); i++)
-		{
-		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] :
-			nodes[i];
-		if (n > net->nodes.size())
-			stop("Invalid node index in iniDist$nodes!");
-
-		net->nodes[n]->frequencies.resize(n_all, 0);
-
-		for (size_t j=0; j<n_all; j++)
-			net->nodes[n]->frequencies[j] = freqs(i, j);
-		}
 	}
 
 
@@ -499,19 +270,6 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	return make_S3XPtr(net, "popsnetwork", true);
 	}
 
-size_t id_from_SEXP(const Net_t & net, SEXP id)
-	{
-	switch (TYPEOF(id))
-		{
-	case INTSXP:
-		return as<int>(id);
-	case STRSXP:
-		return net.id_by_name.at(as<string>(id));
-	default:
-		stop("Node id has to be integer or string!");
-		}
-	}
-
 
 XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id)
 	{
@@ -531,37 +289,6 @@ XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id)
 	}
 
 
-struct RRng
-	{
-	double outOf(double mi, double ma) const
-		{
-		return R::runif(mi, ma);
-		}
-
-	size_t operator()(size_t n) const
-		{
-		size_t r;
-
-		while ((r = R::runif(0, n)) >= n);
-
-		return r;
-		}
-	};
-
-
-void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
-	{
-	if (count.size() != node.frequencies.size())
-		stop("Invalid number of alleles in node!");
-
-	ProportionalPick<> pick(0.000001, node.frequencies);
-	RRng r;
-
-	for (size_t i=0; i<n; i++)
-		count[pick.pick(r)]++;
-	}
-
-
 IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 	{
 	const Node_t * node = p_node.checked_get();
@@ -578,11 +305,11 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
 	const Net_t * net = p_net.checked_get();
-	if (!net)
-		stop("Invalid network object!");
+	if (!net || net->nodes.size()==0)
+		stop("Invalid or empty network object!");
 
-	const IntegerVector nodes = samples["nodes"];
-	const IntegerVector num = samples["N"];
+	const IntegerVector nodes = samples(0);
+	const IntegerVector num = samples(1);
 	const bool f = nodes.inherits("factor");
 	const StringVector levels = f ? nodes.attr("levels") : StringVector();
 

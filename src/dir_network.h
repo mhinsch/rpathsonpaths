@@ -3,29 +3,9 @@
 
 #include "rpathsonpaths_types.h"
 
-struct Drift
-	{
-	typedef typename Node_t::freq_t::value_type num_t;
-	num_t theta;
+#include <Rcpp.h>
 
-	Drift(double t)
-		: theta(t)
-		{ }
-
-	void operator()(const Node_t::freq_t & freqs, Node_t::freq_t & res)
-		{
-		assert(res.size() == freqs.size());
-		num_t norm = 0.0;		
-
-		for (size_t i=0; i<freqs.size(); i++)
-			norm += (res[i] = R::rgamma(freqs[i] * theta, 1.0));
-
-		for (num_t & f : res)
-			f /= norm;
-		}
-	};
-
-
+using namespace Rcpp;
 
 //' @title sources
 //'

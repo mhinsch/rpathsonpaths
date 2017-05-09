@@ -9,10 +9,8 @@
 
 #include <vector>
 
-#include <Rcpp.h>
 
 using namespace std;
-using namespace Rcpp;
 
 template<class T>
 using StdVector = vector<T>;
