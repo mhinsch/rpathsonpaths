@@ -30,6 +30,21 @@ colour_network <- function(edge_list) {
     .Call('rpathsonpaths_colour_network', PACKAGE = 'rpathsonpaths', edge_list)
 }
 
+#' @title cycles
+#' 
+#' @description Detect cycles in a network.
+#' 
+#' @details This function detects circular connections in a network.
+#'
+#' @param edge_list A dataframe containing a list of edges.
+#' @param record Whether to return a list of cycles.
+#' 
+#' @return If record is FALSE, TRUE if a cycle was found, FALSE otherwise. If record is TRUE
+#' a list of cycles (as vectors of node ids) is returned.
+cycles <- function(edge_list, record = FALSE) {
+    .Call('rpathsonpaths_cycles', PACKAGE = 'rpathsonpaths', edge_list, record)
+}
+
 #' @title popsnetwork 
 #'
 #' @description Create a popsnetwork object.

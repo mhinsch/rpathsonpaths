@@ -28,6 +28,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cycles
+SEXP cycles(const DataFrame& edge_list, bool record);
+RcppExport SEXP rpathsonpaths_cycles(SEXP edge_listSEXP, SEXP recordSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame& >::type edge_list(edge_listSEXP);
+    Rcpp::traits::input_parameter< bool >::type record(recordSEXP);
+    rcpp_result_gen = Rcpp::wrap(cycles(edge_list, record));
+    return rcpp_result_gen;
+END_RCPP
+}
 // popsnetwork
 XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission);
 RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP) {

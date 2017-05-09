@@ -53,7 +53,22 @@ IntegerVector sources(const DataFrame & edge_list);
 //' 1 and are not guaranteed to be contiguous.
 // [[Rcpp::export]]
 IntegerVector colour_network(const DataFrame & edge_list);
-	
+
+//' @title cycles
+//' 
+//' @description Detect cycles in a network.
+//' 
+//' @details This function detects circular connections in a network.
+//'
+//' @param edge_list A dataframe containing a list of edges.
+//' @param record Whether to return a list of cycles.
+//' 
+//' @return If record is FALSE, TRUE if a cycle was found, FALSE otherwise. If record is TRUE
+//' a list of cycles (as vectors of node ids) is returned.
+// [[Rcpp::export]]
+SEXP cycles(const DataFrame & edge_list, bool record=false);
+
+
 //' @title popsnetwork 
 //'
 //' @description Create a popsnetwork object.

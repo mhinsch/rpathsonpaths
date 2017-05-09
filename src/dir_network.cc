@@ -82,11 +82,16 @@ public:
 		size_t n = 0;
 		for (size_t i=0; i<_from_raw.size(); i++)
 			{
-			n = max(n, _from_raw[i]);
-			n = max(n, _to_raw[i]);
+			n = max(n, size_t(_from_raw[i]));
+			n = max(n, size_t(_to_raw[i]));
 			}
 
-		return n;
+		return n+1;
+		}
+
+	size_t n_edges() const
+		{
+		return _from_raw.size();
 		}
 
 	bool factor() const
@@ -118,7 +123,7 @@ set<size_t> find_sources(const EdgeList & el)
 	{
 	vector<bool> is_sink;
 
-	for (size_t i=0; i<to.size(); i++)
+	for (size_t i=0; i<el.n_edges(); i++)
 		{
 		const size_t n = el.to(i);
 		if (n >= is_sink.size())
@@ -128,7 +133,7 @@ set<size_t> find_sources(const EdgeList & el)
 
 	set<size_t> scs;
 
-	for (size_t i=0; i<from.size(); i++)
+	for (size_t i=0; i<el.n_edges(); i++)
 		{
 		const size_t n = el.from(i);
 		if (n >= is_sink.size() || !is_sink[n])
@@ -226,49 +231,111 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	}
 
 
-bool has_cycles(const vector<vector<size_t>> & net, size_t cur)
+struct Cycles
 	{
-	static vector<bool> visited;
-	static vector<bool> done(net.size(), false);
+	const vector<vector<size_t>> & net;
+	vector<bool> visited;
+	vector<bool> done;
+	vector<size_t> stack;
+	vector<vector<size_t>> res;
 
-	// this will detect cycles, but if we want to return them we'll need a stack
-	visited[cur] = true;
-	done[cur] = true;
+	Cycles(const vector<vector<size_t>> & network)
+		: net(network), visited(network.size(), false), done(network.size(), false)
+		{}
 
-	for (size_t i : net[cur])
+	bool has_cycles(size_t cur)
 		{
-		if (visited[i])
-			return true;
+		visited[cur] = true;
+		done[cur] = true;
 
-		if (!done[i])
-			if (find_cycles(net, i))
+		for (size_t i : net[cur])
+			{
+			if (visited[i])
 				return true;
+
+			if (!done[i])
+				if (has_cycles(i))
+					return true;
+			}
+
+		visited[cur] = false;
+		return false;
 		}
 
-	visited[cur] = false;
-	return false;
-	}
+	void find_cycles(size_t cur)
+		{
+		stack.push_back(cur);
+		done[cur] = true;
 
-bool cycles(const DataFrame & edgelist)
+		for (size_t i : net[cur])
+			{
+			const auto f = find(stack.begin(), stack.end(), i);
+			if (f != stack.end())
+				{
+				res.push_back(vector<size_t>(f, stack.end()));
+				continue;
+				}
+
+			if (!done[i])
+				find_cycles(i);
+			}
+
+		stack.pop_back();
+		}
+	};
+
+
+SEXP cycles(const DataFrame & edge_list, bool record)
 	{
-	const IntegerVector from = edge_list[0];
-	const IntegerVector to = edge_list[1];
+	const IntegerVector from = edge_list(0);
+	const IntegerVector to = edge_list(1);
 
 	EdgeList el(from, to);
 
 	const set<size_t> scs = find_sources(el);
-	const size_t n_nodes = el.b_nodes();
+	const size_t n_nodes = el.n_nodes();
 
 	vector<vector<size_t> > outputs(n_nodes);
 	for (size_t i=0; i<from.size(); i++)
 		outputs[el.from(i)].push_back(el.to(i));
 
-	for (size_t i : scs)
-		if (has_cycles(outputs, i))
-			return true;
+	Cycles cycles(outputs);
 
-	return false;
+	if (record)
+		{
+		for (size_t i : scs)
+			cycles.find_cycles(i);
+		
+		List res(cycles.res.size());
+		if (el.factor())
+			{
+			for (size_t i=0; i<cycles.res.size(); i++)
+				{
+				IntegerVector v(cycles.res[i].size());
+				// convert to 1-based indexing
+				for (size_t j=0; j<cycles.res[i].size(); j++)
+					v[j] = cycles.res[i][j] + 1;
+				v.attr("class") = "factor";
+				v.attr("levels") = el.names();
+				res[i] = v;
+				}
+			}
+		else
+			for (size_t i=0; i<cycles.res.size(); i++)
+				res[i] = cycles.res[i];
+
+		return res;
+		}
+	else
+		{
+		for (size_t i : scs)
+			if (cycles.has_cycles(i))
+				return wrap(true);
+
+		return wrap(false);
+		}
 	}
+
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
 	double transmission)

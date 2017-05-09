@@ -10,7 +10,7 @@ epic_to_edge_list(x)
 \item{x}{An \code{epicontacts} object.}
 }
 \details{
-Extract an edgelist suitable for PopsNetwork from an epicontacts object.
+Extract an edgelist suitable for popsnetwork from an epicontacts object.
 Note that this will set all rates to 1.
 }
 \examples{
