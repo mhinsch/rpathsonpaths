@@ -7,7 +7,8 @@
 colour_network(edge_list)
 }
 \arguments{
-\item{edge_list}{A dataframe containing a list of edges.}
+\item{edge_list}{A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+for a description of possible formats).}
 }
 \value{
 An integer vector with the sub-network id of each edge. Note that id's start at

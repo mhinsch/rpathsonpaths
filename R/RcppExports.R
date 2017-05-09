@@ -8,9 +8,10 @@
 #' @details Extract a list of source nodes, i.e. nodes that do not have any
 #' inputs, from a network.
 #'
-#' @param edge_list A dataframe containing a list of edges.
+#' @param edge_list A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+#' for a description of possible formats).
 #'
-#' @return An integer vector containg the ids of all source nodes in the network.
+#' @return A list of ids of all source nodes in the network.
 sources <- function(edge_list) {
     .Call('rpathsonpaths_sources', PACKAGE = 'rpathsonpaths', edge_list)
 }
@@ -22,7 +23,8 @@ sources <- function(edge_list) {
 #' @details This function identifies completely separate sub-networks in a network
 #' described as an edge list.
 #'
-#' @param edge_list A dataframe containing a list of edges.
+#' @param edge_list A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+#' for a description of possible formats).
 #'
 #' @return An integer vector with the sub-network id of each edge. Note that id's start at
 #' 1 and are not guaranteed to be contiguous.
@@ -36,11 +38,12 @@ colour_network <- function(edge_list) {
 #' 
 #' @details This function detects circular connections in a network.
 #'
-#' @param edge_list A dataframe containing a list of edges.
+#' @param edge_list A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+#' for a description of possible formats).
 #' @param record Whether to return a list of cycles.
 #' 
-#' @return If record is FALSE, TRUE if a cycle was found, FALSE otherwise. If record is TRUE
-#' a list of cycles (as vectors of node ids) is returned.
+#' @return If record is FALSE: TRUE if a cycle was found, FALSE otherwise. If record is TRUE:
+#' a list of cycles (as vectors of node ids, see \code{\link{popsnetwork}}) is returned.
 cycles <- function(edge_list, record = FALSE) {
     .Call('rpathsonpaths_cycles', PACKAGE = 'rpathsonpaths', edge_list, record)
 }
@@ -53,8 +56,20 @@ cycles <- function(edge_list, record = FALSE) {
 #' network and associated data describing spread of infected diseases on the
 #' network. A network is created from a tabular description of its edges.
 #'
-#' @param links A dataframe describing all edges in the graph in the columns 
-#' $inputs, $outputs and $rates. Note that inputs and outputs refer to node ids.
+#' @section Edge lists and node ids:
+#' Many functions in rpathsonpaths take edge lists as an argument. An edge list is a 
+#' data frame with at least two columns. These columns can be either integer vectors
+#' which will be interpreted as \emph{0-based node indices} or factors. In general where
+#' applicable functions will return the same format they received. Note that formats 
+#' can not be mixed easily. Function arguments (and data frame columns) have to have the 
+#' same type. Furthermore nodes in a \code{popsnetwork} object generated with integer
+#' indices can not be referenced by name.
+#'
+#' In general integer indices are considerably faster than factors.
+#'
+#' @param links A dataframe describing all edges in the graph as well as transfer rates
+#' between them. The first two columns are read as inputs and outputs. If there are only 
+#' two columns all rates are assumed to be 1.
 #' @param external A dataframe describing external inputs into the network as $nodes
 #' and $rates.
 #' @param transmission Rate of infection within nodes.
@@ -80,9 +95,9 @@ popsnetwork <- function(links, external, transmission = 0.0) {
 #' @param p_net A popsnetwork object.
 #' @param ini_dist Initial distribution of allele frequencies. ini_dist has to be 
 #' a list
-#' containing a vector of node IDs (@seealso \code{\link{popsnetwork}}) as $nodes and
-#' a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
-#' way will be treated as a source only by spread_dirichlet.
+#' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+#' a matrix of allele frequencies. Note that *any* node pre-set in this
+#' way will be treated as a source only by \code{spread_dirichlet}.
 #' @return A new popsnetwork object.
 set_allele_freqs <- function(p_net, ini_dist) {
     .Call('rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
@@ -95,7 +110,7 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' 
 #' @details This function simulates the change of gene frequencies in a population
 #' of pathogens as they spread through the transport network starting at the 
-#' external sources (@seealso \code{\link{popsnetwork}}). At each node founder
+#' external sources (see \code{\link{popsnetwork}}). At each node founder
 #' effects are assumed to change composition of the population. This change is 
 #' approximated by drawing a set of allele frequencies from a Dirichlet distribution.
 #' 
@@ -105,8 +120,8 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' frequencies multiplied by theta.
 #' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
 #' a list
-#' containing a vector of node IDs (@seealso \code{\link{popsnetwork}}) as $nodes and
-#' a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
+#' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+#' a matrix of allele frequencies. Note that *any* node pre-set in this
 #' way will be treated as a source only.
 #' @return A new popsnetwork object with allele frequencies set for each node.
 spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
@@ -118,7 +133,8 @@ spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
 #' @description Pick a single node from the network.
 #' 
 #' @param p_net A PopsNet object.
-#' @param id The id of the node to return.
+#' @param id The id of the node to return (either a string or an integer, see 
+#' \code{\link{popsnetwork}}).
 #' @return A popsnode object.
 get_popsnode <- function(p_net, id) {
     .Call('rpathsonpaths_get_popsnode', PACKAGE = 'rpathsonpaths', p_net, id)
@@ -147,8 +163,9 @@ draw_isolates.popsnode <- function(p_node, n) {
 #'
 #' @param p_net a PopsNet object.
 #' @param samples Number of samples to draw from each node. This has to be a dataframe
-#' with node ids in $nodes and number of isolates to draw in $N.
-#' @return A dataframe with node id in $node and number of isolates with allele \code{x}
+#' with node ids (see \code{\link{popsnetwork}}) in the first and number of isolates to 
+#' draw in the second column.
+#' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
 #' in $\code{allele_x}.
 draw_isolates.popsnetwork <- function(p_net, samples) {
     .Call('rpathsonpaths_draw_isolates_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, samples)

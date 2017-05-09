@@ -9,7 +9,8 @@ get_popsnode(p_net, id)
 \arguments{
 \item{p_net}{A PopsNet object.}
 
-\item{id}{The id of the node to return.}
+\item{id}{The id of the node to return (either a string or an integer, see 
+\code{\link{popsnetwork}}).}
 }
 \value{
 A popsnode object.

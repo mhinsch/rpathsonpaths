@@ -7,13 +7,14 @@
 cycles(edge_list, record = FALSE)
 }
 \arguments{
-\item{edge_list}{A dataframe containing a list of edges.}
+\item{edge_list}{A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+for a description of possible formats).}
 
 \item{record}{Whether to return a list of cycles.}
 }
 \value{
-If record is FALSE, TRUE if a cycle was found, FALSE otherwise. If record is TRUE
-a list of cycles (as vectors of node ids) is returned.
+If record is FALSE: TRUE if a cycle was found, FALSE otherwise. If record is TRUE:
+a list of cycles (as vectors of node ids, see \code{\link{popsnetwork}}) is returned.
 }
 \description{
 Detect cycles in a network.

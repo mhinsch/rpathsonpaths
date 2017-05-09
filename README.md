@@ -64,11 +64,11 @@ First, we prepare an edge list describing the network, and the initial state of 
 ``` r
 library(rpathsonpaths)
 
-inp <- c(0, 0, 1, 2, 3, 1, 5)
-outp <- c(1, 2, 3, 3, 4, 4, 2)
+inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
 rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
-edgelist <- data.frame(inputs=inp, outputs=outp, rates=rates)
-ext <- data.frame(nodes=c(0, 5), rates=c(0.5, 0.5))
+edgelist <- data.frame(inp, outp, rates)
+ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
 ```
 
 Now we can create a *popsnetwork* object:
@@ -110,7 +110,7 @@ We set up the initial populations of the source nodes:
 
 ``` r
 freqs <- matrix(c(0.1, 0.4, 0.3, 0.1, 0.2, 0.2, 0.4, 0.3), ncol=4, nrow=2)
-netini <- set_allele_freqs(netraw, list(nodes=c(0, 5), frequencies=freqs))
+netini <- set_allele_freqs(netraw, list(c(0L, 5L), freqs))
 netini
 #> Nodes:
 #> 
@@ -143,10 +143,10 @@ netdir1
 #> 
 #> id   infected    input   alleles...
 #> 0    0.5 1   0.1 0.3 0.2 0.4
-#> 1    0.55    1   0.336698    0.219971    0.0142882   0.429043
-#> 2    1.1 2   0.226885    0.54888 0.120218    0.104017
-#> 3    0.357   0.6 0.898183    0.0764407   6.26606e-05 0.0253133
-#> 4    0.695   1.1 0.834274    0.0898766   0.0548936   0.0209557
+#> 1    0.55    1   0.581491    0.0836394   0.247641    0.087228
+#> 2    1.1 2   0.0335044   0.0132191   0.734967    0.218309
+#> 3    0.357   0.6 0.209466    1.51252e-09 0.76164 0.0288939
+#> 4    0.695   1.1 0.0399902   0.00320033  0.956113    0.000696709
 #> 5    0.5 1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -165,10 +165,10 @@ netdir2
 #> 
 #> id   infected    input   alleles...
 #> 0    0.5 1   0.1 0.3 0.2 0.4
-#> 1    0.55    1   0.00180906  0.0759773   0.438173    0.484041
-#> 2    1.1 2   0.105474    0.159487    0.529805    0.205233
-#> 3    0.357   0.6 0.0355106   0.00225909  0.195762    0.766468
-#> 4    0.695   1.1 1.21519e-05 3.50116e-06 0.110928    0.889057
+#> 1    0.55    1   0.000158453 0.901049    0.076847    0.0219456
+#> 2    1.1 2   0.0287876   0.246972    0.496926    0.227314
+#> 3    0.357   0.6 5.18836e-12 0.764499    0.199804    0.0356975
+#> 4    0.695   1.1 6.1135e-127 0.999998    1.21166e-06 2.9427e-07
 #> 5    0.5 1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -189,15 +189,15 @@ Drawing samples
 Finally we can draw samples from our simulated population.
 
 ``` r
-samplconf <- data.frame(nodes=c(2, 4), N=c(10, 10))
+samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        1        6        2        1
-#> 2    4        9        0        1        0
+#> 1    2        0        0        7        3
+#> 2    4        0        1        9        0
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        2        2        5        1
-#> 2    4        0        0        1        9
+#> 1    2        0        5        3        2
+#> 2    4        0       10        0        0
 ```
 
 Contributors (in alphabetic order):

@@ -11,9 +11,9 @@ set_allele_freqs(p_net, ini_dist)
 
 \item{ini_dist}{Initial distribution of allele frequencies. ini_dist has to be 
 a list
-containing a vector of node IDs (@seealso \code{\link{popsnetwork}}) as $nodes and
-a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
-way will be treated as a source only by spread_dirichlet.}
+containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+a matrix of allele frequencies. Note that *any* node pre-set in this
+way will be treated as a source only by \code{spread_dirichlet}.}
 }
 \value{
 A new popsnetwork object.

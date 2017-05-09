@@ -10,10 +10,11 @@
 \item{p_net}{a PopsNet object.}
 
 \item{samples}{Number of samples to draw from each node. This has to be a dataframe
-with node ids in $nodes and number of isolates to draw in $N.}
+with node ids (see \code{\link{popsnetwork}}) in the first and number of isolates to 
+draw in the second column.}
 }
 \value{
-A dataframe with node id in $node and number of isolates with allele \code{x}
+A dataframe containing node id in $node and number of isolates with allele \code{x}
 in $\code{allele_x}.
 }
 \description{

@@ -7,8 +7,9 @@
 popsnetwork(links, external, transmission = 0)
 }
 \arguments{
-\item{links}{A dataframe describing all edges in the graph in the columns 
-$inputs, $outputs and $rates. Note that inputs and outputs refer to node ids.}
+\item{links}{A dataframe describing all edges in the graph as well as transfer rates
+between them. The first two columns are read as inputs and outputs. If there are only 
+two columns all rates are assumed to be 1.}
 
 \item{external}{A dataframe describing external inputs into the network as $nodes
 and $rates.}
@@ -26,3 +27,16 @@ A popsnetwork object stores the nodes and edges making up a food transport
 network and associated data describing spread of infected diseases on the
 network. A network is created from a tabular description of its edges.
 }
+\section{Edge lists and node ids}{
+
+Many functions in rpathsonpaths take edge lists as an argument. An edge list is a 
+data frame with at least two columns. These columns can be either integer vectors
+which will be interpreted as \emph{0-based node indices} or factors. In general where
+applicable functions will return the same format they received. Note that formats 
+can not be mixed easily. Function arguments (and data frame columns) have to have the 
+same type. Furthermore nodes in a \code{popsnetwork} object generated with integer
+indices can not be referenced by name.
+
+In general integer indices are considerably faster than factors.
+}
+

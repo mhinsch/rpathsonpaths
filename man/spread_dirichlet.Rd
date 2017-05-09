@@ -15,8 +15,8 @@ frequencies multiplied by theta.}
 
 \item{ini_dist}{Initial distribution of allele frequencies (optional). ini_dist has to be 
 a list
-containing a vector of node IDs (@seealso \code{\link{popsnetwork}}) as $nodes and
-a matrix of allele frequencies as $frequencies. Note that *any* node pre-set in this
+containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+a matrix of allele frequencies. Note that *any* node pre-set in this
 way will be treated as a source only.}
 }
 \value{
@@ -29,7 +29,7 @@ distribution to approximate genetic drift.
 \details{
 This function simulates the change of gene frequencies in a population
 of pathogens as they spread through the transport network starting at the 
-external sources (@seealso \code{\link{popsnetwork}}). At each node founder
+external sources (see \code{\link{popsnetwork}}). At each node founder
 effects are assumed to change composition of the population. This change is 
 approximated by drawing a set of allele frequencies from a Dirichlet distribution.
 }

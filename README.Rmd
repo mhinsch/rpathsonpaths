@@ -80,11 +80,11 @@ First, we prepare an edge list describing the network, and the initial state of 
 ```{r, prepare}
 library(rpathsonpaths)
 
-inp <- c(0, 0, 1, 2, 3, 1, 5)
-outp <- c(1, 2, 3, 3, 4, 4, 2)
+inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
 rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
-edgelist <- data.frame(inputs=inp, outputs=outp, rates=rates)
-ext <- data.frame(nodes=c(0, 5), rates=c(0.5, 0.5))
+edgelist <- data.frame(inp, outp, rates)
+ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
 
 ```
 
@@ -105,7 +105,7 @@ We set up the initial populations of the source nodes:
 
 ```{r, inipop}
 freqs <- matrix(c(0.1, 0.4, 0.3, 0.1, 0.2, 0.2, 0.4, 0.3), ncol=4, nrow=2)
-netini <- set_allele_freqs(netraw, list(nodes=c(0, 5), frequencies=freqs))
+netini <- set_allele_freqs(netraw, list(c(0L, 5L), freqs))
 netini
 
 ```
@@ -126,7 +126,7 @@ netdir2
 Finally we can draw samples from our simulated population.
 
 ```{r, isolates}
-samplconf <- data.frame(nodes=c(2, 4), N=c(10, 10))
+samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 draw_isolates(netdir2, samplconf)
 

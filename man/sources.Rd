@@ -7,10 +7,11 @@
 sources(edge_list)
 }
 \arguments{
-\item{edge_list}{A dataframe containing a list of edges.}
+\item{edge_list}{A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+for a description of possible formats).}
 }
 \value{
-An integer vector containg the ids of all source nodes in the network.
+A list of ids of all source nodes in the network.
 }
 \description{
 Get a list of source nodes from a network.
