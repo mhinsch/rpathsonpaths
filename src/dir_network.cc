@@ -592,8 +592,8 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 
 // *** prepare return data
 
-	vector<IntegerVector> data(n_freq+1);
-	for (size_t i=0; i<n_freq+1; i++)
+	vector<IntegerVector> data(n_freq);
+	for (size_t i=0; i<n_freq; i++)
 		data[i] = IntegerVector(nodes.size());
 
 // *** generate data
@@ -610,11 +610,9 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 		sample_node(*net->nodes[n], num[i], count);
 
 		for (size_t j=0; j<n_freq; j++)
-			data[j+1][i] = count[j];
+			data[j][i] = count[j];
 
 		fill(count.begin(), count.end(), 0);
-
-		data[0][i] = n;
 		}
 
 // *** construct dataframe and return
