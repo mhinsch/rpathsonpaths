@@ -52,7 +52,7 @@ struct TranspNode : public NODE
 	double prob_newly_infected() const
 		{
 		// delta inf / inf
-		return  d_rate_in_infd / rate_in_infd;
+		return rate_in_infd <= 0 ? 0 : d_rate_in_infd / rate_in_infd;
 		}
 	};
 
@@ -82,6 +82,7 @@ void annotate_rates(NODE * node, double transm_rate)
 
 		for (typename NODE::link_t * link : node->inputs)
 			{
+			// new links set that to -1
 			if (link->rate_infd < 0)
 				annotate_rates(link->from, transm_rate);
 
@@ -101,7 +102,8 @@ void annotate_rates(NODE * node, double transm_rate)
 		// *** output
 
 		// proportion of infected units
-		const double prop_infd = node->rate_in_infd / node->rate_in;	
+		const double prop_infd = node->rate_in <= 0 ?  
+			0 : node->rate_in_infd / node->rate_in;	
 		
 		for (typename NODE::link_t * link : node->outputs)
 			{
@@ -141,7 +143,7 @@ double prob(NODE * n_from, NODE * n_to)
 	{
 	const typename NODE::link_t * link = n_from->find_link_to(n_to);
 	if (link)
-		return link->rate_infd / n_from->rate_out_infd;
+		return n_from->rate_out_inf <= 0 ? 0 : link->rate_infd / n_from->rate_out_infd;
 	
 	assert(false);
 	return 0;
