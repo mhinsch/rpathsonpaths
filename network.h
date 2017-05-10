@@ -40,7 +40,9 @@ struct Network : public AbstractNetwork
 		swap(tmp.links, this->links);
 		}
 
-	/** Add an edge. Source and target nodes have to be specified as indices.*/
+	/** Add an edge. Source and target nodes have to be specified as indices.
+	 * @param from, to indices of nodes being linked
+	 * @param transfer rate of material (in amount per unit time) */
 	void add_link(size_t from, size_t to, double rate)
 		{
 		if (nodes.size() <= std::max(from, to))
