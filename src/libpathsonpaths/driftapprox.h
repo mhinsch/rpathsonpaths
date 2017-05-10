@@ -53,7 +53,7 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 		if (node->frequencies.empty())
 			node->frequencies.resize(freq_in.size(), 0);
 
-		const double prop = link->rate_infd / prop_in_infd;
+		const double prop = prop_in_infd <= 0 ? 0 : link->rate_infd / prop_in_infd;
 
 		auto f_iter = node->frequencies.begin();
 		for (const auto r : res)
