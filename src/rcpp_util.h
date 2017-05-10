@@ -127,6 +127,7 @@ public:
 
 
 set<size_t> find_sources(const EdgeList & el);
+set<size_t> find_sinks(const EdgeList & el);
 
 
 #endif	// RCPP_UTIL_H

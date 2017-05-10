@@ -27,6 +27,31 @@ vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names
 	}
 
 
+set<size_t> find_sinks(const EdgeList & el)
+	{
+	vector<bool> is_source;
+
+	for (size_t i=0; i<el.n_edges(); i++)
+		{
+		const size_t n = el.from(i);
+		if (n >= is_source.size())
+			is_source.resize(n+1, false);
+		is_source[n] = true;
+		}
+
+	set<size_t> scs;
+
+	for (size_t i=0; i<el.n_edges(); i++)
+		{
+		const size_t n = el.to(i);
+		if (n >= is_source.size() || !is_source[n])
+			scs.insert(n);
+		}
+
+	return scs;
+	}
+
+
 set<size_t> find_sources(const EdgeList & el)
 	{
 	vector<bool> is_sink;

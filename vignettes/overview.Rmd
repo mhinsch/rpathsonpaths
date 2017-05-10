@@ -135,3 +135,66 @@ draw_isolates(netdir2, samplconf)
 
 ```
 
+# An example using real data
+
+Let's load the data:
+
+```{r}
+library(outbreaks)
+data(s_enteritidis_pt59)
+sent_graph = s_enteritidis_pt59$graph
+```
+
+Just in case we do some sanity checks.
+
+```{r}
+library(rpathsonpaths)
+colour_network(sent_graph)
+cycles(sent_graph)
+```
+
+Ok, we do have one contiguous network. Unfortunately, however, there's a cycle. 
+This will make rpathsonpaths very unhappy so we have to get rid of it.
+
+```{r}
+cycles(sent_graph, TRUE)
+sent_graph2 <- subset(sent_graph, !(from=="13dc78" & to=="0b6e5a"))
+cycles(sent_graph2)
+```
+
+Ok, this is solved. Now let's see how many sources we have in the network.
+
+```{r}
+sg_sources <- sources(sent_graph2)
+sg_sources
+```
+
+In order to be able to construct a popsnetwork object we have to provide an external input rate for
+each source.
+
+```{r}
+sg_ext <- data.frame(sg_sources, rep(0.5, length(sg_sources)))
+sg_ext
+```
+
+Now we can create the network.
+
+```{r}
+sg_net <- popsnetwork(sent_graph2, sg_ext, 0.1)
+plot(sg_net)
+```
+
+The only thing left to do in order to run the simulation is to provide initial allele frequency distributions for the source nodes.
+
+```{r}
+sg_freqs <- matrix(rep(c(0.25, 0.25, 0.5), each=7), nrow=7)
+sg_net_dir <- spread_dirichlet(sg_net, 1.3, list(sg_sources, sg_freqs))
+sg_net_dir
+```
+
+Now we are ready to draw isolates.
+
+```{r}
+sg_sinks <- sinks(sent_graph2)
+draw_isolates(sg_net_dir, data.frame(sg_sinks, rep(20, length(sg_sinks))))
+```

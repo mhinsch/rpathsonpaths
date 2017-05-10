@@ -21,6 +21,20 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerVector sources(const DataFrame & edge_list);
 
+//' @title sinks 
+//'
+//' @description Get a list of sink (i.e. leave) nodes from a network.
+//'
+//' @details Extract a list of sink nodes, i.e. nodes that do not have any
+//' outputs, from a network.
+//'
+//' @param edge_list A dataframe containing a list of edges (see \code{\link{popsnetwork}}
+//' for a description of possible formats).
+//'
+//' @return A list of ids of all sink nodes in the network.
+// [[Rcpp::export]]
+IntegerVector sinks(const DataFrame & edge_list);
+
 //' @title colour_network
 //'
 //' @description Identify separate sub-networks.

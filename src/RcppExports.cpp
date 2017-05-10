@@ -17,6 +17,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sinks
+IntegerVector sinks(const DataFrame& edge_list);
+RcppExport SEXP rpathsonpaths_sinks(SEXP edge_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const DataFrame& >::type edge_list(edge_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(sinks(edge_list));
+    return rcpp_result_gen;
+END_RCPP
+}
 // colour_network
 IntegerVector colour_network(const DataFrame& edge_list);
 RcppExport SEXP rpathsonpaths_colour_network(SEXP edge_listSEXP) {

@@ -32,6 +32,31 @@ IntegerVector sources(const DataFrame & edge_list)
 	return res;
 	}
 
+IntegerVector sinks(const DataFrame & edge_list)
+	{
+	const IntegerVector from = edge_list(0);
+	const IntegerVector to = edge_list(1);
+
+	EdgeList el(from, to);
+
+	const set<size_t> scs = find_sinks(el);
+
+	IntegerVector res(scs.size());
+
+	// EdgeList uses 0-base so we might have to rescale here
+	size_t i = 0;
+	for (size_t s : scs)
+		res(i++) = el.factor() ? s+1 : s;
+
+	if (el.factor())
+		{
+		res.attr("class") = "factor";
+		res.attr("levels") = el.names();
+		}
+
+	return res;
+	}
+
 
 IntegerVector colour_network(const DataFrame & edge_list)
 	{
