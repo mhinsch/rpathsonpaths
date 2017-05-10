@@ -192,7 +192,7 @@ sg_net_dir <- spread_dirichlet(sg_net, 1.3, list(sg_sources, sg_freqs))
 sg_net_dir
 ```
 
-Now we are ready to draw isolates.
+Now we are ready to draw lots of isolates.
 
 ```{r}
 sg_sinks <- sinks(sent_graph2)

@@ -88,9 +88,11 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' @param links A dataframe describing all edges in the graph as well as transfer rates
 //' between them. The first two columns are read as inputs and outputs. If there are only 
 //' two columns all rates are assumed to be 1.
-//' @param external A dataframe describing external inputs into the network as $nodes
-//' and $rates.
-//' @param transmission Rate of infection within nodes.
+//' @param external A dataframe describing external inputs into the network. The first column
+//' is expected to contain node ids (as indices or factors), the second column specifies 
+//' the proportion of infected material in the input.
+//' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
+//' becoming infected).
 //' @param checks Perform some basic integrity checks on input data (currently looks for cycles
 //' and disconnected sub-networks).
 //' @return A popsnetwork object.

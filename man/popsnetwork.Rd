@@ -11,10 +11,12 @@ popsnetwork(links, external, transmission = 0, checks = FALSE)
 between them. The first two columns are read as inputs and outputs. If there are only 
 two columns all rates are assumed to be 1.}
 
-\item{external}{A dataframe describing external inputs into the network as $nodes
-and $rates.}
+\item{external}{A dataframe describing external inputs into the network. The first column
+is expected to contain node ids (as indices or factors), the second column specifies 
+the proportion of infected material in the input.}
 
-\item{transmission}{Rate of infection within nodes.}
+\item{transmission}{Rate of infection within nodes (i.e. proportion of uninfected material
+becoming infected).}
 
 \item{checks}{Perform some basic integrity checks on input data (currently looks for cycles
 and disconnected sub-networks).}

@@ -258,7 +258,7 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 		{
 		const Node_t & n = *net->nodes[i];
 		print_node_id(net, i); Rcout  << "\t" <<
-			n.rate_in_infd << "\t" <<
+			(n.rate_in <= 0 ? 0 : n.rate_in_infd/n.rate_in) << "\t" <<
 			n.rate_in;
 		for (auto f : n.frequencies)
 			Rcout << "\t" << f;
@@ -275,7 +275,7 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 		print_node_id(net, f); Rcout  << "\t";
 		print_node_id(net, t); Rcout << "\t" <<
 			l.rate << "\t" <<
-			l.rate_infd << "\n";
+			(l.rate <= 0 ? 0 : l.rate_infd/l.rate) << "\n";
 		}
 	}
 

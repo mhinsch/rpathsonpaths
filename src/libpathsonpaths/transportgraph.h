@@ -10,8 +10,8 @@
 template<class LINK>
 struct TranspLink : public LINK
 	{
-	double rate;		//!< transfer rate of material.
-	double rate_infd;	//!< transfer rate of infected material.
+	double rate;		//!< (absolute) transfer rate of material.
+	double rate_infd;	//!< (absolute) transfer rate of infected material.
 
 	using LINK::LINK;
 
