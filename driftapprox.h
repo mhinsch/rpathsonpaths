@@ -32,6 +32,7 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	if (!node->frequencies.empty())
 		return;
 
+	// amount of incoming infected material
 	const double prop_in_infd = node->rate_in_infd - node->d_rate_in_infd;
 
 	// this is not very elegant, but I can't think of a better way to do it
@@ -53,8 +54,12 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 		if (node->frequencies.empty())
 			node->frequencies.resize(freq_in.size(), 0);
 
+		// proportion of incoming infected material that comes from this link
 		const double prop = prop_in_infd <= 0 ? 0 : link->rate_infd / prop_in_infd;
 
+		// doesn't look like it, but this is safe since res can never be bigger than
+		// node->frequencies (unless users supply differently sized allele freqs but
+		// then they are on their own)
 		auto f_iter = node->frequencies.begin();
 		for (const auto r : res)
 			 *f_iter++ += r * prop;
