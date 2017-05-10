@@ -116,7 +116,8 @@ void print_popsnode(const XPtr<Node_t> & p_node);
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will be treated as a source only by \code{spread_dirichlet}.
+//' way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
+//' upstream).
 //' @return A new popsnetwork object.
 // [[Rcpp::export]]
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
@@ -141,7 +142,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will be treated as a source only.
+//' way will effectively be treated as a source and hide nodes that are further upstream.
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
