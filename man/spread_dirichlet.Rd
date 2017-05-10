@@ -17,7 +17,7 @@ frequencies multiplied by theta.}
 a list
 containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 a matrix of allele frequencies. Note that *any* node pre-set in this
-way will be treated as a source only.}
+way will effectively be treated as a source and hide nodes that are further upstream.}
 }
 \value{
 A new popsnetwork object with allele frequencies set for each node.

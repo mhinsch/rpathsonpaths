@@ -68,19 +68,46 @@ cycles <- function(edge_list, record = FALSE) {
 #' @description Create a popsnetwork object.
 #'
 #' @details A popsnetwork object stores the nodes and edges making up a food transport
-#' network and associated data describing spread of infected diseases on the
+#' network and associated data describing spread of infected material on the
 #' network. A network is created from a tabular description of its edges.
 #'
 #' @section Edge lists and node ids:
+#'
 #' Many functions in rpathsonpaths take edge lists as an argument. An edge list is a 
 #' data frame with at least two columns. These columns can be either integer vectors
 #' which will be interpreted as \emph{0-based node indices} or factors. In general where
-#' applicable functions will return the same format they received. Note that formats 
+#' applicable functions will return the same format they received. 
+#'
+#' Note that formats 
 #' can not be mixed easily. Function arguments (and data frame columns) have to have the 
 #' same type. Furthermore nodes in a \code{popsnetwork} object generated with integer
 #' indices can not be referenced by name.
 #'
 #' In general integer indices are considerably faster than factors.
+#'
+#' @section Using popsnetwork:
+#'
+#' Generating simulated genetic data from a popsnetwork object happens in several steps:
+#' \enumerate{
+#' \item Create the basic network using the constructor \code{\link{popsnetwork}}.
+#' \item Set initial allele frequencies for a number of nodes using 
+#' \code{\link{set_allele_freqs}}. Note that the initial allele distribution can also
+#' be set in the next step, allowing this step to be skipped.
+#' \item Simulate spread of genetic material through the network with 
+#' \code{\link{spread_dirichlet}}.
+#' \item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
+#'
+#' A worked example is available in the 'overview' vignette.
+#'
+#' @examples
+#'
+#' inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+#' outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+#' rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
+#' edgelist <- data.frame(inp, outp, rates)
+#' ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+#' net <- popsnetwork(edgelist, ext, 0.1)
+#' 
 #'
 #' @param links A dataframe describing all edges in the graph as well as transfer rates
 #' between them. The first two columns are read as inputs and outputs. If there are only 
@@ -116,7 +143,8 @@ popsnetwork <- function(links, external, transmission = 0.0, checks = FALSE) {
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 #' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will be treated as a source only by \code{spread_dirichlet}.
+#' way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
+#' upstream).
 #' @return A new popsnetwork object.
 set_allele_freqs <- function(p_net, ini_dist) {
     .Call('rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
@@ -141,7 +169,7 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 #' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will be treated as a source only.
+#' way will effectively be treated as a source and hide nodes that are further upstream.
 #' @return A new popsnetwork object with allele frequencies set for each node.
 spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
     .Call('rpathsonpaths_spread_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)

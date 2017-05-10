@@ -13,7 +13,8 @@ set_allele_freqs(p_net, ini_dist)
 a list
 containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 a matrix of allele frequencies. Note that *any* node pre-set in this
-way will be treated as a source only by \code{spread_dirichlet}.}
+way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
+upstream).}
 }
 \value{
 A new popsnetwork object.
