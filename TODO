@@ -1,9 +1,3 @@
-* safety checks
-	* argument consistency
-	* values in bounds
-	* missing values
-	* etc.
-
 * persistence
 	options:
 	* RawVector as memory backend (???)
@@ -21,17 +15,3 @@
 		- unexpected behaviour
 		+ everybody seems to do it
 
-
-* data formats for import/export
-	* important formats to support?
-
-* documentation
-	* package docs!
-	* examples
-	* example data (?)
-
-* individual-based simulations
-	-> lib
-
-* lineage-based approximation
-	-> lib

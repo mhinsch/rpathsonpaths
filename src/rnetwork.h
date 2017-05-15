@@ -1,14 +1,14 @@
 #ifndef RNETWORK_H
 #define RNETWORK_H
 
-#include "libpathsonpaths/network.h"
+#include "libpathsonpaths/transportnetwork.h"
 
 #include <unordered_map>
 
 using namespace std;
 
 template<class N, class L>
-struct RNetwork : public Network<N, L>
+struct RNetwork : public TransportNetwork<N, L>
 	{
 	//! map factor levels to internal node index
 	unordered_map<string, size_t> id_by_name;

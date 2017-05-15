@@ -342,6 +342,9 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
 		stop("Invalid node object!");
 
 	vector<size_t> count(node->frequencies.size(), 0);
+	if (!count.size())
+		stop("Empty node!");
+
 	sample_node(*node, n, count);
 
 	return IntegerVector(count.begin(), count.end());
