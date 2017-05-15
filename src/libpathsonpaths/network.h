@@ -57,15 +57,7 @@ struct Network : public AbstractNetwork
 		nodes[to]->add_input(links.back());
 		}
 
-	/** Make node @a s an external source with proportion of infected set to @a prop_infd. */
-	void set_source(size_t s, double prop_infd)
-		{
-		assert(nodes.size() > s && nodes[s] != 0);
-		
-		nodes[s]->rate_in = 1.0;
-		nodes[s]->rate_in_infd = prop_infd;
-		nodes[s]->d_rate_in_infd = 0;
-		}
+	void set_source(size_t s, double p) {}
 
 	size_t find_link(L * l) const
 		{
@@ -84,7 +76,6 @@ struct Network : public AbstractNetwork
 
 		return nodes.size();
 		}
-
 
 	~Network()
 		{
