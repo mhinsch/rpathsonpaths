@@ -3,12 +3,10 @@
 
 #include <cassert>
 
-template<class CONT, class NODE>
-struct DriftNode : public NODE
+template<class CONT>
+struct FreqNode
 	{
 	typedef CONT freq_t;
-
-	using NODE::NODE;
 
 	freq_t frequencies;
 
