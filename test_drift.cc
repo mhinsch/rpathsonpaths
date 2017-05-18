@@ -4,7 +4,7 @@
 #include "genericgraph.h"
 #include "transportgraph.h"
 #include "driftapprox.h"
-#include "network.h"
+#include "transportnetwork.h"
 #include "network_io.h"
 
 #include <gsl/gsl_rng.h>
@@ -38,7 +38,8 @@ struct MyTranspLink : public TranspLink, public Link<GRAPH>
 typedef Graph<MyDriftNode, MyTranspLink> G_t;
 typedef G_t::node_t N_t;
 typedef G_t::link_t L_t;
-typedef Network<N_t, L_t> Net_t;
+typedef TransportNetwork<N_t, L_t> Net_t;
+
 
 struct Drift
 	{
