@@ -3,41 +3,28 @@
 
 #include <cassert>
 
-/** A link type that keeps track of transfer rates.
- *
- * @tparam LINK link type to descend from.
- */
-template<class LINK>
-struct TranspLink : public LINK
+/** A link type that keeps track of transfer rates.  */
+struct TranspLink 
 	{
 	double rate;		//!< (absolute) transfer rate of material.
 	double rate_infd;	//!< (absolute) transfer rate of infected material.
 
-	using LINK::LINK;
-
-	TranspLink(typename LINK::node_t * from = 0, typename LINK::node_t * to = 0, 
-		double a_rate = 0.0, double a_rate_infd = -1)
-		: LINK(from, to), rate(a_rate), rate_infd(a_rate_infd)
+	TranspLink(double a_rate = 0.0, double a_rate_infd = -1)
+		: rate(a_rate), rate_infd(a_rate_infd)
 		{}
 	};
 
 
-/** A node type that keeps track of input and output rates.
- *
- * @tparam NODE node type to descend from.
- */
-template<class NODE>
-struct TranspNode : public NODE
+/** A node type that keeps track of input and output rates.*/
+struct TranspNode 
 	{
 	double rate_in;			//!< overall input rate.
 	double rate_in_infd;	//!< overall rate of input of infected material (@a after transmission).
 	double d_rate_in_infd;	//!< 
 	double rate_out_infd;
 
-	using NODE::NODE;
-
 	TranspNode()
-		: NODE(), rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
+		: rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
 		{}
 
 	void reset_rates()
@@ -46,6 +33,12 @@ struct TranspNode : public NODE
 		rate_in_infd = 0;
 		d_rate_in_infd = 0;
 		rate_out_infd = 0;
+		}
+
+	double prop_infected() const
+		{
+		return rate_in <= 0 ?  
+			0 : rate_in_infd / rate_in;	
 		}
 
 	/** Probability an infected unit coming from this node was newly infected. */
@@ -102,9 +95,8 @@ void annotate_rates(NODE * node, double transm_rate)
 		// *** output
 
 		// proportion of infected units
-		const double prop_infd = node->rate_in <= 0 ?  
-			0 : node->rate_in_infd / node->rate_in;	
-		
+		const double prop_infd = node->prop_infected();
+
 		for (typename NODE::link_t * link : node->outputs)
 			{
 			// if this has been done there's something wrong

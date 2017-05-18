@@ -4,7 +4,7 @@
 #include "genericgraph.h"
 #include "transportgraph.h"
 #include "driftapprox.h"
-#include "network.h"
+#include "transportnetwork.h"
 #include "network_io.h"
 
 #include <gsl/gsl_rng.h>
@@ -17,17 +17,29 @@ using namespace std;
 template<class T>
 using StdVector = vector<T>;
 
-template<class GRAPH>
-using MyVecDriftNode = DriftNode<vector<double>, TranspNode<Node<GRAPH, StdVector> > >;
 
 template<class GRAPH>
-using MyTranspLink = TranspLink<Link<GRAPH> >;
+struct MyDriftNode : 
+	public FreqNode<vector<double>>, 
+	public TranspNode,
+	public Node<GRAPH, StdVector>
+	{};
 
-typedef Graph<MyVecDriftNode, MyTranspLink> G_t;
+template<class GRAPH>
+struct MyTranspLink : public TranspLink, public Link<GRAPH>
+	{
+	MyTranspLink(typename GRAPH::node_t * f, typename GRAPH::node_t * t,
+		double a_rate = 0.0, double a_rate_infd = -1)
+		: TranspLink(a_rate, a_rate_infd), Link<GRAPH>(f, t)
+		{}
+	};
+
+
+typedef Graph<MyDriftNode, MyTranspLink> G_t;
 typedef G_t::node_t N_t;
 typedef G_t::link_t L_t;
+typedef TransportNetwork<N_t, L_t> Net_t;
 
-typedef Network<N_t, L_t> Net_t;
 
 struct Drift
 	{
@@ -94,8 +106,8 @@ int main()
 
 	i = 0;
 
-	Net_t * second = net.clone();
-	for (auto n : second->nodes)
+	Net_t second = net;
+	for (auto n : second.nodes)
 		{
 		cout << i++ << ":\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
 		
@@ -104,6 +116,4 @@ int main()
 		cout << "\n";
 		//assert(n->valid(0.0001));
 		}
-
-	delete second;
 	}
