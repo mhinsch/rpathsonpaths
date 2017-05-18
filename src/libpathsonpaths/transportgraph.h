@@ -24,7 +24,7 @@ struct TranspNode
 	double rate_out_infd;
 
 	TranspNode()
-		: rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
+		: rate_in(-1), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(-1)
 		{}
 
 	void reset_rates()
@@ -69,10 +69,13 @@ void annotate_rates(NODE * node, double transm_rate)
 	{
 	// not processed yet
 	// NOTE sources will have this set but *not* the output rate!
-	if (node->rate_in <= 0 && !node->is_root())
+	if (node->rate_in < 0)
 		{
 		// *** input
+		
+		node->rate_in = 0;
 
+		// does nothing for roots
 		for (typename NODE::link_t * link : node->inputs)
 			{
 			// new links set that to -1
@@ -90,13 +93,16 @@ void annotate_rates(NODE * node, double transm_rate)
 		node->rate_in_infd += node->d_rate_in_infd;
 		}
 
-	if (node->rate_out_infd <= 0 && !node->is_leaf())
+	if (node->rate_out_infd < 0)
 		{
 		// *** output
-
+		
+		node->rate_out_infd = 0;
+		
 		// proportion of infected units
 		const double prop_infd = node->prop_infected();
 
+		// does nothing for leaves
 		for (typename NODE::link_t * link : node->outputs)
 			{
 			// if this has been done there's something wrong
