@@ -77,6 +77,12 @@ struct Network : public AbstractNetwork
 		return nodes.size();
 		}
 
+	void reset_done()
+		{
+		for (auto n : nodes)
+			n->done = false;
+		}
+
 	~Network()
 		{
 		for (N * n : nodes)

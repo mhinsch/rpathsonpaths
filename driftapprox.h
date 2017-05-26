@@ -2,21 +2,30 @@
 #define DRIFTAPPROX_H
 
 #include <cassert>
+#include <numeric>
 
 template<class CONT>
 struct FreqNode
 	{
 	typedef CONT freq_t;
+	typedef typename freq_t::value_type value_t;
 
 	freq_t frequencies;
 
-	bool valid(typename freq_t::value_type epsilon) const
+	bool valid(value_t epsilon) const
 		{
-		typename freq_t::value_type sum(0);
-		for (auto f : frequencies)
-			sum += f;
-
+		const auto sum = std::accumulate(frequencies.begin(), frequencies.end(), value_t(0));
 		return sum + epsilon > 1 && sum - epsilon < 1;
+		}
+
+	value_t normalize()
+		{
+		const auto sum = std::accumulate(frequencies.begin(), frequencies.end(), value_t(0));
+		if (sum > 0)
+			for (auto & f : frequencies)
+				f /= sum;
+
+		return sum;
 		}
 	};
 
