@@ -110,6 +110,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// spread_ibm_mixed
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t>& p_net, Nullable<List> ini_dist);
+RcppExport SEXP rpathsonpaths_spread_ibm_mixed(SEXP p_netSEXP, SEXP ini_distSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    Rcpp::traits::input_parameter< Nullable<List> >::type ini_dist(ini_distSEXP);
+    rcpp_result_gen = Rcpp::wrap(spread_ibm_mixed(p_net, ini_dist));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_popsnode
 XPtr<Node_t> get_popsnode(const XPtr<Net_t>& p_net, SEXP id);
 RcppExport SEXP rpathsonpaths_get_popsnode(SEXP p_netSEXP, SEXP idSEXP) {

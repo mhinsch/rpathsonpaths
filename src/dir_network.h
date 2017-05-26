@@ -174,6 +174,30 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 // [[Rcpp::export]]
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
 
+
+//' @title spread_ibm_mixed
+//' 
+//' @description Simulate spread of pathogens on the network using a (very) simple individual-based
+//' model.
+//' 
+//' @details This function simulates the change of gene frequencies in a population
+//' of pathogens as they spread through the transport network starting at the 
+//' external sources (see \code{\link{popsnetwork}}). At each node founder
+//' effects are assumed to change composition of the population. This change is 
+//' simulated by directly drawing from the distribution of genotypes and unfected units,
+//' respectively.
+//' 
+//' @param p_net A popsnetwork object.
+//' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
+//' a list
+//' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+//' a matrix of allele frequencies. Note that *any* node pre-set in this
+//' way will effectively be treated as a source and hide nodes that are further upstream.
+//' @return A new popsnetwork object with allele frequencies set for each node.
+// [[Rcpp::export]]
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
+
+
 //' @title get_popsnode
 //'
 //' @description Pick a single node from the network.

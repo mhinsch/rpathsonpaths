@@ -175,6 +175,29 @@ spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
     .Call('rpathsonpaths_spread_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)
 }
 
+#' @title spread_ibm_mixed
+#' 
+#' @description Simulate spread of pathogens on the network using a (very) simple individual-based
+#' model.
+#' 
+#' @details This function simulates the change of gene frequencies in a population
+#' of pathogens as they spread through the transport network starting at the 
+#' external sources (see \code{\link{popsnetwork}}). At each node founder
+#' effects are assumed to change composition of the population. This change is 
+#' simulated by directly drawing from the distribution of genotypes and unfected units,
+#' respectively.
+#' 
+#' @param p_net A popsnetwork object.
+#' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
+#' a list
+#' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+#' a matrix of allele frequencies. Note that *any* node pre-set in this
+#' way will effectively be treated as a source and hide nodes that are further upstream.
+#' @return A new popsnetwork object with allele frequencies set for each node.
+spread_ibm_mixed <- function(p_net, ini_dist = NULL) {
+    .Call('rpathsonpaths_spread_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
+}
+
 #' @title get_popsnode
 #'
 #' @description Pick a single node from the network.

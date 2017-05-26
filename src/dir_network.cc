@@ -3,6 +3,7 @@
 #include "net_util.h"
 #include "rcpp_util.h"
 #include "rnet_util.h"
+#include "libpathsonpaths/ibmmixed.h"
 
 #include <algorithm>
 
@@ -312,6 +313,25 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 
 	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
+	
+	return make_S3XPtr(net, "popsnetwork", true);
+	}
+
+
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
+	{
+	Net_t * net = new Net_t(*p_net.checked_get());
+
+	if (! iniDist.isNull())
+		_set_allele_freqs(net, iniDist.as());
+
+	if (!net->nodes.size())
+		stop("Error: empty network!");
+
+	const size_t n_all = net->nodes[0]->frequencies.size();
+
+	Rng rng;
+	annotate_frequencies_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	
 	return make_S3XPtr(net, "popsnetwork", true);
 	}

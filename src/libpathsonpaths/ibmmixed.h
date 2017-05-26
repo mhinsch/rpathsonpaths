@@ -18,7 +18,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		return;
 		}
 
-	std::cout << "ibm: " << node << "\n";
+	//std::cout << "ibm: " << node << "\n";
 
 	for (auto * link : node->inputs)
 		annotate_frequencies_ibmm(link->from, rng);
