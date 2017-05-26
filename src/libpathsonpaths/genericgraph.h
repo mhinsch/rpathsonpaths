@@ -32,8 +32,10 @@ struct Node
 	cont_t inputs;
 	cont_t outputs;
 
+	bool done;
+
 	Node()
-		: inputs(), outputs()
+		: inputs(), outputs(), done(false)
 		{}
 
 	void add_input(link_t * inp)
