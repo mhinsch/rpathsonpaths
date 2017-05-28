@@ -114,7 +114,8 @@ cycles <- function(edge_list, record = FALSE) {
 #' two columns all rates are assumed to be 1.
 #' @param external A dataframe describing external inputs into the network. The first column
 #' is expected to contain node ids (as indices or factors), the second column specifies 
-#' the proportion of infected material in the input.
+#' the proportion of infected material in the input. If there is a third column present it
+#' be used to set absolut input rates on the respective nodes (this is relevant for the ibm).
 #' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
 #' becoming infected).
 #' @param checks Perform some basic integrity checks on input data (currently looks for cycles
@@ -142,9 +143,8 @@ popsnetwork <- function(links, external, transmission = 0.0, checks = FALSE) {
 #' @param ini_dist Initial distribution of allele frequencies. ini_dist has to be 
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-#' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
-#' upstream).
+#' a matrix of allele frequencies. Note that only root nodes can be initialized
+#' in this way (in order to prevent inconsistencies).
 #' @return A new popsnetwork object.
 set_allele_freqs <- function(p_net, ini_dist) {
     .Call('rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
@@ -191,8 +191,8 @@ spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
 #' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-#' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will effectively be treated as a source and hide nodes that are further upstream.
+#' a matrix of allele frequencies. Note that only root nodes can be initialized
+#' in this way.
 #' @return A new popsnetwork object with allele frequencies set for each node.
 spread_ibm_mixed <- function(p_net, ini_dist = NULL) {
     .Call('rpathsonpaths_spread_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)

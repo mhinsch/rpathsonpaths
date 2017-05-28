@@ -12,8 +12,8 @@ spread_ibm_mixed(p_net, ini_dist = NULL)
 \item{ini_dist}{Initial distribution of allele frequencies (optional). ini_dist has to be 
 a list
 containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-a matrix of allele frequencies. Note that *any* node pre-set in this
-way will effectively be treated as a source and hide nodes that are further upstream.}
+a matrix of allele frequencies. Note that only root nodes can be initialized
+in this way.}
 }
 \value{
 A new popsnetwork object with allele frequencies set for each node.
