@@ -18,12 +18,13 @@ struct FreqNode
 		return sum + epsilon > 1 && sum - epsilon < 1;
 		}
 
-	value_t normalize()
+	value_t normalize(value_t norm=1.0)
 		{
 		const auto sum = std::accumulate(frequencies.begin(), frequencies.end(), value_t(0));
+		const auto factor = norm / sum;
 		if (sum > 0)
 			for (auto & f : frequencies)
-				f /= sum;
+				f * factor;
 
 		return sum;
 		}

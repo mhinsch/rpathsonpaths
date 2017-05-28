@@ -117,7 +117,8 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' two columns all rates are assumed to be 1.
 //' @param external A dataframe describing external inputs into the network. The first column
 //' is expected to contain node ids (as indices or factors), the second column specifies 
-//' the proportion of infected material in the input.
+//' the proportion of infected material in the input. If there is a third column present it
+//' be used to set absolut input rates on the respective nodes (this is relevant for the ibm).
 //' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
 //' becoming infected).
 //' @param checks Perform some basic integrity checks on input data (currently looks for cycles
@@ -142,9 +143,8 @@ void print_popsnode(const XPtr<Node_t> & p_node);
 //' @param ini_dist Initial distribution of allele frequencies. ini_dist has to be 
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-//' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
-//' upstream).
+//' a matrix of allele frequencies. Note that only root nodes can be initialized
+//' in this way (in order to prevent inconsistencies).
 //' @return A new popsnetwork object.
 // [[Rcpp::export]]
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
@@ -191,8 +191,8 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-//' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will effectively be treated as a source and hide nodes that are further upstream.
+//' a matrix of allele frequencies. Note that only root nodes can be initialized
+//' in this way.
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
 XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);

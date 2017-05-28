@@ -206,7 +206,9 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		stop("Empty network!");
 
 	const IntegerVector ext_nodes = external(0);
-	const NumericVector ext_rates = external(1);
+	const NumericVector ext_rates_infd = external(1);
+	const NumericVector ext_rates_inp = external.size() > 2 ? external(3) : NumericVector;
+	const bool has_inp_rates = ext_rates_inp.size() > 0;
 
 	if (ext_nodes.size() == 0)
 		stop("No external inputs provided!");
@@ -227,7 +229,12 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		{
 		StringVector e_levels = ext_nodes.attr("levels");
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), ext_rates[i]);
+			if (has_inp_rates)
+				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
+					ext_rates_infd[i], ext_rates_inp[i]);
+			else
+				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
+					ext_rates_infd[i]);
 
 		// TODO not pretty, should be done better
 		swap(el.idxs(), net->id_by_name);
@@ -236,7 +243,10 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		}
 	else
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			net->set_source(ext_nodes[i], ext_rates[i]);
+			if (has_inp_rates)
+				net->set_source(ext_nodes[i], ext_rates_infd[i], ext_rates_inp[i]);
+			else
+				net->set_source(ext_nodes[i], ext_rates_infd[i]);
 
 	for (const auto & n : net->nodes)
 		if (n == 0)

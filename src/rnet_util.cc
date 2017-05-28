@@ -24,7 +24,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	if (nodes.size() != freqs.nrow())
 		stop("Invalid parameter 'iniDist': "
-		"number of rows in $frequencies and number of elements in $nodes have to be equal!");
+		"number of rows in frequencies and number of elements in nodes have to be equal!");
 	
 	for (auto n : net->nodes)
 		n->frequencies.clear();
@@ -35,15 +35,20 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	for (size_t i=0; i<nodes.size(); i++)
 		{
-		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] :
-			nodes[i];
-		if (n > net->nodes.size())
-			stop("Invalid node index in iniDist$nodes!");
+		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] : nodes[i];
 
-		net->nodes[n]->frequencies.resize(n_all, 0);
+		if (n > net->nodes.size())
+			stop("Invalid node index!");
+
+		Node_t * node = net->nodes[n];
+
+		if (!node->is_root())
+			stop("Allele frequencies can only be set in root nodes.");
+
+		node->frequencies.resize(n_all, 0);
 
 		for (size_t j=0; j<n_all; j++)
-			net->nodes[n]->frequencies[j] = freqs(i, j);
+			node->frequencies[j] = freqs(i, j);
 		}
 	}
 
