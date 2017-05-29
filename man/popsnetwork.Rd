@@ -13,8 +13,8 @@ two columns all rates are assumed to be 1.}
 
 \item{external}{A dataframe describing external inputs into the network. The first column
 is expected to contain node ids (as indices or factors), the second column specifies 
-the proportion of infected material in the input. If there is a third column present it
-be used to set absolut input rates on the respective nodes (this is relevant for the ibm).}
+the amount of infected material in the input. If there is a third column present it
+be used to set overall input rates on the respective nodes (this is relevant for the ibm).}
 
 \item{transmission}{Rate of infection within nodes (i.e. proportion of uninfected material
 becoming infected).}

@@ -207,7 +207,7 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 
 	const IntegerVector ext_nodes = external(0);
 	const NumericVector ext_rates_infd = external(1);
-	const NumericVector ext_rates_inp = external.size() > 2 ? external(3) : NumericVector();
+	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
 	const bool has_inp_rates = ext_rates_inp.size() > 0;
 
 	if (ext_nodes.size() == 0)
