@@ -24,7 +24,7 @@ struct FreqNode
 		const auto factor = norm / sum;
 		if (sum > 0)
 			for (auto & f : frequencies)
-				f * factor;
+				f *= factor;
 
 		return sum;
 		}

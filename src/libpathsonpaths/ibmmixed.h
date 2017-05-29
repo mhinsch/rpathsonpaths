@@ -33,7 +33,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	// just in case, frequencies might have been initialized to a different scale than
 	// input rate; we just assume input rate has priority
 	if (node->is_root())
-		node->normalize(node->rate_in);
+		node->normalize(node->rate_in_infd);
 
 	const double outp = 
 		std::accumulate(node->outputs.begin(), node->outputs.end(), 0.0, 
