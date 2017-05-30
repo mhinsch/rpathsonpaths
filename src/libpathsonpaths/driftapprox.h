@@ -1,7 +1,6 @@
 #ifndef DRIFTAPPROX_H
 #define DRIFTAPPROX_H
 
-#include <cassert>
 #include <numeric>
 
 template<class CONT>

@@ -1,7 +1,7 @@
 #ifndef TRANSPORTGRAPH_H
 #define TRANSPORTGRAPH_H
 
-#include <cassert>
+#include "util.h"
 
 /** A link type that keeps track of transfer rates.  */
 struct TranspLink 
@@ -48,6 +48,54 @@ struct TranspNode
 		return rate_in_infd <= 0 ? 0 : d_rate_in_infd / rate_in_infd;
 		}
 	};
+
+
+/** Adjust output rates so that sum(output) = sum(input) * (1-decay). */
+template<class NODE>
+void preserve_mass(NODE * node, double decay)
+	{
+	if (node->done || node->is_leaf())
+		return;
+
+	for (auto i : node->inputs)
+		preserve_mass(i->from, decay);
+
+	double inp = 0.0;
+
+	// root nodes use preset value
+	// we could allow for more flexibility (e.g. use preset if inp == 0)
+	// but this is the most consistent option
+	if (node->is_root())
+		inp = node->rate_in;
+	else	
+		for (auto l : node->inputs)
+			inp += l->rate;
+
+	double outp = 0.0;
+	for (auto l : node->outputs)
+		outp += l->rate;
+
+	myassert(outp > 0);
+
+	const double f = (inp * (1.0 - decay)) / outp;
+
+	for (auto l : node->outputs)
+		l->rate *= f;
+
+	node->done = true;
+	}
+
+
+template<class ITER>
+void preserve_mass(const ITER & beg, const ITER & end, double decay)
+	{
+	for (ITER i=beg; i!=end; i++)
+		(*i)->done = false;
+
+	for (ITER i=beg; i!=end; i++)
+		preserve_mass(*i, decay);
+	}
+
 
 /** Calculate overall rate of infected input and proportion of infected material
  * in NODE node (after transmission) and in its output. 
@@ -106,7 +154,7 @@ void annotate_rates(NODE * node, double transm_rate)
 		for (typename NODE::link_t * link : node->outputs)
 			{
 			// if this has been done there's something wrong
-			assert(link->rate_infd < 0);
+			myassert(link->rate_infd < 0);
 			
 			// all outputs have the same proportion of infected units
 			// NOTE could be changed down the line
@@ -143,7 +191,7 @@ double prob(NODE * n_from, NODE * n_to)
 	if (link)
 		return n_from->rate_out_inf <= 0 ? 0 : link->rate_infd / n_from->rate_out_infd;
 	
-	assert(false);
+	myassert(false);
 	return 0;
 	}
 

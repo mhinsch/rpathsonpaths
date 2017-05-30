@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "util.h"
+
 using std::size_t;
 
 /** Abstract base class for Network. */
@@ -110,7 +112,7 @@ struct Network : public AbstractNetwork
 				{
 				// this works because the node still has the old pointers
 				size_t li = find_link(l);
-				assert(li < links.size());
+				myassert(li < links.size());
 				// use new link object
 				l = nn.links[li];
 				// point it to this node
@@ -122,7 +124,7 @@ struct Network : public AbstractNetwork
 				{
 				// this works because the node still has the old pointers
 				size_t li = find_link(l);
-				assert(li < links.size());
+				myassert(li < links.size());
 				// use new link object
 				l = nn.links[li];
 				// point it to this node

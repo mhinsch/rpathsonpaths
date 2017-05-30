@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "util.h"
 
 template<class NODE, class RNG>
 void annotate_frequencies_ibmm(NODE * node, RNG & rng)
@@ -20,7 +21,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 
 	//std::cout << "ibm: " << node << "\n";
 
-	for (auto * link : node->inputs)
+	for (auto link : node->inputs)
 		annotate_frequencies_ibmm(link->from, rng);
 
 	// no input set on this branch
@@ -46,17 +47,26 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		return;
 		}
 
+	// need to use this since gross rates in the nodes will be inaccurate
+	const double infd = 
+		std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
+
+	if (infd <= 0)
+		{
+		node->done = true;
+		return;
+		}
+
 	// reconstruct transmission rate
 	// TODO this is ugly! *_ibmm should not depend on basic annotate_rates
 	const double r_inf = 
 		node->d_rate_in_infd / (node->rate_in - node->rate_in_infd + node->d_rate_in_infd);
 	const double inp = node->rate_in;
-	// need to use this since gross rates in the nodes will be inaccurate
-	const double infd = 
-		std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
 	const double uninfd = inp - infd;
 	// coin flip for each uninfected whether it becomes infected
-	const double newly_infd = uninfd > 0 ? rng.binom(r_inf, uninfd) : 0;
+	const int newly_infd = uninfd > 0 ? rng.binom(r_inf, int(uninfd)) : 0;
+
+	myassert(r_inf >= 0 && inp > 0 && infd > 0 && uninfd >= 0 && newly_infd >=0);
 	
 // *** transmission 
 //
@@ -64,22 +74,31 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 // (or binomial + conditional method).
 
 	// if there are newly infected units, distribute them according to prop. of 
-	// alleles
+	// alleles; has to check for infected as well (due to weird infection model)
 	// multinomial assumes that all infections happen simultaneously
 	if (newly_infd > 0)
 		{
-		double n = newly_infd;
+		int n = newly_infd;
 		double rem = 1.0;
-		for (size_t i=0; i<node->frequencies.size() && n>0 && rem>0; i++)
+
+		for (size_t i=0; i<node->frequencies.size()-1 && n>0 && rem>0; i++)
 			{
 			const double p = node->frequencies[i] / infd;
-			const double add = rng.binom(p/rem, n);
+			const int add = rng.binom(p/rem, n);
+
+			myassert(add >= 0);
 
 			node->frequencies[i] += add;
 
 			n -= add;
 			rem -= p;
+
+			myassert(n>=0 && rem>=0); 
 			}
+
+		// R binom does weird stuff when rem and p are very close so we
+		// skip the last step and just assign n directly
+		node->frequencies.back() += n;
 		}
 
 // *** generate output
@@ -88,8 +107,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 // use a multi-variate hypergeometric distribution (we actually use a regular 
 // hypergeometric and the conditional method).
 
-	for (auto * l : node->outputs)
-		l->to->frequencies.resize(node->frequencies.size());
+	for (auto l : node->outputs)
+		l->to->frequencies.resize(node->frequencies.size(), 0.0);
 
 	// we have to keep track of how many infected there are still left
 	// all_infd == sum(node->frequencies)
@@ -97,27 +116,41 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	double all_non_infd = inp - all_infd;
 	auto left_by_gene = node->frequencies;
 
-	for (auto * l : node->outputs)
+	//std::cout << "****\n";
+	for (auto l : node->outputs)
 		{
 		l->rate_infd = 0;
-		// how many go into this link
+		// how many go into this link (infd + non-infd)
 		double pick = l->rate;
-		// overall number of units left to pick from
+		// overall number of units left to pick from (for all links)
 		double all_left = all_infd + all_non_infd;
 
+		// std::cout << ">>" << all_left << " " << pick << "\n";
 		// do alleles first, then after that assign rest to uninfected
 		
 		for (size_t i=0; i<left_by_gene.size(); i++)
 			{
 			// split leftover into two groups
 			all_left -= left_by_gene[i];
+			
+			myassert(all_left >= 0);
+			myassert(pick <= all_left+left_by_gene[i]);
+
 			// picked units are either allele i or allele >i + uninfected
-			int add = rng.hypergeom(left_by_gene[i], all_left, pick);
+			const int add = rng.hypergeom(int(left_by_gene[i]), int(all_left), int(pick));
+			
+			//std::cout << left_by_gene[i] << " ";
+			//std::cout << add << "\n";
+
+			myassert(add >= 0);
 			// adjust number to pick from for the next output
 			left_by_gene[i] -= add;
+			myassert(left_by_gene[i] >= 0);
 			all_infd -= add;
+			myassert(all_infd >= 0);
 			// we pick less next time
 			pick -= add;
+			myassert(pick >= 0);
 			// add the stuff to the link and its end node
 			l->rate_infd += add;
 			l->to->frequencies[i] += add;
@@ -125,17 +158,17 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		// at this point all_left == all_non_infd
 		// so, just assign the rest of the output's rate to non-infected
 		all_non_infd -= pick;
+		myassert(all_non_infd >= 0);
 		}
 
 	// adjust rates in the node; due to stochasticity these will be 
 	// different from the gross rates calculated before
 	node->rate_in_infd = infd + newly_infd;
 	node->d_rate_in_infd = newly_infd;
-	node->rate_out_infd = 0;
-	std::for_each(node->outputs.begin(), node->outputs.end(),
-		[&node](const auto & l){node->rate_out_infd += l->rate_infd;});
+	node->rate_out_infd = std::accumulate(node->outputs.begin(), node->outputs.end(), 0.0,
+		[](auto s, const auto l){return s + l->rate_infd;});
 
-	// TODO normalize frequencies
+	node->normalize();
 	node->done = true;
 	}
 
@@ -143,6 +176,9 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 template<class ITER, class BINOM_FUNC>
 void annotate_frequencies_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
 	{
+	for (ITER i=beg; i!=end; i++)
+		(*i)->done = false;
+
 	for (ITER i=beg; i!=end; i++)
 		annotate_frequencies_ibmm(*i, binom);
 	}
