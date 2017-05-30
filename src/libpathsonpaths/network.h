@@ -3,13 +3,15 @@
 
 #include <vector>
 
+#include "util.h"
+
 using std::size_t;
 
 /** Abstract base class for Network. */
 struct AbstractNetwork
 	{
 	virtual void add_link(size_t from, size_t to, double rate) = 0;
-	virtual void set_source(size_t s, double p) = 0;
+	virtual void set_source(size_t s, double p, double i=1.0) = 0;
 	virtual ~AbstractNetwork()
 		{
 		}
@@ -57,7 +59,7 @@ struct Network : public AbstractNetwork
 		nodes[to]->add_input(links.back());
 		}
 
-	void set_source(size_t s, double p) {}
+	void set_source(size_t s, double p, double i) {}
 
 	size_t find_link(L * l) const
 		{
@@ -75,6 +77,12 @@ struct Network : public AbstractNetwork
 				return i;
 
 		return nodes.size();
+		}
+
+	void reset_done()
+		{
+		for (auto n : nodes)
+			n->done = false;
 		}
 
 	~Network()
@@ -104,7 +112,7 @@ struct Network : public AbstractNetwork
 				{
 				// this works because the node still has the old pointers
 				size_t li = find_link(l);
-				assert(li < links.size());
+				myassert(li < links.size());
 				// use new link object
 				l = nn.links[li];
 				// point it to this node
@@ -116,7 +124,7 @@ struct Network : public AbstractNetwork
 				{
 				// this works because the node still has the old pointers
 				size_t li = find_link(l);
-				assert(li < links.size());
+				myassert(li < links.size());
 				// use new link object
 				l = nn.links[li];
 				// point it to this node

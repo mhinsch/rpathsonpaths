@@ -169,8 +169,8 @@ sg_sources <- sources(sent_graph2)
 sg_sources
 ```
 
-In order to be able to construct a popsnetwork object we have to provide an external input rate for
-each source.
+In order to be able to construct a popsnetwork object we have to provide at least the rate of
+infected material for each source.
 
 ```{r}
 sg_ext <- data.frame(sg_sources, rep(0.5, length(sg_sources)))

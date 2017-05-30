@@ -117,14 +117,18 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' two columns all rates are assumed to be 1.
 //' @param external A dataframe describing external inputs into the network. The first column
 //' is expected to contain node ids (as indices or factors), the second column specifies 
-//' the proportion of infected material in the input.
+//' the amount of infected material in the input. If there is a third column present it
+//' be used to set overall input rates on the respective nodes (this is relevant for the ibm).
 //' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
 //' becoming infected).
+//' @param decay The decay of material within nodes.
+//' If this parameter has a value in [0, 1) transport rates for the entire network will 
+//' be rescaled so that sum(output) == sum(input) * (1-decay) in all (non-leaf) nodes.
 //' @param checks Perform some basic integrity checks on input data (currently looks for cycles
 //' and disconnected sub-networks).
 //' @return A popsnetwork object.
 // [[Rcpp::export]]
-XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, bool checks=false);
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, double decay=-1.0, bool checks=false);
 
 // [[Rcpp::export(name=".printpopsnetwork")]]
 void print_popsnetwork(const XPtr<Net_t> & p_net);
@@ -142,9 +146,8 @@ void print_popsnode(const XPtr<Node_t> & p_node);
 //' @param ini_dist Initial distribution of allele frequencies. ini_dist has to be 
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-//' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will be treated as a source by \code{spread_dirichlet} (this hiding nodes further
-//' upstream).
+//' a matrix of allele frequencies. Note that only root nodes can be initialized
+//' in this way (in order to prevent inconsistencies).
 //' @return A new popsnetwork object.
 // [[Rcpp::export]]
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
@@ -173,6 +176,30 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
 XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
+
+
+//' @title spread_ibm_mixed
+//' 
+//' @description Simulate spread of pathogens on the network using a (very) simple individual-based
+//' model.
+//' 
+//' @details This function simulates the change of gene frequencies in a population
+//' of pathogens as they spread through the transport network starting at the 
+//' external sources (see \code{\link{popsnetwork}}). At each node founder
+//' effects are assumed to change composition of the population. This change is 
+//' simulated by directly drawing from the distribution of genotypes and unfected units,
+//' respectively.
+//' 
+//' @param p_net A popsnetwork object.
+//' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
+//' a list
+//' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
+//' a matrix of allele frequencies. Note that only root nodes can be initialized
+//' in this way.
+//' @return A new popsnetwork object with allele frequencies set for each node.
+// [[Rcpp::export]]
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
+
 
 //' @title get_popsnode
 //'

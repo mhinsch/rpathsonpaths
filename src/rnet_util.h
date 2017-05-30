@@ -34,6 +34,19 @@ struct Drift
 		}
 	};
 
+// binomial and hypergeometric dists for the ibm
+struct Rng
+	{
+	int binom(double p, int n) const
+		{
+		return R::rbinom(n, p);
+		}
+
+	int hypergeom(int n1, int n2, int k) const
+		{
+		return R::rhyper(n1, n2, k);
+		}
+	};
 
 void print_node_id(const Net_t * net, size_t i);
 void print_popsnode(const Node_t * n);

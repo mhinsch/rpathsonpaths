@@ -1,0 +1,15 @@
+IBM
+
+1) mixed
+
+* Genetics model (alleles -> actual genes/SNPs)
+
+* population dynamics?
+	N_2 = N_1 + delta? 
+
+* mutations
+
+2) compartments
+
+* alleles == compartments?
+

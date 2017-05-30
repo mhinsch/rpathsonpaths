@@ -4,7 +4,7 @@
 \alias{popsnetwork}
 \title{popsnetwork}
 \usage{
-popsnetwork(links, external, transmission = 0, checks = FALSE)
+popsnetwork(links, external, transmission = 0, decay = -1, checks = FALSE)
 }
 \arguments{
 \item{links}{A dataframe describing all edges in the graph as well as transfer rates
@@ -13,10 +13,15 @@ two columns all rates are assumed to be 1.}
 
 \item{external}{A dataframe describing external inputs into the network. The first column
 is expected to contain node ids (as indices or factors), the second column specifies 
-the proportion of infected material in the input.}
+the amount of infected material in the input. If there is a third column present it
+be used to set overall input rates on the respective nodes (this is relevant for the ibm).}
 
 \item{transmission}{Rate of infection within nodes (i.e. proportion of uninfected material
 becoming infected).}
+
+\item{decay}{The decay of material within nodes.
+If this parameter has a value in [0, 1) transport rates for the entire network will 
+be rescaled so that sum(output) == sum(input) * (1-decay) in all (non-leaf) nodes.}
 
 \item{checks}{Perform some basic integrity checks on input data (currently looks for cycles
 and disconnected sub-networks).}

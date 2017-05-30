@@ -3,6 +3,7 @@
 #include "net_util.h"
 #include "rcpp_util.h"
 #include "rnet_util.h"
+#include "libpathsonpaths/ibmmixed.h"
 
 #include <algorithm>
 
@@ -176,7 +177,7 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
-	double transmission, bool checks)
+	double transmission, double decay, bool checks)
 	{
 	if (checks)
 		{
@@ -205,7 +206,9 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		stop("Empty network!");
 
 	const IntegerVector ext_nodes = external(0);
-	const NumericVector ext_rates = external(1);
+	const NumericVector ext_rates_infd = external(1);
+	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
+	const bool has_inp_rates = ext_rates_inp.size() > 0;
 
 	if (ext_nodes.size() == 0)
 		stop("No external inputs provided!");
@@ -226,7 +229,12 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		{
 		StringVector e_levels = ext_nodes.attr("levels");
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), ext_rates[i]);
+			if (has_inp_rates)
+				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
+					ext_rates_infd[i], ext_rates_inp[i]);
+			else
+				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
+					ext_rates_infd[i]);
 
 		// TODO not pretty, should be done better
 		swap(el.idxs(), net->id_by_name);
@@ -235,11 +243,17 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		}
 	else
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			net->set_source(ext_nodes[i], ext_rates[i]);
+			if (has_inp_rates)
+				net->set_source(ext_nodes[i], ext_rates_infd[i], ext_rates_inp[i]);
+			else
+				net->set_source(ext_nodes[i], ext_rates_infd[i]);
 
 	for (const auto & n : net->nodes)
 		if (n == 0)
 			stop("Invalid network, node not set!");
+
+	if (decay >= 0.0 && decay < 1.0)
+		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
 
 	// TODO maybe factor out, make constructor only build the net
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
@@ -312,6 +326,25 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 
 	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
+	
+	return make_S3XPtr(net, "popsnetwork", true);
+	}
+
+
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
+	{
+	Net_t * net = new Net_t(*p_net.checked_get());
+
+	if (! iniDist.isNull())
+		_set_allele_freqs(net, iniDist.as());
+
+	if (!net->nodes.size())
+		stop("Error: empty network!");
+
+	const size_t n_all = net->nodes[0]->frequencies.size();
+
+	Rng rng;
+	annotate_frequencies_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	
 	return make_S3XPtr(net, "popsnetwork", true);
 	}

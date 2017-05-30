@@ -52,16 +52,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // popsnetwork
-XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, bool checks);
-RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP checksSEXP) {
+XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, double decay, bool checks);
+RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP decaySEXP, SEXP checksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const DataFrame& >::type links(linksSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type external(externalSEXP);
     Rcpp::traits::input_parameter< double >::type transmission(transmissionSEXP);
+    Rcpp::traits::input_parameter< double >::type decay(decaySEXP);
     Rcpp::traits::input_parameter< bool >::type checks(checksSEXP);
-    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission, checks));
+    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission, decay, checks));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -107,6 +108,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type ini_dist(ini_distSEXP);
     rcpp_result_gen = Rcpp::wrap(spread_dirichlet(p_net, theta, ini_dist));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spread_ibm_mixed
+XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t>& p_net, Nullable<List> ini_dist);
+RcppExport SEXP rpathsonpaths_spread_ibm_mixed(SEXP p_netSEXP, SEXP ini_distSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    Rcpp::traits::input_parameter< Nullable<List> >::type ini_dist(ini_distSEXP);
+    rcpp_result_gen = Rcpp::wrap(spread_ibm_mixed(p_net, ini_dist));
     return rcpp_result_gen;
 END_RCPP
 }

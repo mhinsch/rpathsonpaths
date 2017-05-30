@@ -6,6 +6,7 @@
 #include "driftapprox.h"
 #include "transportnetwork.h"
 #include "network_io.h"
+#include "ibmmixed.h"
 
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
@@ -67,6 +68,27 @@ struct Drift
 	};
 
 
+struct Rng
+	{
+	gsl_rng * rng;
+
+	Rng()
+		{
+		rng = gsl_rng_alloc(gsl_rng_default);
+		}
+
+	int binom(double p, int t)
+		{
+		return gsl_ran_binomial(rng, p, t);
+		}
+
+	int hypergeom(double n1, double n2, double k)
+		{
+		return gsl_ran_hypergeometric(rng, n1, n2, k);
+		}
+	};
+
+
 int main()
 	{
 	Net_t net;
@@ -74,7 +96,7 @@ int main()
 	
 	gsl_rng_env_setup();
 
-	Drift drift(4, 100000);
+	Drift drift(4, 10);
 
 	size_t i = 0;
 	for (auto & n : net.nodes)
@@ -89,31 +111,50 @@ int main()
 		}
 
 	annotate_rates(net.nodes.begin(), net.nodes.end(), 0.01);
+
+	Net_t net2 = net;
+
 	annotate_frequencies(net.nodes.begin(), net.nodes.end(), drift);
 
 	i = 0;
 	for (auto n : net.nodes)
 		{
-		cout << i++ << ":\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		cout << i++ << ": " << n->rate_in << ", " << n->rate_in_infd << ", "
+			<< n->d_rate_in_infd << ", "
+			<< n->rate_out_infd << "\n";
 		
 		for (auto f : n->frequencies)
 			cout << "\t" << f;
-		cout << "\n";
+		cout << "\n\n";
 		//assert(n->valid(0.0001));
 		}
 
-	cout << "cloning...\n";
+	cout << "ibm...\n";
+
+	Rng rng;
+
+	for (auto & n : net2.nodes)
+		{
+		if (n->is_root())
+			{
+			n->rate_in = 1000;
+			for (auto & f : n->frequencies)
+				f *= 100;
+			}
+		}
+	
+	annotate_frequencies_ibmm(net2.nodes.begin(), net2.nodes.end(), rng);
 
 	i = 0;
-
-	Net_t second = net;
-	for (auto n : second.nodes)
+	for (auto n : net2.nodes)
 		{
-		cout << i++ << ":\t" << n->rate_in << "\t" << n->rate_in_infd << "\n";
+		cout << i++ << ": " << n->rate_in << ", " << n->rate_in_infd << ", "
+			<< n->d_rate_in_infd << ", "
+			<< n->rate_out_infd << "\n";
 		
 		for (auto f : n->frequencies)
 			cout << "\t" << f;
-		cout << "\n";
+		cout << "\n\n";
 		//assert(n->valid(0.0001));
 		}
 	}
