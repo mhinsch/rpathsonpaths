@@ -177,7 +177,7 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
-	double transmission, bool checks)
+	double transmission, double decay, bool checks)
 	{
 	if (checks)
 		{
@@ -251,6 +251,9 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	for (const auto & n : net->nodes)
 		if (n == 0)
 			stop("Invalid network, node not set!");
+
+	if (decay >= 0.0 && decay < 1.0)
+		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
 
 	// TODO maybe factor out, make constructor only build the net
 	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);

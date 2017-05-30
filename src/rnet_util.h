@@ -37,12 +37,12 @@ struct Drift
 // binomial and hypergeometric dists for the ibm
 struct Rng
 	{
-	double binom(double p, double n) const
+	int binom(double p, int n) const
 		{
 		return R::rbinom(n, p);
 		}
 
-	double hypergeom(double n1, double n2, double k) const
+	int hypergeom(int n1, int n2, int k) const
 		{
 		return R::rhyper(n1, n2, k);
 		}

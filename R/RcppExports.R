@@ -118,11 +118,14 @@ cycles <- function(edge_list, record = FALSE) {
 #' be used to set overall input rates on the respective nodes (this is relevant for the ibm).
 #' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
 #' becoming infected).
+#' @param decay The decay of material within nodes.
+#' If this parameter has a value in [0, 1) transport rates for the entire network will 
+#' be rescaled so that sum(output) == sum(input) * (1-decay) in all (non-leaf) nodes.
 #' @param checks Perform some basic integrity checks on input data (currently looks for cycles
 #' and disconnected sub-networks).
 #' @return A popsnetwork object.
-popsnetwork <- function(links, external, transmission = 0.0, checks = FALSE) {
-    .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission, checks)
+popsnetwork <- function(links, external, transmission = 0.0, decay = -1.0, checks = FALSE) {
+    .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission, decay, checks)
 }
 
 .printpopsnetwork <- function(p_net) {
