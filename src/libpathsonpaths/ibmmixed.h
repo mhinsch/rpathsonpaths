@@ -84,7 +84,9 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		for (size_t i=0; i<node->frequencies.size()-1 && n>0 && rem>0; i++)
 			{
 			const double p = node->frequencies[i] / infd;
-			const int add = rng.binom(p/rem, n);
+			// due to numeric effects it can happen that p>rem (slightly)
+			// if this is the last positice frequency
+			const int add = rng.binom(std::min(1.0, p/rem), n);
 
 			myassert(add >= 0);
 
@@ -93,7 +95,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 			n -= add;
 			rem -= p;
 
-			myassert(n>=0 && rem>=0); 
+			myassert(n>=0 && rem>-0.0001); 
 			}
 
 		// R binom does weird stuff when rem and p are very close so we
