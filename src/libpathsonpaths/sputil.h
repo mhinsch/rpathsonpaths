@@ -14,47 +14,24 @@
 #include <boost/algorithm/string.hpp>
 
 
-#define STRFY(s) #s
-#define TOSTR(s) STRFY(s)
-
-#define ERR_LOC __FILE__ ":" TOSTR(__LINE__)
-
-#define VERIFY(expr) verify((expr), ERR_LOC ":\t assertion '" TOSTR(expr) "' failed!")
-#define VERIFY_MSG(expr, msg) verify((expr), ERR_LOC ":\t", msg)
-#ifdef S_DEBUG
-	#define ASSERT(expr) VERIFY(expr)
-#else
-	#define ASSERT(expr) (void(0)) 
-#endif
-
 using boost::lexical_cast;
 
-/*************************************************************************/
-
-inline double pow_2(double x)
+template<unsigned N>
+inline double pow(double x)
 	{
-	return (double) x*(double)x;
+	double res = 1.0;
+
+	for (unsigned i=0; i<N; i++)
+		res *= x;
+
+	return res;
 	}
 
-/*************************************************************************/
 
 inline void get_time_short(std::string & smess)
 	/*get the current time and put only the day number and time in smess*/
 	{
 	smess = lexical_cast<std::string>(time(NULL));
-	}
-
-inline void error(const std::string & msg)
-	{
-	throw std::runtime_error(msg);
-	//std::cerr << "\n" << msg << std::endl;
-	//exit(1);
-	}
-
-inline void verify(bool cond, const std::string & msg, const std::string & msg2 = "")
-	{
-	if (!cond)
-		error(msg + msg2);
 	}
 
 // split string into two halves at position pos and cast results to T
@@ -100,31 +77,6 @@ bool get_value (std::istream & inp_file, T & value)
 
 	return true;
 	}
-
-
-class SPIOException : public std::exception
-	{
-protected:
-	std::string _msg;
-public:
-	SPIOException(const std::string & msg)
-		: _msg(msg)
-		{}
-
-	const char * what() const throw()
-		{
-		return _msg.c_str();
-		}
-
-	void print(std::ostream & out) const
-		{
-		out << _msg;
-		}
-
-	virtual ~SPIOException() throw()
-		{}
-	};
-
 
 
 #endif // SPUTIL_H
