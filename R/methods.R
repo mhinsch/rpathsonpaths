@@ -29,7 +29,10 @@ plot.popsnetwork <- function(x, ...){
 	}
 
 	edges <- edge_list(x)
+	colnames(edges)[3] <- "weight"
+	max_w <- max(edges[3])
 	nodes <- node_list(x)
 	graph <- igraph::graph_from_data_frame(edges, TRUE, nodes)
-	igraph::plot.igraph(graph)
+	igraph::E(graph)$width <- igraph::E(graph)$weight/max_w*3
+	igraph::plot.igraph(graph, layout=igraph::layout_with_lgl, vertex.size=5, vertex.label.cex=0.5)
 	}
