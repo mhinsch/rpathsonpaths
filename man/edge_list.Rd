@@ -14,7 +14,8 @@ A dataframe with from, to, rates and rates_infected.
 }
 \description{
 Get a list of edges in a dataframe.
-
+}
+\details{
 This function returns a list of the edges in the network in a format
 that is suitable for plotting with e.g. iGraph.
 }

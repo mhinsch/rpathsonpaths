@@ -181,3 +181,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// SNP_distance
+int SNP_distance(int g1, int g2);
+RcppExport SEXP rpathsonpaths_SNP_distance(SEXP g1SEXP, SEXP g2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type g1(g1SEXP);
+    Rcpp::traits::input_parameter< int >::type g2(g2SEXP);
+    rcpp_result_gen = Rcpp::wrap(SNP_distance(g1, g2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// SNP_pop_distance
+double SNP_pop_distance(const IntegerVector& p1, const IntegerVector& p2);
+RcppExport SEXP rpathsonpaths_SNP_pop_distance(SEXP p1SEXP, SEXP p2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type p2(p2SEXP);
+    rcpp_result_gen = Rcpp::wrap(SNP_pop_distance(p1, p2));
+    return rcpp_result_gen;
+END_RCPP
+}

@@ -14,7 +14,8 @@ A dataframe with id and rate_infected.
 }
 \description{
 Get a list of nodes in a dataframe.
-
+}
+\details{
 This function returns a list of the nodes in the network in a format
 that is suitable for plotting with e.g. iGraph.
 }

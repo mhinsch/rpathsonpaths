@@ -6,6 +6,7 @@
 #include "libpathsonpaths/ibmmixed.h"
 
 #include <algorithm>
+#include <bitset>
 
 
 IntegerVector sources(const DataFrame & edge_list)
@@ -506,4 +507,24 @@ DataFrame node_list(const XPtr<Net_t> & p_net)
 	}
 
 
+int SNP_distance(int g1, int g2)
+	{
+	return bitset<sizeof(int)*8>(g1 ^ g2).count();
+	}
 
+double SNP_pop_distance(const IntegerVector & p1, const IntegerVector & p2)
+	{
+	double res = 0.0;
+
+	for (int i1 : p1)
+		{
+		int sum = 0;
+		for (int i2 : p2)
+			sum += SNP_distance(i1, i2);
+		
+		// to avoid overflow we already scale a bit here
+		res += sum / p2.size();
+		}
+
+	return res/p1.size();
+	}

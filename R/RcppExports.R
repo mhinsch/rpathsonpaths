@@ -248,7 +248,7 @@ draw_isolates.popsnetwork <- function(p_net, samples) {
 #'
 #' @description Get a list of edges in a dataframe.
 #'
-#' @description This function returns a list of the edges in the network in a format
+#' @details This function returns a list of the edges in the network in a format
 #' that is suitable for plotting with e.g. iGraph.
 #'
 #' @param p_net A PopsNet object.
@@ -261,12 +261,41 @@ edge_list <- function(p_net) {
 #'
 #' @description Get a list of nodes in a dataframe.
 #'
-#' @description This function returns a list of the nodes in the network in a format
+#' @details This function returns a list of the nodes in the network in a format
 #' that is suitable for plotting with e.g. iGraph.
 #'
 #' @param p_net A PopsNet object.
 #' @return A dataframe with id and rate_infected.
 node_list <- function(p_net) {
     .Call('rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
+}
+
+#' @title SNP_distance
+#'
+#' @description Calculate distance (in number of different SNPs) between two genotypes 
+#' encoded as integers. 
+#' 
+#' @details This function calculates the difference between two genetic sequences. A sequence
+#' is represented as an integer number where the binary of that number corresponds
+#' to a list of alleles. The distance between to sequences is the number of positions at
+#' which they have different alleles.
+#' 
+#' @param g1 Sequence 1
+#' @param g2 Sequence 2
+SNP_distance <- function(g1, g2) {
+    .Call('rpathsonpaths_SNP_distance', PACKAGE = 'rpathsonpaths', g1, g2)
+}
+
+#' @title SNP_pop_distance
+#'
+#' @description Calculate genetic distance between two populations.
+#' 
+#' @details This function calculates the genetic distance between two populations as the
+#' average distance between all pairs of individuals of the two populations.
+#' 
+#' @param p1 Population 1.
+#' @param p2 Population 2.
+SNP_pop_distance <- function(p1, p2) {
+    .Call('rpathsonpaths_SNP_pop_distance', PACKAGE = 'rpathsonpaths', p1, p2)
 }
 

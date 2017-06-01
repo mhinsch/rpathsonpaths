@@ -245,7 +245,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 //'
 //' @description Get a list of edges in a dataframe.
 //'
-//' @description This function returns a list of the edges in the network in a format
+//' @details This function returns a list of the edges in the network in a format
 //' that is suitable for plotting with e.g. iGraph.
 //'
 //' @param p_net A PopsNet object.
@@ -257,12 +257,39 @@ DataFrame edge_list(const XPtr<Net_t> & p_net);
 //'
 //' @description Get a list of nodes in a dataframe.
 //'
-//' @description This function returns a list of the nodes in the network in a format
+//' @details This function returns a list of the nodes in the network in a format
 //' that is suitable for plotting with e.g. iGraph.
 //'
 //' @param p_net A PopsNet object.
 //' @return A dataframe with id and rate_infected.
 // [[Rcpp::export]]
 DataFrame node_list(const XPtr<Net_t> & p_net);
+
+//' @title SNP_distance
+//'
+//' @description Calculate distance (in number of different SNPs) between two genotypes 
+//' encoded as integers. 
+//' 
+//' @details This function calculates the difference between two genetic sequences. A sequence
+//' is represented as an integer number where the binary of that number corresponds
+//' to a list of alleles. The distance between to sequences is the number of positions at
+//' which they have different alleles.
+//' 
+//' @param g1 Sequence 1
+//' @param g2 Sequence 2
+// [[Rcpp::export]]
+int SNP_distance(int g1, int g2);
+
+//' @title SNP_pop_distance
+//'
+//' @description Calculate genetic distance between two populations.
+//' 
+//' @details This function calculates the genetic distance between two populations as the
+//' average distance between all pairs of individuals of the two populations.
+//' 
+//' @param p1 Population 1.
+//' @param p2 Population 2.
+// [[Rcpp::export]]
+double SNP_pop_distance(const IntegerVector & p1, const IntegerVector & p2);
 
 #endif	// DIR_NETWORK_H
