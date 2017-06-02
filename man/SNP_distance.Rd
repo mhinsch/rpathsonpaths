@@ -11,6 +11,9 @@ SNP_distance(g1, g2)
 
 \item{g2}{Sequence 2}
 }
+\value{
+The distance between g1 and g2.
+}
 \description{
 Calculate distance (in number of different SNPs) between two genotypes 
 encoded as integers.
