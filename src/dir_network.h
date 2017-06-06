@@ -277,10 +277,11 @@ DataFrame node_list(const XPtr<Net_t> & p_net);
 //' 
 //' @param g1 Sequence 1
 //' @param g2 Sequence 2
+//' @return The distance between g1 and g2.
 // [[Rcpp::export]]
 int SNP_distance(int g1, int g2);
 
-//' @title SNP_pop_distance
+//' @title SNP_distance_pop
 //'
 //' @description Calculate genetic distance between two populations.
 //' 
@@ -289,7 +290,19 @@ int SNP_distance(int g1, int g2);
 //' 
 //' @param p1 Population 1.
 //' @param p2 Population 2.
+//' @return The distance between p1 and p2.
 // [[Rcpp::export]]
-double SNP_pop_distance(const IntegerVector & p1, const IntegerVector & p2);
+double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2);
 
+//' @title distances_net
+//'
+//' @description Calculate genetic distances within a network.
+//' 
+//' @details This function calculates the genetic distance between all pairs of nodes in 
+//' a popsnetwork.
+//' 
+//' @param p_net A popsnetwork object.
+//' @return A matrix of all distances.
+// [[Rcpp::export]]
+NumericMatrix distances_net(const XPtr<Net_t> & p_net);
 #endif	// DIR_NETWORK_H

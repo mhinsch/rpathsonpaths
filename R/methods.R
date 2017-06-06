@@ -34,5 +34,47 @@ plot.popsnetwork <- function(x, ...){
 	nodes <- node_list(x)
 	graph <- igraph::graph_from_data_frame(edges, TRUE, nodes)
 	igraph::E(graph)$width <- igraph::E(graph)$weight/max_w*3
-	igraph::plot.igraph(graph, layout=igraph::layout_with_lgl, vertex.size=5, vertex.label.cex=0.5)
+	igraph::plot.igraph(graph, layout=igraph::layout_with_lgl, vertex.size=5, 
+						vertex.label.cex=0.5)
 	}
+
+#' @title run_popsnet
+#'
+#' @description Create a popsnetwork and run the transport simulation.
+#'
+#' @details This function creates a popsnetwork object from the given parameters and runs 
+#' either the ibm or dirichlet simulation on it.
+#' @param edgelist The list of edges as a dataframe, with origin in the first and target in 
+#' the second column. If a third column is present it is interpreted as transfer rates per
+#' edge.
+#' @param ini_input Net input rates per source node. Note that source nodes in the network
+#' will be automatically detected and will be processed in order of node id.
+#' @param ini_infd Input rate of infected units per source nodes.
+#' @param ini_freqs Allele frequencies per source node. This has to be a matrix.
+#' @param n Number of simulation runs to perform.
+#' @param transmission Rate of infection in nodes.
+#' @param decay Decay rate in nodes used to infer transfer rates. If this is negative all 
+#' transfer rates will be assumed to be 1 (which in most cases is not a very useful value)
+#' unless edgelist has a third column (see above). If decay is not negative transfer rates
+#' will be inferred assuming preservation of mass with decay at the nodes. Note that the ibm
+#' simulation requires output to be smaller or equal to input for all nodes.
+#' @param theta The shape parameter for the Dirichlet distribution.
+#' @param method Either "ibm" or "dirichlet".
+#' @return A list containing the result of the simulation(s) as first and the raw network as
+#' the second element.
+run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmission=0.0, 
+						decay=-1.0, theta=1.0, method="ibm") {
+
+	ext_sources <- sort(sources(edgelist))
+	net_raw <- popsnetwork(edgelist, 
+						   data.frame(ext_sources, ini_infd, ini_input), transmission, decay)
+
+	if (method == "ibm"){
+		res <- replicate(n, spread_ibm_mixed(net_raw, list(ext_sources, ini_freqs))) }
+	else if (method == "dirichlet"){
+		res <- replicate(n, spread_dirichlet(net_raw, list(ext_sources, ini_freqs), theta)) }
+	else {
+		stop("Unknown method!") }
+
+	list(result=res, raw=net_raw)
+}

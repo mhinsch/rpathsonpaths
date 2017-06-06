@@ -58,5 +58,4 @@ size_t id_from_SEXP(const Net_t & net, SEXP id);
 void sample_node(const Node_t & node, size_t n, vector<size_t> & count);
 
 
-
 #endif	// RNET_UTIL_H

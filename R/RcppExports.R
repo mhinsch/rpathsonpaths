@@ -282,11 +282,12 @@ node_list <- function(p_net) {
 #' 
 #' @param g1 Sequence 1
 #' @param g2 Sequence 2
+#' @return The distance between g1 and g2.
 SNP_distance <- function(g1, g2) {
     .Call('rpathsonpaths_SNP_distance', PACKAGE = 'rpathsonpaths', g1, g2)
 }
 
-#' @title SNP_pop_distance
+#' @title SNP_distance_pop
 #'
 #' @description Calculate genetic distance between two populations.
 #' 
@@ -295,7 +296,21 @@ SNP_distance <- function(g1, g2) {
 #' 
 #' @param p1 Population 1.
 #' @param p2 Population 2.
-SNP_pop_distance <- function(p1, p2) {
-    .Call('rpathsonpaths_SNP_pop_distance', PACKAGE = 'rpathsonpaths', p1, p2)
+#' @return The distance between p1 and p2.
+SNP_distance_pop <- function(p1, p2) {
+    .Call('rpathsonpaths_SNP_distance_pop', PACKAGE = 'rpathsonpaths', p1, p2)
+}
+
+#' @title distances_net
+#'
+#' @description Calculate genetic distances within a network.
+#' 
+#' @details This function calculates the genetic distance between all pairs of nodes in 
+#' a popsnetwork.
+#' 
+#' @param p_net A popsnetwork object.
+#' @return A matrix of all distances.
+distances_net <- function(p_net) {
+    .Call('rpathsonpaths_distances_net', PACKAGE = 'rpathsonpaths', p_net)
 }
 

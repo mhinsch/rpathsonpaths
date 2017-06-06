@@ -4,6 +4,7 @@
 #include "rcpp_util.h"
 #include "rnet_util.h"
 #include "libpathsonpaths/ibmmixed.h"
+#include "libpathsonpaths/sputil.h"
 
 #include <algorithm>
 #include <bitset>
@@ -512,7 +513,7 @@ int SNP_distance(int g1, int g2)
 	return bitset<sizeof(int)*8>(g1 ^ g2).count();
 	}
 
-double SNP_pop_distance(const IntegerVector & p1, const IntegerVector & p2)
+double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2)
 	{
 	double res = 0.0;
 
@@ -528,3 +529,48 @@ double SNP_pop_distance(const IntegerVector & p1, const IntegerVector & p2)
 
 	return res/p1.size();
 	}
+
+double SNP_distance(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		for (int j=0; j<n2.frequencies.size(); j++)
+			d += SNP_distance(i, j) * n1.frequencies[i] * n2.frequencies[j];
+
+	return d;
+	}
+
+double freq_distance(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		d += pow<2>(n1.frequencies[i] - n2.frequencies[i]);
+
+	return d/n1.frequencies.size();
+	}
+
+NumericMatrix distances_net(const XPtr<Net_t> & p_net)
+	{
+	const Net_t * net = p_net.checked_get();
+
+	NumericMatrix res(net->nodes.size(), net->nodes.size());
+
+	for (int i=0; i<net->nodes.size(); i++)
+		for (int j=i; j<net->nodes.size(); j++)
+			res(i, j) = res(j, i) = freq_distance(*net->nodes[i], *net->nodes[j]);
+
+	if (net->name_by_id.size())
+		{
+		// StringVector is clearly missing a constructor here
+		StringVector cn(net->name_by_id.size()), rn(net->name_by_id.size());
+		cn = net->name_by_id;
+		rn = net->name_by_id;
+		colnames(res) = cn;
+		rownames(res) = rn;
+		}
+
+	return res;
+	}
+
