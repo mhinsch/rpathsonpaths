@@ -8,15 +8,16 @@ run_popsnet(edgelist, ini_input, ini_infd, ini_freqs, n = 1L,
   transmission = 0, decay = -1, theta = 1, method = "ibm")
 }
 \arguments{
-\item{edgelist}{The list of edges as a dataframe, with from in the first and to in the 
-second column.}
+\item{edgelist}{The list of edges as a dataframe, with origin in the first and target in 
+the second column. If a third column is present it is interpreted as transfer rates per
+edge.}
 
 \item{ini_input}{Net input rates per source node. Note that source nodes in the network
 will be automatically detected and will be processed in order of node id.}
 
 \item{ini_infd}{Input rate of infected units per source nodes.}
 
-\item{ini_freqs}{Allele frequencies per source node. This has to a matrix.}
+\item{ini_freqs}{Allele frequencies per source node. This has to be a matrix.}
 
 \item{n}{Number of simulation runs to perform.}
 
@@ -33,7 +34,7 @@ simulation requires output to be smaller or equal to input for all nodes.}
 \item{method}{Either "ibm" or "dirichlet".}
 }
 \value{
-A list containing the result of the simulation as first and the raw network as
+A list containing the result of the simulation(s) as first and the raw network as
 the second element.
 }
 \description{
