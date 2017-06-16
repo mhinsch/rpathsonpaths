@@ -189,8 +189,8 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		IntegerVector subn = colour_network(links);
 		if (subn.size() == 0)
 			stop("Empty network!");
-		const int col = subn[0];
 
+		const int col = subn[0];
 		for (int c : subn)
 			if (c != col)
 				stop("More than one network in data!");

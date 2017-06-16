@@ -60,14 +60,25 @@ plot.popsnetwork <- function(x, ...){
 #' simulation requires output to be smaller or equal to input for all nodes.
 #' @param theta The shape parameter for the Dirichlet distribution.
 #' @param method Either "ibm" or "dirichlet".
+#' @param checks Whether to perform some sanity checks on the graph before simulating (slow).
 #' @return A list containing the result of the simulation(s) as first and the raw network as
 #' the second element.
 run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmission=0.0, 
-						decay=-1.0, theta=1.0, method="ibm") {
+						decay=-1.0, theta=1.0, method="ibm", checks=FALSE) {
 
 	ext_sources <- sort(sources(edgelist))
+	n_sources <- length(ext_sources)
+
+	vinp <- rep_len(ini_input, n_sources)
+	vinfd <- rep_len(ini_infd, n_sources)
+
 	net_raw <- popsnetwork(edgelist, 
-						   data.frame(ext_sources, ini_infd, ini_input), transmission, decay)
+				data.frame(ext_sources, vinfd, vinp), transmission, decay, checks)
+
+	if (n_sources != nrow(ini_freqs)){
+		stop(paste("One vector of allele frequencies per input required (got ", 
+				   nrow(ini_freqs), " instead of ", n_sources, ")!"))
+	}
 
 	if (method == "ibm"){
 		res <- replicate(n, spread_ibm_mixed(net_raw, list(ext_sources, ini_freqs))) }
