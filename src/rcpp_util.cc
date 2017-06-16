@@ -12,13 +12,13 @@ vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names
 	for (size_t f : factor)
 		{
 		// take into account 1-based indexing in R
-		const auto name = levels(f-1);
+		const string name = string(levels(f-1));
 
 		// try inserting
 		const auto ins_it = idxs.emplace(name, names.size());
 		// success => name was new => new node
 		if (ins_it.second)
-			names.push_back(string(name));
+			names.push_back(name);
 
 		nodes.push_back(ins_it.first->second);
 		}
