@@ -83,7 +83,8 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 	if (method == "ibm"){
 		res <- replicate(n, spread_ibm_mixed(net_raw, list(ext_sources, ini_freqs))) }
 	else if (method == "dirichlet"){
-		res <- replicate(n, spread_dirichlet(net_raw, list(ext_sources, ini_freqs), theta)) }
+		res <- replicate(n, 
+			spread_dirichlet(net_raw, ini_dist=list(ext_sources, ini_freqs), theta=theta)) }
 	else {
 		stop("Unknown method!") }
 
