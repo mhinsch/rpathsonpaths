@@ -11,6 +11,16 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	if (node->done)
 		return;
 
+	// this needs to be done first to make sure we get the whole network set up
+	// properly
+	for (auto link : node->inputs)
+		annotate_frequencies_ibmm(link->from, rng);
+
+	// we want even empty nodes to have a set of frequencies
+	// so let's do that here
+	for (auto l : node->outputs)
+		l->to->frequencies.resize(node->frequencies.size(), 0.0);
+
 	// we are pushing, so ignore leaves
 	if (node->is_leaf() || node->rate_in <= 0)
 		{
@@ -18,11 +28,6 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		node->done = true;
 		return;
 		}
-
-	//std::cout << "ibm: " << node << "\n";
-
-	for (auto link : node->inputs)
-		annotate_frequencies_ibmm(link->from, rng);
 
 	// no input set on this branch
 	if (node->frequencies.size() == 0)
@@ -109,13 +114,11 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 // use a multi-variate hypergeometric distribution (we actually use a regular 
 // hypergeometric and the conditional method).
 
-	for (auto l : node->outputs)
-		l->to->frequencies.resize(node->frequencies.size(), 0.0);
-
 	// we have to keep track of how many infected there are still left
 	// all_infd == sum(node->frequencies)
 	double all_infd = infd + newly_infd;
 	double all_non_infd = inp - all_infd;
+	myassert(all_non_infd >= 0);
 	auto left_by_gene = node->frequencies;
 
 	//std::cout << "****\n";
@@ -123,7 +126,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		{
 		l->rate_infd = 0;
 		// how many go into this link (infd + non-infd)
-		double pick = l->rate;
+		// needs to be an int, otherwise we'll get into trouble b/c rounding errors
+		int pick = int(l->rate);
 		// overall number of units left to pick from (for all links)
 		double all_left = all_infd + all_non_infd;
 
