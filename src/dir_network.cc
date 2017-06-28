@@ -179,7 +179,7 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
-	double transmission, double decay, bool checks)
+	double transmission, double decay, const string & spread_model, bool checks)
 	{
 	if (checks)
 		{
@@ -257,8 +257,16 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	if (decay >= 0.0 && decay < 1.0)
 		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
 
-	// TODO maybe factor out, make constructor only build the net
-	annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
+	if (spread_model== "fluid")
+		// TODO maybe factor out, make constructor only build the net
+		annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
+	else if (spread_model == "units")
+		{
+		Rng rng;
+		annotate_rates_ibmm(net->nodes.begin(), net->nodes.end(), transmission, rng);
+		}
+	else
+		stop("Unknown spread model!");
 
 	return make_S3XPtr(net, "popsnetwork");
 	}

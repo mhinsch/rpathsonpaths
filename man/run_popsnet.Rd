@@ -5,8 +5,8 @@
 \title{run_popsnet}
 \usage{
 run_popsnet(edgelist, ini_input, ini_infd, ini_freqs, n = 1L,
-  transmission = 0, decay = -1, theta = 1, method = "ibm",
-  checks = FALSE)
+  transmission = 0, decay = -1, theta = 1, spread_model = "units",
+  drift_model = "units", checks = FALSE)
 }
 \arguments{
 \item{edgelist}{The list of edges as a dataframe, with origin in the first and target in 
@@ -32,7 +32,9 @@ simulation requires output to be smaller or equal to input for all nodes.}
 
 \item{theta}{The shape parameter for the Dirichlet distribution.}
 
-\item{method}{Either "ibm" or "dirichlet".}
+\item{spread_model}{Either "fluid" or "units".}
+
+\item{drift_model}{Either "dirichlet" or "units".}
 
 \item{checks}{Whether to perform some sanity checks on the graph before simulating (slow).}
 }

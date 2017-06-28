@@ -124,11 +124,15 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' @param decay The decay of material within nodes.
 //' If this parameter has a value in [0, 1) transport rates for the entire network will 
 //' be rescaled so that sum(output) == sum(input) * (1-decay) in all (non-leaf) nodes.
+//' @param spread_model How to model spread of pathogens. With "fluid" the substrate carrying
+//' the infection and the pathogen itself is essentially treated as a fluid and rates are 
+//' calculated deterministically. With "units" infection as well as selection of infected vs.
+//' uninfected material at outputs is modelled as a stochastic process on discrete units.
 //' @param checks Perform some basic integrity checks on input data (currently looks for cycles
 //' and disconnected sub-networks).
 //' @return A popsnetwork object.
 // [[Rcpp::export]]
-XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, double decay=-1.0, bool checks=false);
+XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, double decay=-1.0, const string & spread_model = "fluid", bool checks=false);
 
 // [[Rcpp::export(name=".printpopsnetwork")]]
 void print_popsnetwork(const XPtr<Net_t> & p_net);

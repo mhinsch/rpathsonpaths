@@ -52,8 +52,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // popsnetwork
-XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, double decay, bool checks);
-RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP decaySEXP, SEXP checksSEXP) {
+XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, double decay, const string& spread_model, bool checks);
+RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP decaySEXP, SEXP spread_modelSEXP, SEXP checksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,8 +61,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const DataFrame& >::type external(externalSEXP);
     Rcpp::traits::input_parameter< double >::type transmission(transmissionSEXP);
     Rcpp::traits::input_parameter< double >::type decay(decaySEXP);
+    Rcpp::traits::input_parameter< const string& >::type spread_model(spread_modelSEXP);
     Rcpp::traits::input_parameter< bool >::type checks(checksSEXP);
-    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission, decay, checks));
+    rcpp_result_gen = Rcpp::wrap(popsnetwork(links, external, transmission, decay, spread_model, checks));
     return rcpp_result_gen;
 END_RCPP
 }
