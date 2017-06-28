@@ -212,8 +212,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 // hypergeometric and the conditional method).
 
 	// we have to keep track of how many infected there are still left
-	// all_infd == sum(node->frequencies)
-	double all_infd = node->rate_in_infd;
+	// left_all == sum(node->frequencies)
+	double left_all = node->rate_in_infd;
 	auto left_by_gene = node->frequencies;
 
 	for (auto l : node->outputs)
@@ -221,6 +221,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		// how many infd go into this link (uninfd have been done by annotate_rates)
 		// needs to be an int, otherwise we'll get into trouble b/c rounding errors
 		int pick = int(l->rate_infd);
+		// how many to pick from for the remaining alleles
+		double all_infd = left_all;
 
 		// first n-1 alleles
 		for (size_t i=0; i<left_by_gene.size()-1; i++)
@@ -238,8 +240,9 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 			// adjust number to pick from for the next output
 			left_by_gene[i] -= add;
 			myassert(left_by_gene[i] >= 0);
-			all_infd -= add;
-			myassert(all_infd >= 0);
+			// keep this synchronized with left_by_gene
+			left_all -= add;
+			myassert(left_all >= 0);
 			// we pick less next time
 			pick -= add;
 			myassert(pick >= 0);
@@ -248,9 +251,10 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 			}
 
 		// last allele gets the leftovers
-		all_infd -= pick;
-		left_by_gene.back() -= pick;
 		l->to->frequencies.back() += pick;
+		// keep track
+		left_all -= pick;
+		left_by_gene.back() -= pick;
 		}
 
 	node->normalize();
