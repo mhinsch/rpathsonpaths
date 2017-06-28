@@ -124,7 +124,7 @@ void annotate_rates(NODE * node, double transm_rate)
 		node->rate_in = 0;
 
 		// does nothing for roots
-		for (typename NODE::link_t * link : node->inputs)
+		for (auto link : node->inputs)
 			{
 			// new links set that to -1
 			if (link->rate_infd < 0)
