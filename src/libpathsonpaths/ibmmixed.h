@@ -29,13 +29,6 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 			node->rate_in_infd += link->rate_infd;
 			}
 
-		// nothing happens, so we're done 
-		if (node->rate_in <= 0 || node->rate_in_infd <= 0)
-			{
-			node->done = true;
-			return;
-			}
-
 // *** transmission
 //     NOTE that this doesn't happen for sources
 
@@ -47,14 +40,20 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		node->rate_in_infd += newly_infd;
 		node->d_rate_in_infd = newly_infd;
 
-		myassert(inp > 0 && uninfd >= 0 && newly_infd >=0);
+		myassert(inp >= 0 && uninfd >= 0 && newly_infd >=0);
 		}
 
 // *** output
 
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
+		{
 		outp += l->rate;
+		// do that here so that we can just quit if there's no output
+		l->rate_infd = 0;
+		}
+
+	node->rate_out_infd = 0;
 
 	// no output, done
 	if (outp <= 0)
@@ -77,7 +76,6 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	//std::cout << "****\n";
 	for (auto l : node->outputs)
 		{
-		l->rate_infd = 0;
 		// how many go into this link (infd + non-infd)
 		// needs to be an int, otherwise we'll get into trouble b/c rounding errors
 		int pick = int(l->rate);
@@ -91,7 +89,6 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		}
 
 	// adjust output rates in the node
-	node->rate_out_infd = 0.0;
 	for (const auto & l : node->outputs)
 		node->rate_out_infd += l->rate_infd;
 
@@ -141,10 +138,17 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		return;
 		}
 
-	// just in case, frequencies might have been initialized to a different scale than
-	// input rate; we just assume input rate has priority
 	if (node->is_root())
+		{
+		// just in case, frequencies might have been initialized to a different scale than
+		// input rate; we just assume input rate has priority
 		node->normalize(node->rate_in_infd);
+		// now we move everything to int, otherwise bad things will happen later on
+		int sum = 0;
+		for (auto & f : node->frequencies)
+			sum += (f = int(f));
+		node->rate_in_infd = sum;
+		}
 
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
