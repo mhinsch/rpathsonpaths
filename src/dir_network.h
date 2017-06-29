@@ -97,7 +97,7 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' \code{\link{set_allele_freqs}}. Note that the initial allele distribution can also
 //' be set in the next step, allowing this step to be skipped.
 //' \item Simulate spread of genetic material through the network with 
-//' \code{\link{spread_dirichlet}}.
+//' \code{\link{popgen_dirichlet}}.
 //' \item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
 //'
 //' A worked example is available in the 'overview' vignette.
@@ -157,7 +157,7 @@ void print_popsnode(const XPtr<Node_t> & p_node);
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 
 
-//' @title spread_dirichlet
+//' @title popgen_dirichlet
 //' 
 //' @description Simulate spread of pathogens on the network using a Dirichlet
 //' distribution to approximate genetic drift.
@@ -179,10 +179,10 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 //' way will effectively be treated as a source and hide nodes that are further upstream.
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
-XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
+XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
 
 
-//' @title spread_ibm_mixed
+//' @title popgen_ibm_mixed
 //' 
 //' @description Simulate spread of pathogens on the network using a (very) simple individual-based
 //' model.
@@ -202,7 +202,7 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' in this way.
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
-XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
+XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
 
 
 //' @title get_popsnode

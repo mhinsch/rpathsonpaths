@@ -94,7 +94,7 @@ cycles <- function(edge_list, record = FALSE) {
 #' \code{\link{set_allele_freqs}}. Note that the initial allele distribution can also
 #' be set in the next step, allowing this step to be skipped.
 #' \item Simulate spread of genetic material through the network with 
-#' \code{\link{spread_dirichlet}}.
+#' \code{\link{popgen_dirichlet}}.
 #' \item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
 #'
 #' A worked example is available in the 'overview' vignette.
@@ -157,7 +157,7 @@ set_allele_freqs <- function(p_net, ini_dist) {
     .Call('rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
 }
 
-#' @title spread_dirichlet
+#' @title popgen_dirichlet
 #' 
 #' @description Simulate spread of pathogens on the network using a Dirichlet
 #' distribution to approximate genetic drift.
@@ -178,11 +178,11 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' a matrix of allele frequencies. Note that *any* node pre-set in this
 #' way will effectively be treated as a source and hide nodes that are further upstream.
 #' @return A new popsnetwork object with allele frequencies set for each node.
-spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
-    .Call('rpathsonpaths_spread_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)
+popgen_dirichlet <- function(p_net, theta, ini_dist = NULL) {
+    .Call('rpathsonpaths_popgen_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)
 }
 
-#' @title spread_ibm_mixed
+#' @title popgen_ibm_mixed
 #' 
 #' @description Simulate spread of pathogens on the network using a (very) simple individual-based
 #' model.
@@ -201,8 +201,8 @@ spread_dirichlet <- function(p_net, theta, ini_dist = NULL) {
 #' a matrix of allele frequencies. Note that only root nodes can be initialized
 #' in this way.
 #' @return A new popsnetwork object with allele frequencies set for each node.
-spread_ibm_mixed <- function(p_net, ini_dist = NULL) {
-    .Call('rpathsonpaths_spread_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
+popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
+    .Call('rpathsonpaths_popgen_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
 }
 
 #' @title get_popsnode

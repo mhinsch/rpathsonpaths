@@ -21,7 +21,7 @@ The most important functions include:
 
 -   **`set_allele_freq`**: set the population composition in source nodes.
 
--   **`spread_dirichlet`**: simulate spread of genetic material on the network using a Dirichlet distribution to approximate genetic drift.
+-   **`popgen_dirichlet`**: simulate spread of genetic material on the network using a Dirichlet distribution to approximate genetic drift.
 
 -   **`draw_isolates`**: draw a number of random individuals from a set of nodes using the simulated allele frequencies.
 
@@ -134,19 +134,19 @@ netini
 #> 5    2   0.5 0.5
 ```
 
-Now we are ready to simulate spread of genetic material in the network. Note that every call to spread\_dirichlet will generally produce a different allele frequency distribution.
+Now we are ready to simulate spread of genetic material in the network. Note that every call to popgen\_dirichlet will generally produce a different allele frequency distribution.
 
 ``` r
-netdir1 <- spread_dirichlet(netini, 1.7)
+netdir1 <- popgen_dirichlet(netini, 1.7)
 netdir1
 #> Nodes:
 #> 
 #> id   infected    input   alleles...
 #> 0    0.5 1   0.1 0.3 0.2 0.4
-#> 1    0.55    1   9.26532e-05 0.0160322   0.00619843  0.977677
-#> 2    0.55    2   0.214061    0.154754    0.476562    0.154623
-#> 3    0.595   0.6 0.00318735  0.0449167   0.141349    0.810547
-#> 4    0.631818    1.1 8.30907e-17 2.02343e-09 0.0155671   0.984433
+#> 1    0.55    1   0.00739108  0.409471    0.0328128   0.550325
+#> 2    0.55    2   0.270835    0.172948    0.0765832   0.479634
+#> 3    0.595   0.6 0.00200752  0.722642    0.000274036 0.275076
+#> 4    0.631818    1.1 1.06816e-10 0.17733 1.02006e-13 0.82267
 #> 5    0.5 1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -159,16 +159,16 @@ netdir1
 #> 3    4   1   0.595
 #> 1    4   0.1 0.55
 #> 5    2   0.5 0.5
-netdir2 <- spread_dirichlet(netini, 1.7)
+netdir2 <- popgen_dirichlet(netini, 1.7)
 netdir2
 #> Nodes:
 #> 
 #> id   infected    input   alleles...
 #> 0    0.5 1   0.1 0.3 0.2 0.4
-#> 1    0.55    1   0.0995172   0.0716722   0.530512    0.298298
-#> 2    0.55    2   0.18657 0.0317454   0.00251277  0.779172
-#> 3    0.595   0.6 0.00962029  0.112068    0.689128    0.189184
-#> 4    0.631818    1.1 0.0176785   0.0845968   0.833022    0.0647032
+#> 1    0.55    1   0.288946    0.333519    0.000154674 0.37738
+#> 2    0.55    2   0.186576    0.355378    0.00973227  0.448314
+#> 3    0.595   0.6 0.1033  0.789183    0.00126553  0.106251
+#> 4    0.631818    1.1 0.0778252   0.89497 1.07886e-117    0.0272053
 #> 5    0.5 1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -192,12 +192,12 @@ Finally we can draw samples from our simulated population.
 samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        1        4        5        0
-#> 2    4        0        0        0       10
+#> 1    2        2        3        0        5
+#> 2    4        0        1        0        9
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        2        0        0        8
-#> 2    4        0        2        8        0
+#> 1    2        1        5        0        4
+#> 2    4        0       10        0        0
 ```
 
 Contributors (in alphabetic order):

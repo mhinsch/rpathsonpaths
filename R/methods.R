@@ -71,6 +71,11 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 	ext_sources <- sort(sources(edgelist))
 	n_sources <- length(ext_sources)
 
+	if (n_sources != nrow(ini_freqs)){
+		stop(paste("One vector of allele frequencies per input required (got ", 
+				   nrow(ini_freqs), " instead of ", n_sources, ")!"))
+	}
+
 	vinp <- rep_len(ini_input, n_sources)
 	vinfd <- rep_len(ini_infd, n_sources)
 
@@ -78,16 +83,11 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 				data.frame(ext_sources, vinfd, vinp), transmission, decay, checks, 
 				spread_model=spread_model)
 
-	if (n_sources != nrow(ini_freqs)){
-		stop(paste("One vector of allele frequencies per input required (got ", 
-				   nrow(ini_freqs), " instead of ", n_sources, ")!"))
-	}
-
 	if (drift_model== "units"){
-		res <- replicate(n, spread_ibm_mixed(net_raw, list(ext_sources, ini_freqs))) }
+		res <- replicate(n, popgen_ibm_mixed(net_raw, list(ext_sources, ini_freqs))) }
 	else if (drift_model == "dirichlet"){
 		res <- replicate(n, 
-			spread_dirichlet(net_raw, ini_dist=list(ext_sources, ini_freqs), theta=theta)) }
+			popgen_dirichlet(net_raw, ini_dist=list(ext_sources, ini_freqs), theta=theta)) }
 	else {
 		stop("Unknown method!") }
 

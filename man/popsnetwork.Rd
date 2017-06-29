@@ -69,7 +69,7 @@ Generating simulated genetic data from a popsnetwork object happens in several s
 \code{\link{set_allele_freqs}}. Note that the initial allele distribution can also
 be set in the next step, allowing this step to be skipped.
 \item Simulate spread of genetic material through the network with 
-\code{\link{spread_dirichlet}}.
+\code{\link{popgen_dirichlet}}.
 \item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
 
 A worked example is available in the 'overview' vignette.

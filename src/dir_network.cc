@@ -322,7 +322,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	}
 
 
-XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
+XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
 
@@ -341,7 +341,7 @@ XPtr<Net_t> spread_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	}
 
 
-XPtr<Net_t> spread_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
+XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
 
