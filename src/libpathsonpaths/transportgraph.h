@@ -9,7 +9,7 @@ struct TranspLink
 	double rate;		//!< (absolute) transfer rate of material.
 	double rate_infd;	//!< (absolute) transfer rate of infected material.
 
-	TranspLink(double a_rate = 0.0, double a_rate_infd = -1)
+	TranspLink(double a_rate = 0.0, double a_rate_infd = 0.0)
 		: rate(a_rate), rate_infd(a_rate_infd)
 		{}
 	};
@@ -24,7 +24,7 @@ struct TranspNode
 	double rate_out_infd;
 
 	TranspNode()
-		: rate_in(-1), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(-1)
+		: rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
 		{}
 
 	void reset_rates()
@@ -90,10 +90,10 @@ template<class ITER>
 void preserve_mass(const ITER & beg, const ITER & end, double decay)
 	{
 	for (ITER i=beg; i!=end; i++)
-		(*i)->done = false;
+		preserve_mass(*i, decay);
 
 	for (ITER i=beg; i!=end; i++)
-		preserve_mass(*i, decay);
+		(*i)->done = false;
 	}
 
 
@@ -103,11 +103,6 @@ void preserve_mass(const ITER & beg, const ITER & end, double decay)
  * @note This function will call itself 
  * recursively for unprocessed input nodes.
  *
- * @note Current implicit assumption:
- * - sources are input-less nodes with rates pre-set
- * - links: rate_infd < 0 <=> haven't been processed yet
- * - nodes: rate_in <= 0 <=> haven't been processed yet
- * 
  * @tparam NODE node type.
  * @param node node to process.
  * @param transm_rate rate of infection within nodes
@@ -116,53 +111,43 @@ template<class NODE>
 void annotate_rates(NODE * node, double transm_rate)
 	{
 	// not processed yet
-	// NOTE sources will have this set but *not* the output rate!
-	if (node->rate_in < 0)
+	if (node->done)
+		return;
+
+	// *** input
+
+	// does nothing for roots
+	for (auto link : node->inputs)
 		{
-		// *** input
-		
-		node->rate_in = 0;
+		// do parents first
+		annotate_rates(link->from, transm_rate);
 
-		// does nothing for roots
-		for (auto link : node->inputs)
-			{
-			// new links set that to -1
-			if (link->rate_infd < 0)
-				annotate_rates(link->from, transm_rate);
-
-			node->rate_in += link->rate;
-			node->rate_in_infd += link->rate_infd;
-			}
-
-		// *** infection
-		
-		// proportion of input becomes infected
-		node->d_rate_in_infd = transm_rate * (node->rate_in - node->rate_in_infd);
-		node->rate_in_infd += node->d_rate_in_infd;
+		node->rate_in += link->rate;
+		node->rate_in_infd += link->rate_infd;
 		}
 
-	if (node->rate_out_infd < 0)
+	// *** infection
+	
+	// proportion of input becomes infected
+	node->d_rate_in_infd = transm_rate * (node->rate_in - node->rate_in_infd);
+	node->rate_in_infd += node->d_rate_in_infd;
+
+	// *** output
+		
+	// proportion of infected units
+	const double prop_infd = node->prop_infected();
+
+	// does nothing for leaves
+	for (typename NODE::link_t * link : node->outputs)
 		{
-		// *** output
-		
-		node->rate_out_infd = 0;
-		
-		// proportion of infected units
-		const double prop_infd = node->prop_infected();
+		// all outputs have the same proportion of infected units
+		// NOTE could be changed down the line
+		link->rate_infd = link->rate * prop_infd;
 
-		// does nothing for leaves
-		for (typename NODE::link_t * link : node->outputs)
-			{
-			// if this has been done there's something wrong
-			myassert(link->rate_infd < 0);
-			
-			// all outputs have the same proportion of infected units
-			// NOTE could be changed down the line
-			link->rate_infd = link->rate * prop_infd;
-
-			node->rate_out_infd += link->rate_infd;
-			}
+		node->rate_out_infd += link->rate_infd;
 		}
+
+	node->done = true;
 	}
 
 /** Annotate rates for a collection of nodes and all their inputs (recursively). 
@@ -176,6 +161,9 @@ void annotate_rates(const ITER & beg, const ITER & end, double transm_rate)
 	{
 	for (ITER i=beg; i!=end; i++)
 		annotate_rates(*i, transm_rate);
+
+	for (ITER i=beg; i!=end; i++)
+		(*i)->done = false;
 	}
 
 /** Probability of infected material from node @a n_from to end up in node @a n_to. 

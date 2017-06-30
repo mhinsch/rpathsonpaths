@@ -8,52 +8,40 @@
 template<class NODE, class RNG>
 void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	{
+	// not processed yet
 	if (node->done)
 		return;
 
-	// not processed yet
-	// NOTE sources will have this set but *not* the output rate!
-	if (node->rate_in < 0)
-		{
-		node->rate_in = 0;
-
 // *** collect input
 
-		// this needs to be done first to make sure we get the whole network set up
-		// properly
-		for (auto link : node->inputs)
-			{
-			annotate_rates_ibmm(link->from, transm_rate, rng);
+	// this needs to be done first to make sure we get the whole network set up
+	// properly
+	for (auto link : node->inputs)
+		{
+		annotate_rates_ibmm(link->from, transm_rate, rng);
 
-			node->rate_in += link->rate;
-			node->rate_in_infd += link->rate_infd;
-			}
+		node->rate_in += link->rate;
+		node->rate_in_infd += link->rate_infd;
+		}
 
 // *** transmission
-//     NOTE that this doesn't happen for sources
+//     NOTE that this also happens for sources
 
-		const double inp = node->rate_in;
-		const double uninfd = inp - node->rate_in_infd;
-		// coin flip for each uninfected whether it becomes infected
-		const int newly_infd = uninfd > 0 ? rng.binom(transm_rate, int(uninfd)) : 0;
+	const double inp = node->rate_in;
+	const double uninfd = inp - node->rate_in_infd;
+	// coin flip for each uninfected whether it becomes infected
+	const int newly_infd = uninfd > 0 ? rng.binom(transm_rate, int(uninfd)) : 0;
 
-		node->rate_in_infd += newly_infd;
-		node->d_rate_in_infd = newly_infd;
+	node->rate_in_infd += newly_infd;
+	node->d_rate_in_infd = newly_infd;
 
-		myassert(inp >= 0 && uninfd >= 0 && newly_infd >=0);
-		}
+	myassert(inp >= 0 && uninfd >= 0 && newly_infd >=0);
 
 // *** output
 
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
-		{
 		outp += l->rate;
-		// do that here so that we can just quit if there's no output
-		l->rate_infd = 0;
-		}
-
-	node->rate_out_infd = 0;
 
 	// no output, done
 	if (outp <= 0)
@@ -100,12 +88,39 @@ template<class ITER, class RNG>
 void annotate_rates_ibmm(const ITER & beg, const ITER & end, double transm_rate, RNG & rng)
 	{
 	for (ITER i=beg; i!=end; i++)
-		(*i)->done = false;
+		annotate_rates_ibmm(*i, transm_rate, rng);
 
 	for (ITER i=beg; i!=end; i++)
-		annotate_rates_ibmm(*i, transm_rate, rng);
+		(*i)->done = false;
 	}
 
+// assign infd randomly according to frequencies
+template<class NODE, class RNG>
+void init_frequencies_ibmm(NODE * node, RNG & rng)
+	{
+	int n = node->rate_in_infd;
+	double rem = 1.0;
+
+	for (size_t i=0; i<node->frequencies.size()-1 && n>0 && rem>0; i++)
+		{
+		const double p = node->frequencies[i];
+		// due to numeric effects it can happen that p>rem (slightly)
+		// if this is the last positive frequency
+		const int add = rng.binom(std::min(1.0, p/rem), n);
+
+		myassert(add >= 0);
+
+		node->frequencies[i] = add;
+
+		n -= add;
+		rem -= p;
+		}
+
+	myassert(n>=0 && rem>-0.0001); 
+	// R binom does weird stuff when rem and p are very close so we
+	// skip the last step and just assign n directly
+	node->frequencies.back() += n;
+	}
 
 template<class NODE, class RNG>
 void annotate_frequencies_ibmm(NODE * node, RNG & rng)
@@ -138,22 +153,11 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		return;
 		}
 
-	if (node->is_root())
-		{
-		// just in case, frequencies might have been initialized to a different scale than
-		// input rate; we just assume input rate has priority
-		node->normalize(node->rate_in_infd);
-		// now we move everything to int, otherwise bad things will happen later on
-		int sum = 0;
-		for (auto & f : node->frequencies)
-			sum += (f = int(f));
-		node->rate_in_infd = sum;
-		}
-
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
 		outp += l->rate;
 
+	// no output, done
 	if (outp <= 0)
 		{
 		node->normalize();
@@ -164,6 +168,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	// pre-transmission infected
 	const double infd = node->rate_in_infd - node->d_rate_in_infd;
 
+	// nothing infected, done
 	if (infd <= 0)
 		{
 		node->done = true;
@@ -269,6 +274,10 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 template<class ITER, class BINOM_FUNC>
 void annotate_frequencies_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
 	{
+	// get #individuals from frequencies
+	for (ITER i=beg; i!=end; i++)
+		init_frequencies_ibmm(*i, binom);
+
 	for (ITER i=beg; i!=end; i++)
 		(*i)->done = false;
 

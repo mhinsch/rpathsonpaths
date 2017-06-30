@@ -36,10 +36,12 @@ struct Network : public AbstractNetwork
 		other.clone_into(*this);
 		}
 
-	const Network & operator=(Network tmp)
+	const Network & operator=(Network && tmp)
 		{
 		swap(tmp.nodes, this->nodes);
 		swap(tmp.links, this->links);
+
+		return *this;
 		}
 
 	/** Add an edge. Source and target nodes have to be specified as indices.

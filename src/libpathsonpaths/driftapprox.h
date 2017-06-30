@@ -20,10 +20,12 @@ struct FreqNode
 	value_t normalize(value_t norm=1.0)
 		{
 		const auto sum = std::accumulate(frequencies.begin(), frequencies.end(), value_t(0));
-		const auto factor = norm / sum;
-		if (sum > 0)
+		if (sum > 0 && sum != norm)
+			{
+			const auto factor = norm / sum;
 			for (auto & f : frequencies)
 				f *= factor;
+			}
 
 		return sum;
 		}
