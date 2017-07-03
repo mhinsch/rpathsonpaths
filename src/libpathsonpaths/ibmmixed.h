@@ -5,14 +5,17 @@
 
 #include "util.h"
 
+
 template<class NODE, class RNG>
 void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	{
-	// not processed yet
 	if (node->done)
 		return;
 
 // *** collect input
+
+	if (!node->is_root())
+		node->rate_in = node->rate_in_infd = 0;
 
 	// this needs to be done first to make sure we get the whole network set up
 	// properly
@@ -24,20 +27,32 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		node->rate_in_infd += link->rate_infd;
 		}
 
+	const int in_infd = node->rate_in_infd;
+	const int in = node->rate_in;
+	if (in_infd <= 0)
+		{
+		node->done = true;
+		return;
+		}
+
 // *** transmission
 //     NOTE that this also happens for sources
 
-	const double inp = node->rate_in;
-	const double uninfd = inp - node->rate_in_infd;
+	const int uninfd = node->rate_in - node->rate_in_infd;
 	// coin flip for each uninfected whether it becomes infected
-	const int newly_infd = uninfd > 0 ? rng.binom(transm_rate, int(uninfd)) : 0;
+	// we need to check for int(infected input) otherwise we might get
+	// output but 0 allele frequencies
+	const int newly_infd = uninfd>0 && in_infd>0 ? 
+		rng.binom(transm_rate, uninfd) : 0;
 
-	node->rate_in_infd += newly_infd;
+	node->rate_in_infd = in_infd + newly_infd;
 	node->d_rate_in_infd = newly_infd;
 
-	myassert(inp >= 0 && uninfd >= 0 && newly_infd >=0);
+	myassert(uninfd >= 0 && newly_infd >=0);
 
 // *** output
+
+	node->rate_out_infd = 0;
 
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
@@ -49,7 +64,7 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		node->done = true;
 		return;
 		}
-	
+
 // *** generate output
 //
 // We don't replace units that have been selected for output => we have to 
@@ -57,8 +72,8 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 
 	// we have to keep track of how many infected there are still left
 	// all_infd == sum(node->frequencies)
-	double all_infd = node->rate_in_infd;
-	double all_non_infd = node->rate_in - node->rate_in_infd;
+	int all_infd = node->rate_in_infd;
+	int all_non_infd = node->rate_in - node->rate_in_infd;
 	myassert(all_non_infd >= 0);
 
 	//std::cout << "****\n";
@@ -70,7 +85,7 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 
 		myassert(pick <= all_infd + all_non_infd);
 
-		const double a = rng.hypergeom(int(all_infd), int(all_non_infd), int(pick));
+		const int a = rng.hypergeom(all_infd, all_non_infd, pick);
 		l->rate_infd = a;
 		all_infd -= a;
 		all_non_infd -= (pick - a);
@@ -94,19 +109,30 @@ void annotate_rates_ibmm(const ITER & beg, const ITER & end, double transm_rate,
 		(*i)->done = false;
 	}
 
+
 // assign infd randomly according to frequencies
 template<class NODE, class RNG>
-void init_frequencies_ibmm(NODE * node, RNG & rng)
+void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	{
-	int n = node->rate_in_infd;
-	double rem = 1.0;
+	int n = int(node->rate_in_infd - node->d_rate_in_infd);
 
-	for (size_t i=0; i<node->frequencies.size()-1 && n>0 && rem>0; i++)
+	if (n <= 0 || node->frequencies.empty()) 
+		return;
+
+	// who know how these have been initialised
+	double rem = std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
+
+	myassert(rem >= 0);
+
+	if (rem <= 0)
+		return;
+
+	for (size_t i=0; i<node->frequencies.size()-1; i++)
 		{
 		const double p = node->frequencies[i];
 		// due to numeric effects it can happen that p>rem (slightly)
 		// if this is the last positive frequency
-		const int add = rng.binom(std::min(1.0, p/rem), n);
+		const int add = n>0 && rem >0 ? rng.binom(std::min(1.0, p/rem), n) : 0;
 
 		myassert(add >= 0);
 
@@ -119,8 +145,18 @@ void init_frequencies_ibmm(NODE * node, RNG & rng)
 	myassert(n>=0 && rem>-0.0001); 
 	// R binom does weird stuff when rem and p are very close so we
 	// skip the last step and just assign n directly
-	node->frequencies.back() += n;
+	node->frequencies.back() = n;
 	}
+
+
+template<class ITER, class BINOM_FUNC>
+void freq_to_popsize_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
+	{
+	// get #individuals from frequencies
+	for (ITER i=beg; i!=end; i++)
+		freq_to_popsize_ibmm(*i, binom);
+	}
+
 
 template<class NODE, class RNG>
 void annotate_frequencies_ibmm(NODE * node, RNG & rng)
@@ -147,7 +183,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		}
 
 	// no input set on this branch
-	if (node->frequencies.size() == 0)
+	if (node->frequencies.empty())
 		{
 		node->done = true;
 		return;
@@ -167,6 +203,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 
 	// pre-transmission infected
 	const double infd = node->rate_in_infd - node->d_rate_in_infd;
+
+	myassert(std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0) == infd);
 
 	// nothing infected, done
 	if (infd <= 0)
@@ -191,24 +229,24 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	if (newly_infd > 0)
 		{
 		int n = newly_infd;
-		double rem = 1.0;
+		// tracks sum(freq[i..n])
+		int infd_left = infd;
 
-		for (size_t i=0; i<node->frequencies.size()-1 && n>0 && rem>0; i++)
+		for (size_t i=0; i<node->frequencies.size()-1; i++)
 			{
-			const double p = node->frequencies[i] / infd;
+			const double p = node->frequencies[i] / infd_left;
 			// due to numeric effects it can happen that p>rem (slightly)
 			// if this is the last positive frequency
-			const int add = rng.binom(std::min(1.0, p/rem), n);
+			const int add = n>0 ? rng.binom(std::min(1.0, p), n) : 0;
 
 			myassert(add >= 0);
 
+			infd_left -= node->frequencies[i];
 			node->frequencies[i] += add;
-
 			n -= add;
-			rem -= p;
 			}
 
-		myassert(n>=0 && rem>-0.0001); 
+		myassert(n>=0); 
 		// R binom does weird stuff when rem and p are very close so we
 		// skip the last step and just assign n directly
 		node->frequencies.back() += n;
@@ -230,6 +268,11 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		// how many infd go into this link (uninfd have been done by annotate_rates)
 		// needs to be an int, otherwise we'll get into trouble b/c rounding errors
 		int pick = int(l->rate_infd);
+
+		// link rate might be 0
+		if (pick == 0) continue;
+		myassert(pick > 0);
+
 		// how many to pick from for the remaining alleles
 		double all_infd = left_all;
 
@@ -274,15 +317,11 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 template<class ITER, class BINOM_FUNC>
 void annotate_frequencies_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
 	{
-	// get #individuals from frequencies
 	for (ITER i=beg; i!=end; i++)
-		init_frequencies_ibmm(*i, binom);
+		annotate_frequencies_ibmm(*i, binom);
 
 	for (ITER i=beg; i!=end; i++)
 		(*i)->done = false;
-
-	for (ITER i=beg; i!=end; i++)
-		annotate_frequencies_ibmm(*i, binom);
 	}
 
 
