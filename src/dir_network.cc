@@ -354,6 +354,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	const size_t n_all = net->nodes[0]->frequencies.size();
 
 	Rng rng;
+	freq_to_popsize_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	annotate_frequencies_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	
 	return make_S3XPtr(net, "popsnetwork", true);

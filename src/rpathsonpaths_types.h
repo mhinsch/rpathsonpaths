@@ -4,6 +4,7 @@
 #include "libpathsonpaths/genericgraph.h"
 #include "libpathsonpaths/transportgraph.h"
 #include "libpathsonpaths/driftapprox.h"
+#include "libpathsonpaths/genefreqgraph.h"
 
 #include "rnetwork.h"
 
@@ -27,7 +28,7 @@ template<class GRAPH>
 struct MyTranspLink : public TranspLink, public Link<GRAPH>
 	{
 	MyTranspLink(typename GRAPH::node_t * f, typename GRAPH::node_t * t,
-		double a_rate = 0.0, double a_rate_infd = -1)
+		double a_rate = 0.0, double a_rate_infd = 0)
 		: TranspLink(a_rate, a_rate_infd), Link<GRAPH>(f, t)
 		{}
 	};
