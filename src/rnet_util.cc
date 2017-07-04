@@ -42,13 +42,21 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 		Node_t * node = net->nodes[n];
 
-		if (!node->is_root())
-			stop("Allele frequencies can only be set in root nodes.");
-
 		node->frequencies.resize(n_all, 0);
 
 		for (size_t j=0; j<n_all; j++)
 			node->frequencies[j] = freqs(i, j);
+
+		// if a non-root is being set all upstream is blanked out
+		if (!node->is_root())
+			{
+			Node_t::freq_t freqs(node->frequencies.size(), 0);
+			freqs[0] = 1;
+			for (auto l : node->inputs)
+				apply_upstream(*l->from, [&freqs](Node_t & node){
+					node.frequencies = freqs;
+					});
+			}
 		}
 	}
 
