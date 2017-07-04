@@ -133,5 +133,61 @@ struct Graph
 	};
 	
 
+template<class NODE>
+void reset_downstream(NODE & node, bool to=false)
+	{
+	node->done = to;
+
+	for (auto l : node->outputs)
+		reset_downstream(*l.to, to);
+	}
+
+
+template<class NODE>
+void reset_upstream(NODE & node, bool to=false)
+	{
+	node->done = to;
+
+	for (auto l : node->inputs)
+		reset_upstream(*l.from, to);
+	}
+
+template<bool PREORDER=true, class NODE, class FUNC>
+void apply_downstream(NODE && node, FUNC && func)
+	{
+	if (node.done)
+		return;
+
+	node.done = true;
+
+	if (PREORDER)
+		func(node);
+
+	for (auto l : node.outputs)
+		apply_downstream(*l->to, func);
+
+	if (!PREORDER)
+		func(node);
+	}
+
+
+template<bool PREORDER=true, class NODE, class FUNC>
+void apply_upstream(NODE && node, FUNC && func)
+	{
+	if (node.done)
+		return;
+
+	node.done = true;
+
+	if (PREORDER)
+		func(node);
+
+	for (auto l : node.inputs)
+		apply_upstream(*l->from, func);
+
+	if (!PREORDER)
+		func(node);
+	}
+
 #endif	// GENERICGRAPH_H
 
