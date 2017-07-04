@@ -119,12 +119,12 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	if (n <= 0 || node->frequencies.empty()) 
 		return;
 
-	// who know how these have been initialised
 	double rem = std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
 
 	myassert(rem >= 0);
 
-	if (rem <= 0)
+	// invalid or already scaled
+	if (rem <= 0 || rem == n)
 		return;
 
 	for (size_t i=0; i<node->frequencies.size()-1; i++)
@@ -177,7 +177,6 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	// we are pushing, so ignore leaves
 	if (node->is_leaf() || node->rate_in <= 0)
 		{
-		node->normalize();
 		node->done = true;
 		return;
 		}
@@ -196,7 +195,6 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	// no output, done
 	if (outp <= 0)
 		{
-		node->normalize();
 		node->done = true;
 		return;
 		}
@@ -309,7 +307,6 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		left_by_gene.back() -= pick;
 		}
 
-	node->normalize();
 	node->done = true;
 	}
 
