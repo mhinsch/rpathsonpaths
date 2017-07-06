@@ -136,24 +136,24 @@ struct Graph
 template<class NODE>
 void reset_downstream(NODE & node, bool to=false)
 	{
-	node->done = to;
+	node.done = to;
 
-	for (auto l : node->outputs)
-		reset_downstream(*l.to, to);
+	for (auto l : node.outputs)
+		reset_downstream(*l->to, to);
 	}
 
 
 template<class NODE>
 void reset_upstream(NODE & node, bool to=false)
 	{
-	node->done = to;
+	node.done = to;
 
-	for (auto l : node->inputs)
-		reset_upstream(*l.from, to);
+	for (auto l : node.inputs)
+		reset_upstream(*l->from, to);
 	}
 
 template<bool PREORDER=true, class NODE, class FUNC>
-void apply_downstream(NODE && node, FUNC && func)
+void apply_downstream(NODE & node, FUNC func)
 	{
 	if (node.done)
 		return;
@@ -172,7 +172,7 @@ void apply_downstream(NODE && node, FUNC && func)
 
 
 template<bool PREORDER=true, class NODE, class FUNC>
-void apply_upstream(NODE && node, FUNC && func)
+void apply_upstream(NODE & node, FUNC func)
 	{
 	if (node.done)
 		return;

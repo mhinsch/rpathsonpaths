@@ -119,8 +119,9 @@ void annotate_frequencies_push(NODE * node, DRIFT_FUNC & drift)
 		// node->frequencies (unless users supply differently sized allele freqs but
 		// then they are on their own)
 		auto f_iter = to->frequencies.begin();
-		for (const auto r : res)
-			 *f_iter++ += r * p_to;
+		if (!to->blocked)
+			for (const auto r : res)
+				 *f_iter++ += r * p_to;
 		}
 
 	node->done = true;

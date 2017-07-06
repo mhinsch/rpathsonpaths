@@ -23,8 +23,10 @@ struct TranspNode
 	double d_rate_in_infd;	//!< 
 	double rate_out_infd;
 
+	bool blocked;
+
 	TranspNode()
-		: rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0)
+		: rate_in(0), rate_in_infd(0), d_rate_in_infd(0), rate_out_infd(0), blocked(false)
 		{}
 
 	void reset_rates()

@@ -296,12 +296,14 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 			// we pick less next time
 			pick -= add;
 			myassert(pick >= 0);
-			// add the stuff to the link and its end node
-			l->to->frequencies[i] += add;
+			if (!l->to->blocked)
+				// add the stuff to the link and its end node
+				l->to->frequencies[i] += add;
 			}
 
-		// last allele gets the leftovers
-		l->to->frequencies.back() += pick;
+		if (!l->to->blocked)
+			// last allele gets the leftovers
+			l->to->frequencies.back() += pick;
 		// keep track
 		left_all -= pick;
 		left_by_gene.back() -= pick;
