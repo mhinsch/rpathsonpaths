@@ -150,8 +150,9 @@ void print_popsnode(const XPtr<Node_t> & p_node);
 //' @param ini_dist Initial distribution of allele frequencies. ini_dist has to be 
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-//' a matrix of allele frequencies. Note that only root nodes can be initialized
-//' in this way (in order to prevent inconsistencies).
+//' a matrix of allele frequencies. Note that if non-root nodes are initialized in this way
+//' they will be marked as blocked, i.e. they will not receive input in genetic material 
+//' (but will produce output themselves).
 //' @return A new popsnetwork object.
 // [[Rcpp::export]]
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
@@ -198,8 +199,8 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
-//' a matrix of allele frequencies. Note that only root nodes can be initialized
-//' in this way.
+//' a matrix of allele frequencies. Note that *any* node pre-set in this
+//' way will effectively be treated as a source and hide nodes that are further upstream.
 //' @return A new popsnetwork object with allele frequencies set for each node.
 // [[Rcpp::export]]
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
@@ -309,4 +310,7 @@ double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2);
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
 NumericMatrix distances_net(const XPtr<Net_t> & p_net);
+
+// [[Rcpp::export]]
+NumericMatrix distances_gen(const XPtr<Net_t> & p_net);
 #endif	// DIR_NETWORK_H

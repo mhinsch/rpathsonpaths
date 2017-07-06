@@ -18,7 +18,10 @@ will be automatically detected and will be processed in order of node id.}
 
 \item{ini_infd}{Input rate of infected units per source nodes.}
 
-\item{ini_freqs}{Allele frequencies per source node. This has to be a matrix.}
+\item{ini_freqs}{Allele frequencies per source node. This has to be either a matrix with
+one row per source node or a list of initialization objects (each of them containing
+a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In
+the latter case n simulations are run per initialization.}
 
 \item{n}{Number of simulation runs to perform.}
 

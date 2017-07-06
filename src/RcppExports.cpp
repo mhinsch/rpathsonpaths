@@ -217,3 +217,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// distances_gen
+NumericMatrix distances_gen(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_distances_gen(SEXP p_netSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_gen(p_net));
+    return rcpp_result_gen;
+END_RCPP
+}

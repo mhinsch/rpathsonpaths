@@ -318,3 +318,7 @@ distances_net <- function(p_net) {
     .Call('rpathsonpaths_distances_net', PACKAGE = 'rpathsonpaths', p_net)
 }
 
+distances_gen <- function(p_net) {
+    .Call('rpathsonpaths_distances_gen', PACKAGE = 'rpathsonpaths', p_net)
+}
+

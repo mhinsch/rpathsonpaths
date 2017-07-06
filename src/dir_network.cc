@@ -332,6 +332,8 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	if (!net->nodes.size())
 		stop("Error: empty network!");
 
+//	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
+
 	const size_t n_all = net->nodes[0]->frequencies.size();
 
 	Drift drift(theta);
@@ -350,6 +352,8 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 
 	if (!net->nodes.size())
 		stop("Error: empty network!");
+
+//	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
 
 	const size_t n_all = net->nodes[0]->frequencies.size();
 
@@ -560,6 +564,36 @@ double freq_distance(const Node_t & n1, const Node_t & n2)
 		d += pow<2>(n1.frequencies[i] - n2.frequencies[i]);
 
 	return d/n1.frequencies.size();
+	}
+
+NumericMatrix distances_gen(const XPtr<Net_t> & p_net)
+	{
+	const Net_t * net = p_net.checked_get();
+
+	NumericMatrix res(net->nodes.size(), net->nodes.size());
+
+	vector<vector<size_t>> counts(net->nodes.size());
+	for (size_t i=0; i<counts.size(); i++)
+		{
+		counts[i].resize(net->nodes[i]->frequencies.size(), 0);
+		sample_node(*net->nodes[i], 1, counts[i]);
+		}
+
+	for (int i=0; i<net->nodes.size(); i++)
+		for (int j=i; j<net->nodes.size(); j++)
+			res(i, j) = res(j, i) = 1 - (counts[i] == counts[j]); 
+
+	if (net->name_by_id.size())
+		{
+		// StringVector is clearly missing a constructor here
+		StringVector cn(net->name_by_id.size()), rn(net->name_by_id.size());
+		cn = net->name_by_id;
+		rn = net->name_by_id;
+		colnames(res) = cn;
+		rownames(res) = rn;
+		}
+
+	return res;
 	}
 
 NumericMatrix distances_net(const XPtr<Net_t> & p_net)

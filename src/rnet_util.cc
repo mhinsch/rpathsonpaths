@@ -24,10 +24,18 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	if (nodes.size() != freqs.nrow())
 		stop("Invalid parameter 'iniDist': "
-		"number of rows in frequencies and number of elements in nodes have to be equal!");
-	
+		"number of rows in frequencies and number of elements in nodes have to be equal!");	
+
+	// init nodes
 	for (auto n : net->nodes)
-		n->frequencies.clear();
+		{
+		// set all to 0
+		n->frequencies.resize(n_all);
+		fill(n->frequencies.begin(), n->frequencies.end(), 0);
+		// root nodes start with wild type
+		if (n->is_root())
+			n->frequencies[0] = 1.0;
+		}
 
 	const bool f = nodes.inherits("factor");
 
@@ -42,21 +50,11 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 		Node_t * node = net->nodes[n];
 
-		node->frequencies.resize(n_all, 0);
-
 		for (size_t j=0; j<n_all; j++)
 			node->frequencies[j] = freqs(i, j);
 
-		// if a non-root is being set all upstream is blanked out
-		if (!node->is_root())
-			{
-			Node_t::freq_t freqs(node->frequencies.size(), 0);
-			freqs[0] = 1;
-			for (auto l : node->inputs)
-				apply_upstream(*l->from, [&freqs](Node_t & node){
-					node.frequencies = freqs;
-					});
-			}
+		// no additional input into this node
+		node->blocked = true;
 		}
 	}
 
