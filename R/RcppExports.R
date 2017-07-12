@@ -330,7 +330,7 @@ distances_freqdist <- function(p_net) {
 #' @param p_net A popsnetwork object.
 #' @param n How many samples per node to use for comparison.
 #' @return A matrix of all distances.
-distances_sample <- function(p_net, n) {
+distances_sample <- function(p_net, n = 1L) {
     .Call('rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n)
 }
 

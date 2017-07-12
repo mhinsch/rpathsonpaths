@@ -323,7 +323,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net);
 //' @param n How many samples per node to use for comparison.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n);
+NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1);
 
 
 //' @title distances_EHamming

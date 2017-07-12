@@ -4,7 +4,7 @@
 \alias{distances_sample}
 \title{distances_sample}
 \usage{
-distances_sample(p_net, n)
+distances_sample(p_net, n = 1L)
 }
 \arguments{
 \item{p_net}{A popsnetwork object.}
