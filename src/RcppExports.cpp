@@ -206,25 +206,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// distances_net
-NumericMatrix distances_net(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_distances_net(SEXP p_netSEXP) {
+// distances_freqdist
+NumericMatrix distances_freqdist(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_distances_freqdist(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(distances_net(p_net));
+    rcpp_result_gen = Rcpp::wrap(distances_freqdist(p_net));
     return rcpp_result_gen;
 END_RCPP
 }
-// distances_gen
-NumericMatrix distances_gen(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_distances_gen(SEXP p_netSEXP) {
+// distances_sample
+NumericMatrix distances_sample(const XPtr<Net_t>& p_net, int n);
+RcppExport SEXP rpathsonpaths_distances_sample(SEXP p_netSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(distances_gen(p_net));
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_sample(p_net, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// distances_EHamming
+NumericMatrix distances_EHamming(const XPtr<Net_t>& p_net);
+RcppExport SEXP rpathsonpaths_distances_EHamming(SEXP p_netSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_EHamming(p_net));
     return rcpp_result_gen;
 END_RCPP
 }

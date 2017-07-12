@@ -566,7 +566,18 @@ double freq_distance(const Node_t & n1, const Node_t & n2)
 	return d/n1.frequencies.size();
 	}
 
-NumericMatrix distances_gen(const XPtr<Net_t> & p_net)
+double distance_EHamming(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		d += n1.frequencies[i] * n2.frequencies[i];
+
+	return 1.0 - d;
+	}
+
+
+NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -576,12 +587,18 @@ NumericMatrix distances_gen(const XPtr<Net_t> & p_net)
 	for (size_t i=0; i<counts.size(); i++)
 		{
 		counts[i].resize(net->nodes[i]->frequencies.size(), 0);
-		sample_node(*net->nodes[i], 1, counts[i]);
+		sample_node(*net->nodes[i], n, counts[i]);
 		}
 
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
-			res(i, j) = res(j, i) = 1 - (counts[i] == counts[j]); 
+			{
+			for (size_t k=0; k<counts[i].size(); k++)
+				res(i, j) += abs(counts[i][k] - counts[j][k]); 
+
+			res(i, j) /= 2;
+			res(j, i) = res(i, j);
+			}
 
 	if (net->name_by_id.size())
 		{
@@ -596,7 +613,7 @@ NumericMatrix distances_gen(const XPtr<Net_t> & p_net)
 	return res;
 	}
 
-NumericMatrix distances_net(const XPtr<Net_t> & p_net)
+NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -605,6 +622,29 @@ NumericMatrix distances_net(const XPtr<Net_t> & p_net)
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
 			res(i, j) = res(j, i) = freq_distance(*net->nodes[i], *net->nodes[j]);
+
+	if (net->name_by_id.size())
+		{
+		// StringVector is clearly missing a constructor here
+		StringVector cn(net->name_by_id.size()), rn(net->name_by_id.size());
+		cn = net->name_by_id;
+		rn = net->name_by_id;
+		colnames(res) = cn;
+		rownames(res) = rn;
+		}
+
+	return res;
+	}
+
+NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net)
+	{
+	const Net_t * net = p_net.checked_get();
+
+	NumericMatrix res(net->nodes.size(), net->nodes.size());
+
+	for (int i=0; i<net->nodes.size(); i++)
+		for (int j=i; j<net->nodes.size(); j++)
+			res(i, j) = res(j, i) = distance_EHamming(*net->nodes[i], *net->nodes[j]);
 
 	if (net->name_by_id.size())
 		{

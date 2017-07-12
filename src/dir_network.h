@@ -291,7 +291,8 @@ int SNP_distance(int g1, int g2);
 //' @description Calculate genetic distance between two populations.
 //' 
 //' @details This function calculates the genetic distance between two populations as the
-//' average distance between all pairs of individuals of the two populations.
+//' average distance between all pairs of individuals of the two populations where genotype
+//' is encoded as an integer.
 //' 
 //' @param p1 Population 1.
 //' @param p2 Population 2.
@@ -299,18 +300,45 @@ int SNP_distance(int g1, int g2);
 // [[Rcpp::export]]
 double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2);
 
-//' @title distances_net
+//' @title distances_freqdist
 //'
-//' @description Calculate genetic distances within a network.
+//' @description Calculate genetic dissimilarities within a network.
 //' 
-//' @details This function calculates the genetic distance between all pairs of nodes in 
-//' a popsnetwork.
+//' @details This function calculates the dissimilarity (mean square distance in
+//' allele frequencies) of all pairs of nodes in a network.
 //' 
 //' @param p_net A popsnetwork object.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_net(const XPtr<Net_t> & p_net);
+NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net);
 
+//' @title distances_sample
+//'
+//' @description Calculate genetic distances within a network.
+//' 
+//' @details This function calculates the genetic distance of all pairs of nodes in a 
+//' network by comparing a number of random samples from each node (using Hamming distance).
+//' 
+//' @param p_net A popsnetwork object.
+//' @param n How many samples per node to use for comparison.
+//' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_gen(const XPtr<Net_t> & p_net);
+NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n);
+
+
+//' @title distances_EHamming
+//'
+//' @description Calculate genetic distances within a network as expected values of Hamming
+//' distances.
+//' 
+//' @details This function calculates the genetic distance of all pairs of nodes in a 
+//' network by calculating per pair of nodes the average Hamming distance between them 
+//' (more precisely the expected value of the Hamming distance between two individuals 
+//' randomly selected from each of the nodes).
+//' 
+//' @param p_net A popsnetwork object.
+//' @return A matrix of all distances.
+// [[Rcpp::export]]
+NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net);
+
 #endif	// DIR_NETWORK_H

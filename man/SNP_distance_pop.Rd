@@ -19,5 +19,6 @@ Calculate genetic distance between two populations.
 }
 \details{
 This function calculates the genetic distance between two populations as the
-average distance between all pairs of individuals of the two populations.
+average distance between all pairs of individuals of the two populations where genotype
+is encoded as an integer.
 }

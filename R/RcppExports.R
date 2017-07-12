@@ -297,7 +297,8 @@ SNP_distance <- function(g1, g2) {
 #' @description Calculate genetic distance between two populations.
 #' 
 #' @details This function calculates the genetic distance between two populations as the
-#' average distance between all pairs of individuals of the two populations.
+#' average distance between all pairs of individuals of the two populations where genotype
+#' is encoded as an integer.
 #' 
 #' @param p1 Population 1.
 #' @param p2 Population 2.
@@ -306,20 +307,46 @@ SNP_distance_pop <- function(p1, p2) {
     .Call('rpathsonpaths_SNP_distance_pop', PACKAGE = 'rpathsonpaths', p1, p2)
 }
 
-#' @title distances_net
+#' @title distances_freqdist
 #'
-#' @description Calculate genetic distances within a network.
+#' @description Calculate genetic dissimilarities within a network.
 #' 
-#' @details This function calculates the genetic distance between all pairs of nodes in 
-#' a popsnetwork.
+#' @details This function calculates the dissimilarity (mean square distance in
+#' allele frequencies) of all pairs of nodes in a network.
 #' 
 #' @param p_net A popsnetwork object.
 #' @return A matrix of all distances.
-distances_net <- function(p_net) {
-    .Call('rpathsonpaths_distances_net', PACKAGE = 'rpathsonpaths', p_net)
+distances_freqdist <- function(p_net) {
+    .Call('rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net)
 }
 
-distances_gen <- function(p_net) {
-    .Call('rpathsonpaths_distances_gen', PACKAGE = 'rpathsonpaths', p_net)
+#' @title distances_sample
+#'
+#' @description Calculate genetic distances within a network.
+#' 
+#' @details This function calculates the genetic distance of all pairs of nodes in a 
+#' network by comparing a number of random samples from each node (using Hamming distance).
+#' 
+#' @param p_net A popsnetwork object.
+#' @param n How many samples per node to use for comparison.
+#' @return A matrix of all distances.
+distances_sample <- function(p_net, n) {
+    .Call('rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n)
+}
+
+#' @title distances_EHamming
+#'
+#' @description Calculate genetic distances within a network as expected values of Hamming
+#' distances.
+#' 
+#' @details This function calculates the genetic distance of all pairs of nodes in a 
+#' network by calculating per pair of nodes the average Hamming distance between them 
+#' (more precisely the expected value of the Hamming distance between two individuals 
+#' randomly selected from each of the nodes).
+#' 
+#' @param p_net A popsnetwork object.
+#' @return A matrix of all distances.
+distances_EHamming <- function(p_net) {
+    .Call('rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net)
 }
 
