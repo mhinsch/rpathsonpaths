@@ -181,6 +181,8 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
 	double transmission, double decay, const string & spread_model, bool checks)
 	{
+	// Rcout << "decay: " << decay << "\n";
+
 	if (checks)
 		{
 		if (as<bool>(cycles(links)))
@@ -594,7 +596,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
 		for (int j=i; j<net->nodes.size(); j++)
 			{
 			for (size_t k=0; k<counts[i].size(); k++)
-				res(i, j) += abs(counts[i][k] - counts[j][k]); 
+				res(i, j) += double(abs(int(counts[i][k]) - int(counts[j][k]))); 
 
 			res(i, j) /= 2;
 			res(j, i) = res(i, j);
