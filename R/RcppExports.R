@@ -316,8 +316,8 @@ SNP_distance_pop <- function(p1, p2) {
 #' 
 #' @param p_net A popsnetwork object.
 #' @return A matrix of all distances.
-distances_freqdist <- function(p_net) {
-    .Call('rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net)
+distances_freqdist <- function(p_net, skip_empty = TRUE) {
+    .Call('rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
 
 #' @title distances_sample
@@ -329,9 +329,10 @@ distances_freqdist <- function(p_net) {
 #' 
 #' @param p_net A popsnetwork object.
 #' @param n How many samples per node to use for comparison.
+#' @params skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
-distances_sample <- function(p_net, n = 1L) {
-    .Call('rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n)
+distances_sample <- function(p_net, n = 1L, skip_empty = TRUE) {
+    .Call('rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n, skip_empty)
 }
 
 #' @title distances_EHamming
@@ -346,7 +347,7 @@ distances_sample <- function(p_net, n = 1L) {
 #' 
 #' @param p_net A popsnetwork object.
 #' @return A matrix of all distances.
-distances_EHamming <- function(p_net) {
-    .Call('rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net)
+distances_EHamming <- function(p_net, skip_empty = TRUE) {
+    .Call('rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
 

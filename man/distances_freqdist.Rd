@@ -4,7 +4,7 @@
 \alias{distances_freqdist}
 \title{distances_freqdist}
 \usage{
-distances_freqdist(p_net)
+distances_freqdist(p_net, skip_empty = TRUE)
 }
 \arguments{
 \item{p_net}{A popsnetwork object.}

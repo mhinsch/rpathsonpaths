@@ -14,9 +14,12 @@ the second column. If a third column is present it is interpreted as transfer ra
 edge.}
 
 \item{ini_input}{Net input rates per source node. Note that source nodes in the network
-will be automatically detected and will be processed in order of node id.}
+will be automatically detected and will be processed in order of node id. ini_input can 
+either be a single number that will be a repeated for each source node or a list containing
+one element per source node.}
 
-\item{ini_infd}{Input rate of infected units per source nodes.}
+\item{ini_infd}{Input rate of infected units per source nodes. Format requirements are
+identical to those for \code{\link{ini_input}}.}
 
 \item{ini_freqs}{Allele frequencies per source node. This has to be either a matrix with
 one row per source node or a list of initialization objects (each of them containing

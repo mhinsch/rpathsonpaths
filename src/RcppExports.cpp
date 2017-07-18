@@ -207,36 +207,39 @@ BEGIN_RCPP
 END_RCPP
 }
 // distances_freqdist
-NumericMatrix distances_freqdist(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_distances_freqdist(SEXP p_netSEXP) {
+NumericMatrix distances_freqdist(const XPtr<Net_t>& p_net, bool skip_empty);
+RcppExport SEXP rpathsonpaths_distances_freqdist(SEXP p_netSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(distances_freqdist(p_net));
+    Rcpp::traits::input_parameter< bool >::type skip_empty(skip_emptySEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_freqdist(p_net, skip_empty));
     return rcpp_result_gen;
 END_RCPP
 }
 // distances_sample
-NumericMatrix distances_sample(const XPtr<Net_t>& p_net, int n);
-RcppExport SEXP rpathsonpaths_distances_sample(SEXP p_netSEXP, SEXP nSEXP) {
+NumericMatrix distances_sample(const XPtr<Net_t>& p_net, int n, bool skip_empty);
+RcppExport SEXP rpathsonpaths_distances_sample(SEXP p_netSEXP, SEXP nSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(distances_sample(p_net, n));
+    Rcpp::traits::input_parameter< bool >::type skip_empty(skip_emptySEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_sample(p_net, n, skip_empty));
     return rcpp_result_gen;
 END_RCPP
 }
 // distances_EHamming
-NumericMatrix distances_EHamming(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_distances_EHamming(SEXP p_netSEXP) {
+NumericMatrix distances_EHamming(const XPtr<Net_t>& p_net, bool skip_empty);
+RcppExport SEXP rpathsonpaths_distances_EHamming(SEXP p_netSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(distances_EHamming(p_net));
+    Rcpp::traits::input_parameter< bool >::type skip_empty(skip_emptySEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_EHamming(p_net, skip_empty));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -310,7 +310,7 @@ double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2);
 //' @param p_net A popsnetwork object.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net);
+NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
 //' @title distances_sample
 //'
@@ -321,9 +321,10 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net);
 //' 
 //' @param p_net A popsnetwork object.
 //' @param n How many samples per node to use for comparison.
+//' @params skip_empty Whether to return NA for empty nodes.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1);
+NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_empty=true);
 
 
 //' @title distances_EHamming
@@ -339,6 +340,6 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1);
 //' @param p_net A popsnetwork object.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
-NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net);
+NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
 #endif	// DIR_NETWORK_H

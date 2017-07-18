@@ -4,7 +4,7 @@
 \alias{distances_EHamming}
 \title{distances_EHamming}
 \usage{
-distances_EHamming(p_net)
+distances_EHamming(p_net, skip_empty = TRUE)
 }
 \arguments{
 \item{p_net}{A popsnetwork object.}

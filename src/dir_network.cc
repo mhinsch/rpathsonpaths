@@ -579,7 +579,7 @@ double distance_EHamming(const Node_t & n1, const Node_t & n2)
 	}
 
 
-NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
+NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -588,6 +588,9 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
 	vector<vector<size_t>> counts(net->nodes.size());
 	for (size_t i=0; i<counts.size(); i++)
 		{
+		if (skip_empty && net->nodes[i]->rate_in_infd <= 0)
+			continue;
+
 		counts[i].resize(net->nodes[i]->frequencies.size(), 0);
 		sample_node(*net->nodes[i], n, counts[i]);
 		}
@@ -595,6 +598,12 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
 			{
+			if (counts[j].empty() || counts[i].empty())
+				{
+				res(i, j) = res(j, i) = NA_REAL;
+				continue;
+				}
+
 			for (size_t k=0; k<counts[i].size(); k++)
 				res(i, j) += double(abs(int(counts[i][k]) - int(counts[j][k]))); 
 
@@ -615,7 +624,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n)
 	return res;
 	}
 
-NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net)
+NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -623,7 +632,10 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net)
 
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
-			res(i, j) = res(j, i) = freq_distance(*net->nodes[i], *net->nodes[j]);
+			res(i, j) = res(j, i) = 
+				skip_empty && 
+					(net->nodes[i]->rate_in_infd <= 0 || net->nodes[j]->rate_in_infd <= 0) ? 
+				NA_REAL : freq_distance(*net->nodes[i], *net->nodes[j]);
 
 	if (net->name_by_id.size())
 		{
@@ -638,7 +650,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net)
 	return res;
 	}
 
-NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net)
+NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -646,7 +658,10 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net)
 
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
-			res(i, j) = res(j, i) = distance_EHamming(*net->nodes[i], *net->nodes[j]);
+			res(i, j) = res(j, i) = 
+				skip_empty && 
+					(net->nodes[i]->rate_in_infd <= 0 || net->nodes[j]->rate_in_infd <= 0) ? 
+				NA_REAL : distance_EHamming(*net->nodes[i], *net->nodes[j]);
 
 	if (net->name_by_id.size())
 		{
