@@ -114,10 +114,16 @@ void annotate_rates_ibmm(const ITER & beg, const ITER & end, double transm_rate,
 template<class NODE, class RNG>
 void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	{
+	if (node->frequencies.empty()) 
+		return;
+
 	int n = int(node->rate_in_infd - node->d_rate_in_infd);
 
-	if (n <= 0 || node->frequencies.empty()) 
+	if (n <= 0)
+		{
+		std::fill(node->frequencies.begin(), node->frequencies.end(), 0.0);
 		return;
+		}
 
 	double rem = std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
 
