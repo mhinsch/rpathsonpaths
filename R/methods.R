@@ -138,3 +138,43 @@ mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 
 	replicate(n_muts, list(sample(nods, 1), freq), simplify=FALSE)
 }
+
+descendants <- function(edgelist, node){
+	from <- c()
+	to <- c()
+
+	use_factor <- is.factor(edgelist[[1]])
+
+	if (is.factor(node)) {
+		nodes <- as.character(node)
+	} else {
+		nodes <- node
+	}
+
+	repeat {
+		desc <- edgelist[edgelist[1] == nodes,]
+
+		if (nrow(desc) == 0)
+			break;
+
+		if (use_factor){
+			d1 <- as.character(desc[[1]])
+			d2 <- as.character(desc[[2]])
+		} else {
+			d1 <- desc[[1]]
+			d2 <- desc[[2]]
+		}
+
+		from <- c(from, d1)
+		to <- c(to, d2)
+
+		nodes <- unique(d2)
+	}
+
+	if (use_factor){
+		from <- factor(from)
+		to <- factor(to)
+	}
+
+	data.frame(from, to)
+}
