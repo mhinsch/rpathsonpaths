@@ -52,7 +52,7 @@ plot.popsnetwork <- function(x, ...){
 #' either be a single number that will be a repeated for each source node or a list containing
 #' one element per source node.
 #' @param ini_infd Input rate of infected units per source nodes. Format requirements are
-#' identical to those for \code{\link{ini_input}}.
+#' identical to those for \code{ini_input}.
 #' @param ini_freqs Allele frequencies per source node. This has to be either a matrix with
 #' one row per source node or a list of initialization objects (each of them containing
 #' a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In
@@ -139,6 +139,17 @@ mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 	replicate(n_muts, list(sample(nods, 1), freq), simplify=FALSE)
 }
 
+
+#' @title descendants
+#'
+#' @description get all descendants of a particular node in a graph
+#' 
+#' @details This function will return the graph reachable from a given node in a
+#' network.
+#' @param edgelist The graph as an edgelist (a data frame consisting of a from and 
+#' a to column).
+#' @param node The node to find the descendants of.
+#' @return An edgelist containing the complete downstream graph of the given node.
 descendants <- function(edgelist, node){
 	from <- c()
 	to <- c()

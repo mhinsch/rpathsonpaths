@@ -10,6 +10,8 @@ distances_sample(p_net, n = 1L, skip_empty = TRUE)
 \item{p_net}{A popsnetwork object.}
 
 \item{n}{How many samples per node to use for comparison.}
+
+\item{skip_empty}{Whether to return NA for empty nodes.}
 }
 \value{
 A matrix of all distances.

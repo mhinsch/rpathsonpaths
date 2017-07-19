@@ -19,7 +19,7 @@ either be a single number that will be a repeated for each source node or a list
 one element per source node.}
 
 \item{ini_infd}{Input rate of infected units per source nodes. Format requirements are
-identical to those for \code{\link{ini_input}}.}
+identical to those for \code{ini_input}.}
 
 \item{ini_freqs}{Allele frequencies per source node. This has to be either a matrix with
 one row per source node or a list of initialization objects (each of them containing

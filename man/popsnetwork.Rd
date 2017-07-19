@@ -70,7 +70,8 @@ Generating simulated genetic data from a popsnetwork object happens in several s
 be set in the next step, allowing this step to be skipped.
 \item Simulate spread of genetic material through the network with 
 \code{\link{popgen_dirichlet}}.
-\item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
+\item Draw samples from the simulated population using 
+\code{\link{draw_isolates.popsnetwork}}.}
 
 A worked example is available in the 'overview' vignette.
 }

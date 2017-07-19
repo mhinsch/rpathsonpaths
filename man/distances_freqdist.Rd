@@ -8,6 +8,8 @@ distances_freqdist(p_net, skip_empty = TRUE)
 }
 \arguments{
 \item{p_net}{A popsnetwork object.}
+
+\item{skip_empty}{Whether to return NA for empty nodes.}
 }
 \value{
 A matrix of all distances.

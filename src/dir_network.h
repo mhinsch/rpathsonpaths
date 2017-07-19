@@ -98,7 +98,8 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' be set in the next step, allowing this step to be skipped.
 //' \item Simulate spread of genetic material through the network with 
 //' \code{\link{popgen_dirichlet}}.
-//' \item Draw samples from the simulated population using \code{\link{draw_isolates}}.}
+//' \item Draw samples from the simulated population using 
+//' \code{\link{draw_isolates.popsnetwork}}.}
 //'
 //' A worked example is available in the 'overview' vignette.
 //'
@@ -308,6 +309,7 @@ double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2);
 //' allele frequencies) of all pairs of nodes in a network.
 //' 
 //' @param p_net A popsnetwork object.
+//' @param skip_empty Whether to return NA for empty nodes.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
 NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true);
@@ -321,7 +323,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true
 //' 
 //' @param p_net A popsnetwork object.
 //' @param n How many samples per node to use for comparison.
-//' @params skip_empty Whether to return NA for empty nodes.
+//' @param skip_empty Whether to return NA for empty nodes.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
 NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_empty=true);
@@ -338,6 +340,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_emp
 //' randomly selected from each of the nodes).
 //' 
 //' @param p_net A popsnetwork object.
+//' @param skip_empty Whether to return NA for empty nodes.
 //' @return A matrix of all distances.
 // [[Rcpp::export]]
 NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true);
