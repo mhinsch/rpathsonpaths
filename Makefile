@@ -13,8 +13,13 @@ README.md: README.Rmd
 man/popsnetwork.Rd: R/RcppExports.R vignettes
 	${RSCRIPT} -e "library(roxygen2); roxygenize()"
 
-vignettes: 
+mans:
+	${RSCRIPT} -e "library(roxygen2); roxygenize()"
+
+vignette: 
 	${RSCRIPT} -e 'library(rmarkdown); render("vignettes/overview.Rmd")'
+
+docs: mans vignette
 
 install: man/popsnetwork.Rd 
 	R CMD INSTALL .

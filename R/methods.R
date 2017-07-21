@@ -120,15 +120,16 @@ nodes <- function(edgelist) unique(c(edgelist[[1]], edgelist[[2]]))
 #' 
 #' @details This function will generate a list of mutations suitable as gene frequencies
 #' with e.g. \code{\link{set_allele_freqs}} or \code{\link{run_popsnet}}. Each mutation 
-#' will be assigned will be assigned to a random node. Allele frequencies will be initialized
-#' for the wild type (0) and the mutant (1) and set to 0 otherwise.
+#' will be assigned to a random node. Allele frequencies will be initialized
+#' for the wild type (allele 0) and the mutant (allele 1) and set to 0 otherwise.
 #' @param edgelist Two columns of nodes (from, to).
 #' @param n_alleles How many alleles to initialize the frequency vector to.
 #' @param freq_mutant Frequency of the mutant allele. Note that the wildtype (allele 0)
-#' will have frequency 1-freq_mutant.
+#' will have frequency \code{1-freq_mutant}.
 #' @param n_muts How many mutations to generate.
-#' @return Produces a list of mutations. Each mutation consists of a list of node ids and
-#' a matrix containing allele frequencies for each node.
+#' @return Produces a list of mutations. Each mutation consists of a list containing the
+#' node id and a 1-row matrix with allele frequencies. This can be used e.g. as the 
+#' \code{ini_freqs} parameter of \link{\code{run_popsnet}}.
 mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 	nods <- nodes(edgelist)
 	
@@ -163,7 +164,7 @@ descendants <- function(edgelist, node){
 	}
 
 	repeat {
-		desc <- edgelist[edgelist[1] == nodes,]
+		desc <- edgelist[edgelist[[1]] %in% nodes,]
 
 		if (nrow(desc) == 0)
 			break;

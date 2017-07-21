@@ -12,13 +12,14 @@ mutations(edgelist, n_alleles, freq_mutant, n_muts)
 \item{n_alleles}{How many alleles to initialize the frequency vector to.}
 
 \item{freq_mutant}{Frequency of the mutant allele. Note that the wildtype (allele 0)
-will have frequency 1-freq_mutant.}
+will have frequency \code{1-freq_mutant}.}
 
 \item{n_muts}{How many mutations to generate.}
 }
 \value{
-Produces a list of mutations. Each mutation consists of a list of node ids and
-a matrix containing allele frequencies for each node.
+Produces a list of mutations. Each mutation consists of a list containing the
+node id and a 1-row matrix with allele frequencies. This can be used e.g. as the 
+\code{ini_freqs} parameter of \link{\code{run_popsnet}}.
 }
 \description{
 generate a list of random mutations on a given graph
@@ -26,6 +27,6 @@ generate a list of random mutations on a given graph
 \details{
 This function will generate a list of mutations suitable as gene frequencies
 with e.g. \code{\link{set_allele_freqs}} or \code{\link{run_popsnet}}. Each mutation 
-will be assigned will be assigned to a random node. Allele frequencies will be initialized
-for the wild type (0) and the mutant (1) and set to 0 otherwise.
+will be assigned to a random node. Allele frequencies will be initialized
+for the wild type (allele 0) and the mutant (allele 1) and set to 0 otherwise.
 }
