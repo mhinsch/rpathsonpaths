@@ -116,7 +116,13 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 #' @details Returns a list of node ids for a graph.
 #' @param edgelist An edgelist as two columns of node ids (from, to).
 #' @return A list or vector of node ids.
-nodes <- function(edgelist) unique(c(edgelist[[1]], edgelist[[2]]))
+nodes <- function(edgelist) {
+	if (is.factor(edgelist[[1]])){
+		factor(unique(c(as.character(edgelist[[1]]), as.character(edgelist[[2]]))))
+	} else {
+		unique(c(edgelist[[1]], edgelist[[2]]))
+	}
+}
 
 #' @title mutations
 #' 
