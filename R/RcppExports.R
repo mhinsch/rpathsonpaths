@@ -276,38 +276,6 @@ node_list <- function(p_net) {
     .Call('rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
 }
 
-#' @title SNP_distance
-#'
-#' @description Calculate distance (in number of different SNPs) between two genotypes 
-#' encoded as integers. 
-#' 
-#' @details This function calculates the difference between two genetic sequences. A sequence
-#' is represented as an integer number where the binary of that number corresponds
-#' to a list of alleles. The distance between to sequences is the number of positions at
-#' which they have different alleles.
-#' 
-#' @param g1 Sequence 1
-#' @param g2 Sequence 2
-#' @return The distance between g1 and g2.
-SNP_distance <- function(g1, g2) {
-    .Call('rpathsonpaths_SNP_distance', PACKAGE = 'rpathsonpaths', g1, g2)
-}
-
-#' @title SNP_distance_pop
-#'
-#' @description Calculate genetic distance between two populations.
-#' 
-#' @details This function calculates the genetic distance between two populations as the
-#' average distance between all pairs of individuals of the two populations where genotype
-#' is encoded as an integer.
-#' 
-#' @param p1 Population 1.
-#' @param p2 Population 2.
-#' @return The distance between p1 and p2.
-SNP_distance_pop <- function(p1, p2) {
-    .Call('rpathsonpaths_SNP_distance_pop', PACKAGE = 'rpathsonpaths', p1, p2)
-}
-
 #' @title distances_freqdist
 #'
 #' @description Calculate genetic dissimilarities within a network.

@@ -19,7 +19,7 @@ will have frequency \code{1-freq_mutant}.}
 \value{
 Produces a list of mutations. Each mutation consists of a list containing the
 node id and a 1-row matrix with allele frequencies. This can be used e.g. as the 
-\code{ini_freqs} parameter of \link{\code{run_popsnet}}.
+\code{ini_freqs} parameter of \code{\link{run_popsnet}}.
 }
 \description{
 generate a list of random mutations on a given graph

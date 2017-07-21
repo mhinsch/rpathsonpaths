@@ -129,7 +129,7 @@ nodes <- function(edgelist) unique(c(edgelist[[1]], edgelist[[2]]))
 #' @param n_muts How many mutations to generate.
 #' @return Produces a list of mutations. Each mutation consists of a list containing the
 #' node id and a 1-row matrix with allele frequencies. This can be used e.g. as the 
-#' \code{ini_freqs} parameter of \link{\code{run_popsnet}}.
+#' \code{ini_freqs} parameter of \code{\link{run_popsnet}}.
 mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 	nods <- nodes(edgelist)
 	

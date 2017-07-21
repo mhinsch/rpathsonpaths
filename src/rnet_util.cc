@@ -1,6 +1,7 @@
 #include "rnet_util.h"
 
 #include "libpathsonpaths/proportionalpick.h"
+#include "libpathsonpaths/sputil.h"
 
 #include "rcpp_util.h"
 
@@ -85,3 +86,24 @@ void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 		count[pick.pick(r)]++;
 	}
 
+
+double distance_freq(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		d += pow<2>(n1.frequencies[i] - n2.frequencies[i]);
+
+	return d/n1.frequencies.size();
+	}
+
+
+double distance_EHamming(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		d += n1.frequencies[i] * n2.frequencies[i];
+
+	return 1.0 - d;
+	}

@@ -4,7 +4,6 @@
 #include "rcpp_util.h"
 #include "rnet_util.h"
 #include "libpathsonpaths/ibmmixed.h"
-#include "libpathsonpaths/sputil.h"
 
 #include <algorithm>
 #include <bitset>
@@ -530,6 +529,19 @@ int SNP_distance(int g1, int g2)
 	return bitset<sizeof(int)*8>(g1 ^ g2).count();
 	}
 
+
+double distance_SNP(const Node_t & n1, const Node_t & n2)
+	{
+	double d = 0.0;
+
+	for (int i=0; i<n1.frequencies.size(); i++)
+		for (int j=0; j<n2.frequencies.size(); j++)
+			d += SNP_distance(i, j) * n1.frequencies[i] * n2.frequencies[j];
+
+	return d;
+	}
+
+
 double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2)
 	{
 	double res = 0.0;
@@ -545,37 +557,6 @@ double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2)
 		}
 
 	return res/p1.size();
-	}
-
-double SNP_distance(const Node_t & n1, const Node_t & n2)
-	{
-	double d = 0.0;
-
-	for (int i=0; i<n1.frequencies.size(); i++)
-		for (int j=0; j<n2.frequencies.size(); j++)
-			d += SNP_distance(i, j) * n1.frequencies[i] * n2.frequencies[j];
-
-	return d;
-	}
-
-double freq_distance(const Node_t & n1, const Node_t & n2)
-	{
-	double d = 0.0;
-
-	for (int i=0; i<n1.frequencies.size(); i++)
-		d += pow<2>(n1.frequencies[i] - n2.frequencies[i]);
-
-	return d/n1.frequencies.size();
-	}
-
-double distance_EHamming(const Node_t & n1, const Node_t & n2)
-	{
-	double d = 0.0;
-
-	for (int i=0; i<n1.frequencies.size(); i++)
-		d += n1.frequencies[i] * n2.frequencies[i];
-
-	return 1.0 - d;
 	}
 
 
@@ -635,7 +616,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty)
 			res(i, j) = res(j, i) = 
 				skip_empty && 
 					(net->nodes[i]->rate_in_infd <= 0 || net->nodes[j]->rate_in_infd <= 0) ? 
-				NA_REAL : freq_distance(*net->nodes[i], *net->nodes[j]);
+				NA_REAL : distance_freq(*net->nodes[i], *net->nodes[j]);
 
 	if (net->name_by_id.size())
 		{
