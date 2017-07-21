@@ -247,6 +247,36 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n);
 // [[Rcpp::export(name="draw_isolates.popsnetwork")]]
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples);
 
+
+//' @title draw_alleles.popsnode
+//'
+//' @description Draw a set of alleles from a single node.
+//'
+//' @details Draw a random set of alleles from a given node. This will only work if
+//' allele frequencies have been set (manually or by simulation).
+//'
+//' @param p_node A popsnode object.
+//' @param n Number of alleles to draw.
+//' @return A vector of allele ids.
+// [[Rcpp::export(name="draw_alleles.popsnode")]]
+IntegerVector draw_alleles_popsnode(const XPtr<Node_t> & p_node, int n);
+
+
+//' @title draw_alleles.popsnetwork
+//'
+//' @description Draw a set of alleles from the network.
+//' 
+//' @details Draw a random set of alleles from a number of nodes in the network. This will
+//' *only* work if allele frequencies have been set or simulated.
+//'
+//' @param p_net a PopsNet object.
+//' @param nodes A vector of node ids (either integer or factor).
+//' @param n How many alleles to draw per node.
+//' @return A dataframe with one column per node containing a list of allele ids.
+// [[Rcpp::export(name="draw_alleles.popsnetwork")]]
+DataFrame draw_alleles_popsnetwork(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n=1);
+
+
 //' @title egdeList
 //'
 //' @description Get a list of edges in a dataframe.

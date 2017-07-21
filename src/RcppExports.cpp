@@ -160,6 +160,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// draw_alleles_popsnode
+IntegerVector draw_alleles_popsnode(const XPtr<Node_t>& p_node, int n);
+RcppExport SEXP rpathsonpaths_draw_alleles_popsnode(SEXP p_nodeSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(draw_alleles_popsnode(p_node, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// draw_alleles_popsnetwork
+DataFrame draw_alleles_popsnetwork(const XPtr<Net_t>& p_net, const IntegerVector& nodes, int n);
+RcppExport SEXP rpathsonpaths_draw_alleles_popsnetwork(SEXP p_netSEXP, SEXP nodesSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nodes(nodesSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(draw_alleles_popsnetwork(p_net, nodes, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // edge_list
 DataFrame edge_list(const XPtr<Net_t>& p_net);
 RcppExport SEXP rpathsonpaths_edge_list(SEXP p_netSEXP) {

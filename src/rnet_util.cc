@@ -1,9 +1,7 @@
 #include "rnet_util.h"
 
-#include "libpathsonpaths/proportionalpick.h"
 #include "libpathsonpaths/sputil.h"
 
-#include "rcpp_util.h"
 
 void print_node_id(const Net_t * net, size_t i)
 	{

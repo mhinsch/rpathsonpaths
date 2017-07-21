@@ -5,7 +5,10 @@
 
 #include <Rcpp.h>
 
+#include "libpathsonpaths/proportionalpick.h"
+
 #include "rpathsonpaths_types.h"
+#include "rcpp_util.h"
 
 using namespace std;
 using namespace Rcpp;
@@ -56,6 +59,17 @@ void _set_allele_freqs(Net_t * net, const List & ini);
 size_t id_from_SEXP(const Net_t & net, SEXP id);
 
 void sample_node(const Node_t & node, size_t n, vector<size_t> & count);
+
+template<class CONT>
+void sample_alleles_node(const Node_t & node, CONT & alleles)
+	{
+	ProportionalPick<> pick(0.000001, node.frequencies);
+	RRng r;
+
+	for (auto & a : alleles)
+		a = pick.pick(r);
+	}
+
 
 double distance_SNP(const Node_t & n1, const Node_t & n2);
 double distance_freq(const Node_t & n1, const Node_t & n2);

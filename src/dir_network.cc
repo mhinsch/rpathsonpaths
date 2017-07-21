@@ -460,6 +460,73 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 	}
 
 
+IntegerVector draw_alleles_popsnode(const XPtr<Node_t> & p_node, int n)
+	{
+	const Node_t * node = p_node.checked_get();
+	if (!node)
+		stop("Invalid node object!");
+	if (!node->frequencies.size())
+		stop("Empty node!");
+
+	vector<size_t> alleles(n, 0);
+
+	sample_alleles_node(*node, alleles);
+
+	return IntegerVector(alleles.begin(), alleles.end());
+	}
+
+
+DataFrame draw_alleles_popsnetwork
+	(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n)
+	{
+	const Net_t * net = p_net.checked_get();
+	if (!net || net->nodes.size()==0)
+		stop("Invalid or empty network object!");
+
+	const bool f = nodes.inherits("factor");
+	const StringVector levels = f ? nodes.attr("levels") : StringVector();
+
+	// check nodes
+	for (auto n : net->nodes)
+		if (!n->frequencies.size())
+			stop("Empty node detected!");
+
+// *** prepare return data
+
+	vector<IntegerVector> data(nodes.size());
+	for (auto & v : data)
+		v = IntegerVector(n);
+
+// *** generate data
+
+	for (size_t i=0; i<nodes.size(); i++)
+		{
+		const size_t nid = f ? net->id_by_name.at(string(levels[nodes[i]-1])):
+			nodes[i];
+		if (nid >= net->nodes.size())
+			stop("Invalid node id!");
+
+		sample_alleles_node(*net->nodes[nid], data[i]);
+		}
+
+// *** construct dataframe and return
+
+	CharacterVector namevec(nodes.size(), "");
+	for (size_t i=0; i<nodes.size(); i++)
+		if (f) 
+			namevec[i] = levels[nodes[i]-1];
+		else
+			namevec[i] = to_string(i);
+
+	List dataf(nodes.size());
+	for (size_t i=0; i<nodes.size(); i++)
+		dataf(i) = data[i];
+	dataf.attr("names") = namevec;
+
+	return DataFrame(dataf);
+	}
+
+
 DataFrame edge_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
