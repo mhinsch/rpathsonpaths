@@ -23,6 +23,10 @@ draw_isolates <- function(obj, ...){
 	UseMethod("draw_isolates")
 	}
 
+draw_alleles<- function(obj, ...){
+	UseMethod("draw_alleles")
+	}
+
 plot.popsnetwork <- function(x, ...){
 	if (!requireNamespace("igraph")){
 		stop("This function requires the iGraph package.")

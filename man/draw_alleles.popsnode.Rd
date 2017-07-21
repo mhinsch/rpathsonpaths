@@ -4,7 +4,7 @@
 \alias{draw_alleles.popsnode}
 \title{draw_alleles.popsnode}
 \usage{
-draw_alleles.popsnode(p_node, n)
+\method{draw_alleles}{popsnode}(p_node, n)
 }
 \arguments{
 \item{p_node}{A popsnode object.}

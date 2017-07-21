@@ -4,7 +4,7 @@
 \alias{draw_alleles.popsnetwork}
 \title{draw_alleles.popsnetwork}
 \usage{
-draw_alleles.popsnetwork(p_net, nodes, n = 1L)
+\method{draw_alleles}{popsnetwork}(p_net, nodes, n = 1L)
 }
 \arguments{
 \item{p_net}{a PopsNet object.}
