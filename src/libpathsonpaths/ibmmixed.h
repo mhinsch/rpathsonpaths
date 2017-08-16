@@ -130,7 +130,8 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	myassert(rem >= 0);
 
 	// invalid or already scaled
-	if (rem <= 0 || rem == n)
+	// (we have to special case 1 since that's the canonical sum of frequencies)
+	if (rem <= 0 || (n>1 && rem == n))
 		return;
 
 	for (size_t i=0; i<node->frequencies.size()-1; i++)
