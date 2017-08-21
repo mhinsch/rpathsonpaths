@@ -180,8 +180,6 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
 	double transmission, double decay, const string & spread_model, bool checks)
 	{
-	// Rcout << "decay: " << decay << "\n";
-
 	if (checks)
 		{
 		if (as<bool>(cycles(links)))

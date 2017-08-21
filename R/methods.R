@@ -78,8 +78,12 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 						decay=-1.0, theta=1.0, spread_model="units", drift_model="units", 
 						checks=FALSE) {
 
+	meta <- list(spread = spread_model, drift = drift_model, n_inp = length(ini_input))
+
 	ext_sources <- sort(sources(edgelist))
 	n_sources <- length(ext_sources)
+
+	meta$n_sources <- n_sources
 
 	vinp <- rep_len(ini_input, n_sources)
 	vinfd <- rep_len(ini_infd, n_sources)
@@ -97,6 +101,8 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 		ini_freqs <- list(list(ext_sources, ini_freqs))
 	}
 
+	meta$n_ini <- length(ini_freqs)
+
 	ini_freqs <- rep(ini_freqs, n)
 
 	if (drift_model== "units"){
@@ -106,7 +112,8 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 	else {
 		stop("Unknown method!") }
 
-	list(result=res, raw=net_raw)
+
+	list(result=res, raw=net_raw, meta = meta)
 }
 
 #' @title nodes
