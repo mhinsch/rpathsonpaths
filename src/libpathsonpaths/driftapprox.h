@@ -20,8 +20,7 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	for (auto * link : node->inputs)
 		annotate_frequencies(link->from, drift);
 
-	// non-empty list indicates freqs have been pre-set 
-	if (!node->frequencies.empty())
+	if (node->blocked) 
 		{
 		node->done = true;
 		return;
@@ -101,6 +100,9 @@ void annotate_frequencies_push(NODE * node, DRIFT_FUNC & drift)
 	for (auto link : node->outputs)
 		{
 		auto to = link->to;
+
+		if (to->blocked) continue;
+
 		// pre-transmission infected in target node
 		const double to_n_infd = to->rate_in_infd - to->d_rate_in_infd;
 
@@ -119,9 +121,8 @@ void annotate_frequencies_push(NODE * node, DRIFT_FUNC & drift)
 		// node->frequencies (unless users supply differently sized allele freqs but
 		// then they are on their own)
 		auto f_iter = to->frequencies.begin();
-		if (!to->blocked)
-			for (const auto r : res)
-				 *f_iter++ += r * p_to;
+		for (const auto r : res)
+			 *f_iter++ += r * p_to;
 		}
 
 	node->done = true;
