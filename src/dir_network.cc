@@ -657,15 +657,22 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 			res(j, i) = res(i, j);
 			}
 
+	StringVector cn(net->nodes.size()), rn(net->nodes.size());
+
 	if (net->name_by_id.size())
 		{
 		// StringVector is clearly missing a constructor here
-		StringVector cn(net->name_by_id.size()), rn(net->name_by_id.size());
 		cn = net->name_by_id;
 		rn = net->name_by_id;
-		colnames(res) = cn;
-		rownames(res) = rn;
 		}
+	// we need to name cols and rows even for non-factors, otherwise
+	// subscripting won't work (0-based vs. 1-based)
+	else
+		for (size_t i=0; i<net->nodes.size(); i++)
+			cn(i) = rn(i) = to_string(i);
+
+	colnames(res) = cn;
+	rownames(res) = rn;
 
 	return res;
 	}
@@ -709,15 +716,22 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 					(net->nodes[i]->rate_in_infd <= 0 || net->nodes[j]->rate_in_infd <= 0) ? 
 				NA_REAL : distance_EHamming(*net->nodes[i], *net->nodes[j]);
 
+	StringVector cn(net->nodes.size()), rn(net->nodes.size());
+
 	if (net->name_by_id.size())
 		{
 		// StringVector is clearly missing a constructor here
-		StringVector cn(net->name_by_id.size()), rn(net->name_by_id.size());
 		cn = net->name_by_id;
 		rn = net->name_by_id;
-		colnames(res) = cn;
-		rownames(res) = rn;
 		}
+	// we need to name cols and rows even for non-factors, otherwise
+	// subscripting won't work (0-based vs. 1-based)
+	else
+		for (size_t i=0; i<net->nodes.size(); i++)
+			cn(i) = rn(i) = to_string(i);
+
+	colnames(res) = cn;
+	rownames(res) = rn;
 
 	return res;
 	}
