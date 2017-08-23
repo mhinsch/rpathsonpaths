@@ -27,13 +27,14 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		node->rate_in_infd += link->rate_infd;
 		}
 
-	const int in_infd = node->rate_in_infd;
-	const int in = node->rate_in;
-	if (in_infd <= 0)
+	if (node->rate_in_infd <= 0)
 		{
 		node->done = true;
 		return;
 		}
+
+	const int in_infd = node->rate_in_infd;
+	const int in = node->rate_in;
 
 // *** transmission
 //     NOTE that this also happens for sources

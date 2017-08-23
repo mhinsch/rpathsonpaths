@@ -118,6 +118,9 @@ void annotate_rates(NODE * node, double transm_rate)
 
 	// *** input
 
+	if (!node->is_root())
+		node->rate_in = node->rate_in_infd = 0;
+
 	// does nothing for roots
 	for (auto link : node->inputs)
 		{
@@ -128,6 +131,13 @@ void annotate_rates(NODE * node, double transm_rate)
 		node->rate_in_infd += link->rate_infd;
 		}
 
+	// we don't do infection for clean nodes
+	if (node->rate_in_infd <= 0)
+		{
+		node->done = true;
+		return;
+		}
+	
 	// *** infection
 	
 	// proportion of input becomes infected
