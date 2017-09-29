@@ -207,3 +207,18 @@ descendants <- function(edgelist, node){
 
 	data.frame(from, to)
 }
+
+#' @title biggest_subnetwork
+#'
+#' @description Find and return the biggest (in terms of number of edges) connected subnetwork
+#' of a given network.
+#'
+#' @details Uses \code{\link{colour_network}} to find isolated subnetworks, then returns only
+#' the edges of the subnetwork with the highest number of edges.
+#' @param edgelist An edge list in dataframe format.
+#' @return An edge list in dataframe format.
+biggest_subnetwork <- function(edgelist){
+	cols <- colour_network(edgelist)
+	bigst <- which.max(tabulate(cols))
+	edgelist[cols==bigst,]
+}
