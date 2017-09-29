@@ -376,4 +376,23 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_emp
 // [[Rcpp::export]]
 NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
+//' @title generate_PA
+//'
+//' @description Generate a random transport network using preferential attachment.
+//'
+//' @details This function generates a random scale-free network. It uses the Barabasi-Albert 
+//' preferential attachment algorithm, slightly modified to allow for directedness and 
+//' isolated initial nodes.
+//'
+//' @param n_nodes Number of (non-source) nodes to generate.
+//' @param n_sources Number of source nodes to initialize the network with (has to be at least
+//' 1). Note that there is no guarantee all source nodes will become part of the network.
+//' @param m_dist The probability distribution to draw the number of inputs for new nodes
+//' from. m_dist will be normalized, therefore it does not have to sum up to 1.
+//' @param zero_appeal Constant to be added to the nodes' attractiveness.
+//' @param compact Whether to remove isolated source nodes.
+//' @return An edgelist as a dataframe. 
+// [[Rcpp::export]]
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal=1,
+	bool compact=true);
 #endif	// DIR_NETWORK_H

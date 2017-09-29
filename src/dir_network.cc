@@ -736,3 +736,89 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 	return res;
 	}
 
+
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal, bool
+	compact)
+	{
+	if (n_sources < 1)
+		stop("Number of sources has to be >= 1.");
+	if (n_nodes < 1)
+		stop("Number of nodes has to be >= 1.");
+	if (zero_appeal < 1)
+		stop("zero_appeal has to be >= 1.");
+
+	vector<int> degree(n_nodes + n_sources, 0);
+
+	vector<int> from, to;
+
+	from.reserve(n_nodes);
+	to.reserve(n_nodes);
+	
+	for (size_t i=0; i<n_sources; i++)
+		degree[i] = zero_appeal;
+
+	size_t sum = n_sources * zero_appeal;
+
+	ProportionalPick<> pick(0.000001, m_dist);
+	RRng r;
+
+	for (size_t i=0; i<n_nodes; i++)
+		{
+		// index of current node
+		const size_t node = i + n_sources;
+		// how many inputs
+		const size_t n_inp = pick.pick(r) + 1;
+
+		for (size_t j=0; j<n_inp; j++)
+			{
+			size_t r_inp = r(sum);
+			size_t inp = 0;
+			// find previous node in weight list
+			while (r_inp > degree[inp])
+				r_inp -= degree[inp++];
+
+			from.push_back(inp);
+			to.push_back(node);
+
+			// input node gains a connection
+			degree[inp]++;
+			// and sum increases accordingly
+			sum++;
+			}
+
+		// new node has 0 outputs
+		degree[node] = zero_appeal;
+		sum++;
+		}
+
+
+	if (compact)
+		{
+		// *** remove isolated nodes === make node indices contiguous
+		//     we re-use degree to store how much we have to count the index for a given
+		//     node down by
+
+		int reduce = 0;
+
+		// find isolated sources
+		for (size_t i=0; i<n_sources; i++)
+			{
+			// sources that are still at zero_appeal have no outputs => isolated
+			if (degree[i] == zero_appeal)
+				reduce++;
+			else
+				degree[i] = reduce;
+			}
+
+		// regular nodes can't be isolated, but we still have to change their index 
+		fill(degree.begin()+n_sources, degree.end(), reduce);
+
+		for (size_t i=0; i<from.size(); i++)
+			{
+			from[i] -= degree[from[i]];
+			to[i] -= degree[to[i]];
+			}
+		}
+
+	return DataFrame::create(Named("from") = from, Named("to") = to);
+	}

@@ -351,3 +351,23 @@ distances_EHamming <- function(p_net, skip_empty = TRUE) {
     .Call('rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
 
+#' @title generate_PA
+#'
+#' @description Generate a random transport network using preferential attachment.
+#'
+#' @details This function generates a random scale-free network. It uses the Barabasi-Albert 
+#' preferential attachment algorithm, slightly modified to allow for directedness and 
+#' isolated initial nodes.
+#'
+#' @param n_nodes Number of (non-source) nodes to generate.
+#' @param n_sources Number of source nodes to initialize the network with (has to be at least
+#' 1). Note that there is no guarantee all source nodes will become part of the network.
+#' @param m_dist The probability distribution to draw the number of inputs for new nodes
+#' from. m_dist will be normalized, therefore it does not have to sum up to 1.
+#' @param zero_appeal Constant to be added to the nodes' attractiveness.
+#' @param compact Whether to remove isolated source nodes.
+#' @return An edgelist as a dataframe. 
+generate_PA <- function(n_nodes, n_sources, m_dist, zero_appeal = 1L, compact = TRUE) {
+    .Call('rpathsonpaths_generate_PA', PACKAGE = 'rpathsonpaths', n_nodes, n_sources, m_dist, zero_appeal, compact)
+}
+

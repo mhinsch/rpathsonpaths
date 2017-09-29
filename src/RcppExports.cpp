@@ -244,3 +244,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// generate_PA
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal, bool compact);
+RcppExport SEXP rpathsonpaths_generate_PA(SEXP n_nodesSEXP, SEXP n_sourcesSEXP, SEXP m_distSEXP, SEXP zero_appealSEXP, SEXP compactSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_nodes(n_nodesSEXP);
+    Rcpp::traits::input_parameter< int >::type n_sources(n_sourcesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type m_dist(m_distSEXP);
+    Rcpp::traits::input_parameter< int >::type zero_appeal(zero_appealSEXP);
+    Rcpp::traits::input_parameter< bool >::type compact(compactSEXP);
+    rcpp_result_gen = Rcpp::wrap(generate_PA(n_nodes, n_sources, m_dist, zero_appeal, compact));
+    return rcpp_result_gen;
+END_RCPP
+}
