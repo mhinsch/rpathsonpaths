@@ -14,6 +14,14 @@ knitr::opts_chunk$set(
 
 # Installing the package
 
+Prerequisites:
+
+- C++ boost libraries
+
+- *Rcpp* (>= 0.12.9)
+
+Some of the functionality will also require the *igraph* package. 
+
 *rpathsonpaths* is not on CRAN yet, therefore for now please install the development version of the package from *github*:
 ```{r install2, eval=FALSE}
 devtools::install_github("mhinsch/rpathsonpaths")

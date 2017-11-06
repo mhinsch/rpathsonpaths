@@ -36,6 +36,15 @@ content of `REAME.md`.
 
 *rpathsonpaths* is currently only available on github.
 
+Prerequisites:
+
+- C++ boost libraries
+
+- *Rcpp* (>= 0.12.9)
+
+Some of the functionality will also require the *igraph* package. 
+
+
 ```{r install2, eval=FALSE}
 devtools::install_github("reconhub/incidence")
 ```
@@ -142,7 +151,8 @@ Let's load the data:
 ```{r}
 library(outbreaks)
 data(s_enteritidis_pt59)
-sent_graph = s_enteritidis_pt59$graph
+raw_graph = s_enteritidis_pt59$graph
+sent_graph = data.frame(from=raw_graph[[1]], to=raw_graph[[2]])
 ```
 
 Just in case we do some sanity checks.
