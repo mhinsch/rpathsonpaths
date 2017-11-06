@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // sources
 IntegerVector sources(const DataFrame& edge_list);
-RcppExport SEXP rpathsonpaths_sources(SEXP edge_listSEXP) {
+RcppExport SEXP _rpathsonpaths_sources(SEXP edge_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // sinks
 IntegerVector sinks(const DataFrame& edge_list);
-RcppExport SEXP rpathsonpaths_sinks(SEXP edge_listSEXP) {
+RcppExport SEXP _rpathsonpaths_sinks(SEXP edge_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // colour_network
 IntegerVector colour_network(const DataFrame& edge_list);
-RcppExport SEXP rpathsonpaths_colour_network(SEXP edge_listSEXP) {
+RcppExport SEXP _rpathsonpaths_colour_network(SEXP edge_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -41,7 +41,7 @@ END_RCPP
 }
 // cycles
 SEXP cycles(const DataFrame& edge_list, bool record);
-RcppExport SEXP rpathsonpaths_cycles(SEXP edge_listSEXP, SEXP recordSEXP) {
+RcppExport SEXP _rpathsonpaths_cycles(SEXP edge_listSEXP, SEXP recordSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,7 +53,7 @@ END_RCPP
 }
 // popsnetwork
 XPtr<Net_t> popsnetwork(const DataFrame& links, const DataFrame& external, double transmission, double decay, const string& spread_model, bool checks);
-RcppExport SEXP rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP decaySEXP, SEXP spread_modelSEXP, SEXP checksSEXP) {
+RcppExport SEXP _rpathsonpaths_popsnetwork(SEXP linksSEXP, SEXP externalSEXP, SEXP transmissionSEXP, SEXP decaySEXP, SEXP spread_modelSEXP, SEXP checksSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -69,7 +69,7 @@ END_RCPP
 }
 // print_popsnetwork
 void print_popsnetwork(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_print_popsnetwork(SEXP p_netSEXP) {
+RcppExport SEXP _rpathsonpaths_print_popsnetwork(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
@@ -77,19 +77,9 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// print_popsnode
-void print_popsnode(const XPtr<Node_t>& p_node);
-RcppExport SEXP rpathsonpaths_print_popsnode(SEXP p_nodeSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
-    print_popsnode(p_node);
-    return R_NilValue;
-END_RCPP
-}
 // set_allele_freqs
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t>& p_net, const List& ini_dist);
-RcppExport SEXP rpathsonpaths_set_allele_freqs(SEXP p_netSEXP, SEXP ini_distSEXP) {
+RcppExport SEXP _rpathsonpaths_set_allele_freqs(SEXP p_netSEXP, SEXP ini_distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -101,7 +91,7 @@ END_RCPP
 }
 // popgen_dirichlet
 XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t>& p_net, double theta, Nullable<List> ini_dist);
-RcppExport SEXP rpathsonpaths_popgen_dirichlet(SEXP p_netSEXP, SEXP thetaSEXP, SEXP ini_distSEXP) {
+RcppExport SEXP _rpathsonpaths_popgen_dirichlet(SEXP p_netSEXP, SEXP thetaSEXP, SEXP ini_distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -114,7 +104,7 @@ END_RCPP
 }
 // popgen_ibm_mixed
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t>& p_net, Nullable<List> ini_dist);
-RcppExport SEXP rpathsonpaths_popgen_ibm_mixed(SEXP p_netSEXP, SEXP ini_distSEXP) {
+RcppExport SEXP _rpathsonpaths_popgen_ibm_mixed(SEXP p_netSEXP, SEXP ini_distSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,33 +114,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_popsnode
-XPtr<Node_t> get_popsnode(const XPtr<Net_t>& p_net, SEXP id);
-RcppExport SEXP rpathsonpaths_get_popsnode(SEXP p_netSEXP, SEXP idSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type id(idSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_popsnode(p_net, id));
-    return rcpp_result_gen;
-END_RCPP
-}
-// draw_isolates_popsnode
-IntegerVector draw_isolates_popsnode(const XPtr<Node_t>& p_node, int n);
-RcppExport SEXP rpathsonpaths_draw_isolates_popsnode(SEXP p_nodeSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(draw_isolates_popsnode(p_node, n));
-    return rcpp_result_gen;
-END_RCPP
-}
 // draw_isolates_popsnetwork
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t>& p_net, const DataFrame& samples);
-RcppExport SEXP rpathsonpaths_draw_isolates_popsnetwork(SEXP p_netSEXP, SEXP samplesSEXP) {
+RcppExport SEXP _rpathsonpaths_draw_isolates_popsnetwork(SEXP p_netSEXP, SEXP samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -160,21 +126,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// draw_alleles_popsnode
-IntegerVector draw_alleles_popsnode(const XPtr<Node_t>& p_node, int n);
-RcppExport SEXP rpathsonpaths_draw_alleles_popsnode(SEXP p_nodeSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const XPtr<Node_t>& >::type p_node(p_nodeSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(draw_alleles_popsnode(p_node, n));
-    return rcpp_result_gen;
-END_RCPP
-}
 // draw_alleles_popsnetwork
 DataFrame draw_alleles_popsnetwork(const XPtr<Net_t>& p_net, const IntegerVector& nodes, int n);
-RcppExport SEXP rpathsonpaths_draw_alleles_popsnetwork(SEXP p_netSEXP, SEXP nodesSEXP, SEXP nSEXP) {
+RcppExport SEXP _rpathsonpaths_draw_alleles_popsnetwork(SEXP p_netSEXP, SEXP nodesSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -187,7 +141,7 @@ END_RCPP
 }
 // edge_list
 DataFrame edge_list(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_edge_list(SEXP p_netSEXP) {
+RcppExport SEXP _rpathsonpaths_edge_list(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -198,7 +152,7 @@ END_RCPP
 }
 // node_list
 DataFrame node_list(const XPtr<Net_t>& p_net);
-RcppExport SEXP rpathsonpaths_node_list(SEXP p_netSEXP) {
+RcppExport SEXP _rpathsonpaths_node_list(SEXP p_netSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -209,7 +163,7 @@ END_RCPP
 }
 // distances_freqdist
 NumericMatrix distances_freqdist(const XPtr<Net_t>& p_net, bool skip_empty);
-RcppExport SEXP rpathsonpaths_distances_freqdist(SEXP p_netSEXP, SEXP skip_emptySEXP) {
+RcppExport SEXP _rpathsonpaths_distances_freqdist(SEXP p_netSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -221,7 +175,7 @@ END_RCPP
 }
 // distances_sample
 NumericMatrix distances_sample(const XPtr<Net_t>& p_net, int n, bool skip_empty);
-RcppExport SEXP rpathsonpaths_distances_sample(SEXP p_netSEXP, SEXP nSEXP, SEXP skip_emptySEXP) {
+RcppExport SEXP _rpathsonpaths_distances_sample(SEXP p_netSEXP, SEXP nSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -234,7 +188,7 @@ END_RCPP
 }
 // distances_EHamming
 NumericMatrix distances_EHamming(const XPtr<Net_t>& p_net, bool skip_empty);
-RcppExport SEXP rpathsonpaths_distances_EHamming(SEXP p_netSEXP, SEXP skip_emptySEXP) {
+RcppExport SEXP _rpathsonpaths_distances_EHamming(SEXP p_netSEXP, SEXP skip_emptySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -245,17 +199,43 @@ BEGIN_RCPP
 END_RCPP
 }
 // generate_PA
-DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal, bool compact);
-RcppExport SEXP rpathsonpaths_generate_PA(SEXP n_nodesSEXP, SEXP n_sourcesSEXP, SEXP m_distSEXP, SEXP zero_appealSEXP, SEXP compactSEXP) {
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float zero_appeal, bool compact);
+RcppExport SEXP _rpathsonpaths_generate_PA(SEXP n_nodesSEXP, SEXP n_sourcesSEXP, SEXP m_distSEXP, SEXP zero_appealSEXP, SEXP compactSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n_nodes(n_nodesSEXP);
     Rcpp::traits::input_parameter< int >::type n_sources(n_sourcesSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type m_dist(m_distSEXP);
-    Rcpp::traits::input_parameter< int >::type zero_appeal(zero_appealSEXP);
+    Rcpp::traits::input_parameter< float >::type zero_appeal(zero_appealSEXP);
     Rcpp::traits::input_parameter< bool >::type compact(compactSEXP);
     rcpp_result_gen = Rcpp::wrap(generate_PA(n_nodes, n_sources, m_dist, zero_appeal, compact));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_rpathsonpaths_sources", (DL_FUNC) &_rpathsonpaths_sources, 1},
+    {"_rpathsonpaths_sinks", (DL_FUNC) &_rpathsonpaths_sinks, 1},
+    {"_rpathsonpaths_colour_network", (DL_FUNC) &_rpathsonpaths_colour_network, 1},
+    {"_rpathsonpaths_cycles", (DL_FUNC) &_rpathsonpaths_cycles, 2},
+    {"_rpathsonpaths_popsnetwork", (DL_FUNC) &_rpathsonpaths_popsnetwork, 6},
+    {"_rpathsonpaths_print_popsnetwork", (DL_FUNC) &_rpathsonpaths_print_popsnetwork, 1},
+    {"_rpathsonpaths_set_allele_freqs", (DL_FUNC) &_rpathsonpaths_set_allele_freqs, 2},
+    {"_rpathsonpaths_popgen_dirichlet", (DL_FUNC) &_rpathsonpaths_popgen_dirichlet, 3},
+    {"_rpathsonpaths_popgen_ibm_mixed", (DL_FUNC) &_rpathsonpaths_popgen_ibm_mixed, 2},
+    {"_rpathsonpaths_draw_isolates_popsnetwork", (DL_FUNC) &_rpathsonpaths_draw_isolates_popsnetwork, 2},
+    {"_rpathsonpaths_draw_alleles_popsnetwork", (DL_FUNC) &_rpathsonpaths_draw_alleles_popsnetwork, 3},
+    {"_rpathsonpaths_edge_list", (DL_FUNC) &_rpathsonpaths_edge_list, 1},
+    {"_rpathsonpaths_node_list", (DL_FUNC) &_rpathsonpaths_node_list, 1},
+    {"_rpathsonpaths_distances_freqdist", (DL_FUNC) &_rpathsonpaths_distances_freqdist, 2},
+    {"_rpathsonpaths_distances_sample", (DL_FUNC) &_rpathsonpaths_distances_sample, 3},
+    {"_rpathsonpaths_distances_EHamming", (DL_FUNC) &_rpathsonpaths_distances_EHamming, 2},
+    {"_rpathsonpaths_generate_PA", (DL_FUNC) &_rpathsonpaths_generate_PA, 5},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_rpathsonpaths(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

@@ -15,9 +15,6 @@ print.popsnetwork <- function(x, ...){
 	.printpopsnetwork(x)
 	}
 
-print.popsnode <- function(x, ...){
-	.printpopsnode(x)
-	}
 
 draw_isolates <- function(obj, ...){
 	UseMethod("draw_isolates")

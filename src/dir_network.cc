@@ -303,14 +303,6 @@ void print_popsnetwork(const XPtr<Net_t> & p_net)
 	}
 
 
-void print_popsnode(const XPtr<Node_t> & p_node)
-	{
-	const Node_t * node = p_node.checked_get();
-	
-	print_popsnode(node);
-	}
-
-
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & iniDist)
 	{
 	Net_t * net = new Net_t(*p_net.checked_get());
@@ -363,40 +355,6 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 		node->normalize();
 	
 	return make_S3XPtr(net, "popsnetwork", true);
-	}
-
-
-XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id)
-	{
-	Net_t * net = p_net.checked_get();
-	if (!net)
-		stop("Invalid network object!");
-
-	const size_t n_id = id_from_SEXP(*net, id);
-
-	if (n_id > net->nodes.size())
-		stop("Invalid node id!");
-	
-	Node_t * node = net->nodes[n_id];
-
-	// don't GC, since net owns the memory
-	return make_S3XPtr(node, "popsnode", false);
-	}
-
-
-IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n)
-	{
-	const Node_t * node = p_node.checked_get();
-	if (!node)
-		stop("Invalid node object!");
-
-	vector<size_t> count(node->frequencies.size(), 0);
-	if (!count.size())
-		stop("Empty node!");
-
-	sample_node(*node, n, count);
-
-	return IntegerVector(count.begin(), count.end());
 	}
 
 
@@ -455,22 +413,6 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 	dataf.attr("names") = namevec;
 
 	return DataFrame(dataf);
-	}
-
-
-IntegerVector draw_alleles_popsnode(const XPtr<Node_t> & p_node, int n)
-	{
-	const Node_t * node = p_node.checked_get();
-	if (!node)
-		stop("Invalid node object!");
-	if (!node->frequencies.size())
-		stop("Empty node!");
-
-	vector<size_t> alleles(n, 0);
-
-	sample_alleles_node(*node, alleles);
-
-	return IntegerVector(alleles.begin(), alleles.end());
 	}
 
 
@@ -737,17 +679,17 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 	}
 
 
-DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal, bool
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float zero_appeal, bool
 	compact)
 	{
 	if (n_sources < 1)
 		stop("Number of sources has to be >= 1.");
 	if (n_nodes < 1)
 		stop("Number of nodes has to be >= 1.");
-	if (zero_appeal < 1)
-		stop("zero_appeal has to be >= 1.");
+	if (zero_appeal <= 0)
+		stop("zero_appeal has to be > 0.");
 
-	vector<int> degree(n_nodes + n_sources, 0);
+	vector<float> weight(n_nodes + n_sources, 0);
 
 	vector<int> from, to;
 
@@ -755,9 +697,9 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero
 	to.reserve(n_nodes);
 	
 	for (size_t i=0; i<n_sources; i++)
-		degree[i] = zero_appeal;
+		weight[i] = zero_appeal;
 
-	size_t sum = n_sources * zero_appeal;
+	double sum = n_sources * zero_appeal;
 
 	ProportionalPick<> pick(0.000001, m_dist);
 	RRng r;
@@ -771,23 +713,26 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero
 
 		for (size_t j=0; j<n_inp; j++)
 			{
-			size_t r_inp = r(sum);
+			size_t r_inp = r.outOf(0, sum);
 			size_t inp = 0;
 			// find previous node in weight list
-			while (r_inp > degree[inp])
-				r_inp -= degree[inp++];
+			while (r_inp > weight[inp])
+				r_inp -= weight[inp++];
+
+			if (inp >= node)
+				stop("Internal error: invalid node!");
 
 			from.push_back(inp);
 			to.push_back(node);
 
 			// input node gains a connection
-			degree[inp]++;
+			weight[inp]++;
 			// and sum increases accordingly
 			sum++;
 			}
 
 		// new node has 0 outputs
-		degree[node] = zero_appeal;
+		weight[node] = zero_appeal;
 		sum++;
 		}
 
@@ -795,7 +740,7 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero
 	if (compact)
 		{
 		// *** remove isolated nodes === make node indices contiguous
-		//     we re-use degree to store how much we have to count the index for a given
+		//     we re-use weight to store how much we have to count the index for a given
 		//     node down by
 
 		int reduce = 0;
@@ -804,19 +749,19 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero
 		for (size_t i=0; i<n_sources; i++)
 			{
 			// sources that are still at zero_appeal have no outputs => isolated
-			if (degree[i] == zero_appeal)
+			if (weight[i] == zero_appeal)
 				reduce++;
 			else
-				degree[i] = reduce;
+				weight[i] = reduce;
 			}
 
 		// regular nodes can't be isolated, but we still have to change their index 
-		fill(degree.begin()+n_sources, degree.end(), reduce);
+		fill(weight.begin()+n_sources, weight.end(), reduce);
 
 		for (size_t i=0; i<from.size(); i++)
 			{
-			from[i] -= degree[from[i]];
-			to[i] -= degree[to[i]];
+			from[i] -= weight[from[i]];
+			to[i] -= weight[to[i]];
 			}
 		}
 

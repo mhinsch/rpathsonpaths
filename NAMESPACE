@@ -5,7 +5,3 @@ import(methods, Rcpp)
 S3method("print", "popsnetwork")
 S3method("draw_isolates", "popsnetwork")
 S3method("draw_alleles", "popsnetwork")
-
-S3method("print", "popsnode")
-S3method("draw_isolates", "popsnode")
-S3method("draw_alleles", "popsnode")

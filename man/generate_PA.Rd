@@ -4,7 +4,7 @@
 \alias{generate_PA}
 \title{generate_PA}
 \usage{
-generate_PA(n_nodes, n_sources, m_dist, zero_appeal = 1L, compact = TRUE)
+generate_PA(n_nodes, n_sources, m_dist, zero_appeal = 1, compact = TRUE)
 }
 \arguments{
 \item{n_nodes}{Number of (non-source) nodes to generate.}

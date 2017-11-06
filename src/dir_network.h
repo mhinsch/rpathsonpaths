@@ -21,6 +21,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerVector sources(const DataFrame & edge_list);
 
+
 //' @title sinks 
 //'
 //' @description Get a list of sink (i.e. leave) nodes from a network.
@@ -34,6 +35,7 @@ IntegerVector sources(const DataFrame & edge_list);
 //' @return A list of ids of all sink nodes in the network.
 // [[Rcpp::export]]
 IntegerVector sinks(const DataFrame & edge_list);
+
 
 //' @title colour_network
 //'
@@ -49,6 +51,7 @@ IntegerVector sinks(const DataFrame & edge_list);
 //' 1 and are not guaranteed to be contiguous.
 // [[Rcpp::export]]
 IntegerVector colour_network(const DataFrame & edge_list);
+
 
 //' @title cycles
 //' 
@@ -135,11 +138,10 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 // [[Rcpp::export]]
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, double transmission=0.0, double decay=-1.0, const string & spread_model = "fluid", bool checks=false);
 
+
 // [[Rcpp::export(name=".printpopsnetwork")]]
 void print_popsnetwork(const XPtr<Net_t> & p_net);
 
-// [[Rcpp::export(name=".printpopsnode")]]
-void print_popsnode(const XPtr<Node_t> & p_node);
 
 //' @title set_allele_freqs
 //' 
@@ -207,30 +209,6 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
 
 
-//' @title get_popsnode
-//'
-//' @description Pick a single node from the network.
-//' 
-//' @param p_net A PopsNet object.
-//' @param id The id of the node to return (either a string or an integer, see 
-//' \code{\link{popsnetwork}}).
-//' @return A popsnode object.
-// [[Rcpp::export(name="get_popsnode")]]
-XPtr<Node_t> get_popsnode(const XPtr<Net_t> & p_net, SEXP id);
-
-//' @title draw_isolates.popsnode
-//'
-//' @description Draw a set of isolates from a single node.
-//'
-//' @details Draw a random set of isolates from a given node. This will only work if
-//' allele frequencies have been set (manually or by simulation).
-//'
-//' @param p_node A popsnode object.
-//' @param n Number of isolates to draw.
-//' @return A vector of allele counts.
-// [[Rcpp::export(name="draw_isolates.popsnode")]]
-IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n);
-
 //' @title draw_isolates.popsnetwork
 //'
 //' @description Draw a set of isolates from the network.
@@ -246,20 +224,6 @@ IntegerVector draw_isolates_popsnode(const XPtr<Node_t> & p_node, int n);
 //' in $\code{allele_x}.
 // [[Rcpp::export(name="draw_isolates.popsnetwork")]]
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples);
-
-
-//' @title draw_alleles.popsnode
-//'
-//' @description Draw a set of alleles from a single node.
-//'
-//' @details Draw a random set of alleles from a given node. This will only work if
-//' allele frequencies have been set (manually or by simulation).
-//'
-//' @param p_node A popsnode object.
-//' @param n Number of alleles to draw.
-//' @return A vector of allele ids.
-// [[Rcpp::export(name="draw_alleles.popsnode")]]
-IntegerVector draw_alleles_popsnode(const XPtr<Node_t> & p_node, int n);
 
 
 //' @title draw_alleles.popsnetwork
@@ -345,6 +309,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net);
 // [[Rcpp::export]]
 NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
+
 //' @title distances_sample
 //'
 //' @description Calculate genetic distances within a network.
@@ -376,6 +341,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_emp
 // [[Rcpp::export]]
 NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
+
 //' @title generate_PA
 //'
 //' @description Generate a random transport network using preferential attachment.
@@ -393,6 +359,8 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true
 //' @param compact Whether to remove isolated source nodes.
 //' @return An edgelist as a dataframe. 
 // [[Rcpp::export]]
-DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, int zero_appeal=1,
+DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float zero_appeal=1,
 	bool compact=true);
+
+
 #endif	// DIR_NETWORK_H

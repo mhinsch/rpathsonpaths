@@ -13,7 +13,7 @@
 #'
 #' @return A list of ids of all source nodes in the network.
 sources <- function(edge_list) {
-    .Call('rpathsonpaths_sources', PACKAGE = 'rpathsonpaths', edge_list)
+    .Call('_rpathsonpaths_sources', PACKAGE = 'rpathsonpaths', edge_list)
 }
 
 #' @title sinks 
@@ -28,7 +28,7 @@ sources <- function(edge_list) {
 #'
 #' @return A list of ids of all sink nodes in the network.
 sinks <- function(edge_list) {
-    .Call('rpathsonpaths_sinks', PACKAGE = 'rpathsonpaths', edge_list)
+    .Call('_rpathsonpaths_sinks', PACKAGE = 'rpathsonpaths', edge_list)
 }
 
 #' @title colour_network
@@ -44,7 +44,7 @@ sinks <- function(edge_list) {
 #' @return An integer vector with the sub-network id of each edge. Note that id's start at
 #' 1 and are not guaranteed to be contiguous.
 colour_network <- function(edge_list) {
-    .Call('rpathsonpaths_colour_network', PACKAGE = 'rpathsonpaths', edge_list)
+    .Call('_rpathsonpaths_colour_network', PACKAGE = 'rpathsonpaths', edge_list)
 }
 
 #' @title cycles
@@ -60,7 +60,7 @@ colour_network <- function(edge_list) {
 #' @return If record is FALSE: TRUE if a cycle was found, FALSE otherwise. If record is TRUE:
 #' a list of cycles (as vectors of node ids, see \code{\link{popsnetwork}}) is returned.
 cycles <- function(edge_list, record = FALSE) {
-    .Call('rpathsonpaths_cycles', PACKAGE = 'rpathsonpaths', edge_list, record)
+    .Call('_rpathsonpaths_cycles', PACKAGE = 'rpathsonpaths', edge_list, record)
 }
 
 #' @title popsnetwork 
@@ -130,15 +130,11 @@ cycles <- function(edge_list, record = FALSE) {
 #' and disconnected sub-networks).
 #' @return A popsnetwork object.
 popsnetwork <- function(links, external, transmission = 0.0, decay = -1.0, spread_model = "fluid", checks = FALSE) {
-    .Call('rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission, decay, spread_model, checks)
+    .Call('_rpathsonpaths_popsnetwork', PACKAGE = 'rpathsonpaths', links, external, transmission, decay, spread_model, checks)
 }
 
 .printpopsnetwork <- function(p_net) {
-    invisible(.Call('rpathsonpaths_print_popsnetwork', PACKAGE = 'rpathsonpaths', p_net))
-}
-
-.printpopsnode <- function(p_node) {
-    invisible(.Call('rpathsonpaths_print_popsnode', PACKAGE = 'rpathsonpaths', p_node))
+    invisible(.Call('_rpathsonpaths_print_popsnetwork', PACKAGE = 'rpathsonpaths', p_net))
 }
 
 #' @title set_allele_freqs
@@ -156,7 +152,7 @@ popsnetwork <- function(links, external, transmission = 0.0, decay = -1.0, sprea
 #' (but will produce output themselves).
 #' @return A new popsnetwork object.
 set_allele_freqs <- function(p_net, ini_dist) {
-    .Call('rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
+    .Call('_rpathsonpaths_set_allele_freqs', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
 }
 
 #' @title popgen_dirichlet
@@ -181,7 +177,7 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' way will effectively be treated as a source and hide nodes that are further upstream.
 #' @return A new popsnetwork object with allele frequencies set for each node.
 popgen_dirichlet <- function(p_net, theta, ini_dist = NULL) {
-    .Call('rpathsonpaths_popgen_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)
+    .Call('_rpathsonpaths_popgen_dirichlet', PACKAGE = 'rpathsonpaths', p_net, theta, ini_dist)
 }
 
 #' @title popgen_ibm_mixed
@@ -204,33 +200,7 @@ popgen_dirichlet <- function(p_net, theta, ini_dist = NULL) {
 #' way will effectively be treated as a source and hide nodes that are further upstream.
 #' @return A new popsnetwork object with allele frequencies set for each node.
 popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
-    .Call('rpathsonpaths_popgen_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
-}
-
-#' @title get_popsnode
-#'
-#' @description Pick a single node from the network.
-#' 
-#' @param p_net A PopsNet object.
-#' @param id The id of the node to return (either a string or an integer, see 
-#' \code{\link{popsnetwork}}).
-#' @return A popsnode object.
-get_popsnode <- function(p_net, id) {
-    .Call('rpathsonpaths_get_popsnode', PACKAGE = 'rpathsonpaths', p_net, id)
-}
-
-#' @title draw_isolates.popsnode
-#'
-#' @description Draw a set of isolates from a single node.
-#'
-#' @details Draw a random set of isolates from a given node. This will only work if
-#' allele frequencies have been set (manually or by simulation).
-#'
-#' @param p_node A popsnode object.
-#' @param n Number of isolates to draw.
-#' @return A vector of allele counts.
-draw_isolates.popsnode <- function(p_node, n) {
-    .Call('rpathsonpaths_draw_isolates_popsnode', PACKAGE = 'rpathsonpaths', p_node, n)
+    .Call('_rpathsonpaths_popgen_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
 }
 
 #' @title draw_isolates.popsnetwork
@@ -247,21 +217,7 @@ draw_isolates.popsnode <- function(p_node, n) {
 #' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
 #' in $\code{allele_x}.
 draw_isolates.popsnetwork <- function(p_net, samples) {
-    .Call('rpathsonpaths_draw_isolates_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, samples)
-}
-
-#' @title draw_alleles.popsnode
-#'
-#' @description Draw a set of alleles from a single node.
-#'
-#' @details Draw a random set of alleles from a given node. This will only work if
-#' allele frequencies have been set (manually or by simulation).
-#'
-#' @param p_node A popsnode object.
-#' @param n Number of alleles to draw.
-#' @return A vector of allele ids.
-draw_alleles.popsnode <- function(p_node, n) {
-    .Call('rpathsonpaths_draw_alleles_popsnode', PACKAGE = 'rpathsonpaths', p_node, n)
+    .Call('_rpathsonpaths_draw_isolates_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, samples)
 }
 
 #' @title draw_alleles.popsnetwork
@@ -276,7 +232,7 @@ draw_alleles.popsnode <- function(p_node, n) {
 #' @param n How many alleles to draw per node.
 #' @return A dataframe with one column per node containing a list of allele ids.
 draw_alleles.popsnetwork <- function(p_net, nodes, n = 1L) {
-    .Call('rpathsonpaths_draw_alleles_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, nodes, n)
+    .Call('_rpathsonpaths_draw_alleles_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, nodes, n)
 }
 
 #' @title egdeList
@@ -289,7 +245,7 @@ draw_alleles.popsnetwork <- function(p_net, nodes, n = 1L) {
 #' @param p_net A PopsNet object.
 #' @return A dataframe with from, to, rates and rates_infected.
 edge_list <- function(p_net) {
-    .Call('rpathsonpaths_edge_list', PACKAGE = 'rpathsonpaths', p_net)
+    .Call('_rpathsonpaths_edge_list', PACKAGE = 'rpathsonpaths', p_net)
 }
 
 #' @title node_list
@@ -302,7 +258,7 @@ edge_list <- function(p_net) {
 #' @param p_net A PopsNet object.
 #' @return A dataframe with id and rate_infected.
 node_list <- function(p_net) {
-    .Call('rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
+    .Call('_rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
 }
 
 #' @title distances_freqdist
@@ -316,7 +272,7 @@ node_list <- function(p_net) {
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
 distances_freqdist <- function(p_net, skip_empty = TRUE) {
-    .Call('rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
+    .Call('_rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
 
 #' @title distances_sample
@@ -331,7 +287,7 @@ distances_freqdist <- function(p_net, skip_empty = TRUE) {
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
 distances_sample <- function(p_net, n = 1L, skip_empty = TRUE) {
-    .Call('rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n, skip_empty)
+    .Call('_rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n, skip_empty)
 }
 
 #' @title distances_EHamming
@@ -348,7 +304,7 @@ distances_sample <- function(p_net, n = 1L, skip_empty = TRUE) {
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
 distances_EHamming <- function(p_net, skip_empty = TRUE) {
-    .Call('rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
+    .Call('_rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
 
 #' @title generate_PA
@@ -367,7 +323,7 @@ distances_EHamming <- function(p_net, skip_empty = TRUE) {
 #' @param zero_appeal Constant to be added to the nodes' attractiveness.
 #' @param compact Whether to remove isolated source nodes.
 #' @return An edgelist as a dataframe. 
-generate_PA <- function(n_nodes, n_sources, m_dist, zero_appeal = 1L, compact = TRUE) {
-    .Call('rpathsonpaths_generate_PA', PACKAGE = 'rpathsonpaths', n_nodes, n_sources, m_dist, zero_appeal, compact)
+generate_PA <- function(n_nodes, n_sources, m_dist, zero_appeal = 1, compact = TRUE) {
+    .Call('_rpathsonpaths_generate_PA', PACKAGE = 'rpathsonpaths', n_nodes, n_sources, m_dist, zero_appeal, compact)
 }
 
