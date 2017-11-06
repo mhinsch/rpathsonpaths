@@ -219,3 +219,127 @@ biggest_subnetwork <- function(edgelist){
 	bigst <- which.max(tabulate(cols))
 	edgelist[cols==bigst,]
 }
+
+#' @title perfect_binary
+#'
+#' @description Create a perfect binary tree of a given size.
+#'
+#' @details Create a perfect, full binary tree with a given depth.
+#'
+#' @param size Size of the tree in number of edges from the root to any leaf (which is
+#' equal to depth-1).
+#' @return An edge list in dataframe format.
+perfect_binary <- function(size){
+	num <- 2 ^ (depth+1) - 2
+
+	from <- vector("integer", num)
+	to <- vector("integer", num)
+
+	count <- 1L
+	nodes <- c(0L)
+	for (i in 1:degree){
+		# next node id we can use
+		next_id <- tail(nodes, 1) + 1L
+		# twice as many nodes on this level
+		n <- length(nodes) * 2L
+		new_nodes <- next_id : (next_id + n-1)
+		for (j in 1:n){
+			j_o <- (j+1L) %/% 2L
+			from[[count]] <- nodes[[j_o]]
+			to[[count]] <- new_nodes[[j]]
+			count <- count + 1L
+		}
+		nodes <- new_nodes
+	}
+
+	data.frame(from, to)
+}
+
+#' @title path_distances
+#'
+#' @description Obtain the shortest distances between all pairs of nodes.
+#'
+#' @details Uses \code{\link{igraph::distances}} to calculate the shortest path for
+#' all pairs of nodes in the network.
+#'
+#' @param net A popsnetwork object.
+#' @return The distances in a matrix (see \code{\link{igraph::distances}}).
+path_distances <- function(net) {
+	if (!requireNamespace("igraph")){
+		stop("This function requires the iGraph package.")
+	}
+
+	if (class(net) == "popsnetwork") {
+		igraph::distances(igraph::graph_from_data_frame(edge_list(net))) 
+	} else {
+		igraph::distances(igraph::graph_from_data_frame(net)) 
+	}
+}
+
+
+#' @title children
+#'
+#' @description Find all direct children of a node.
+#'
+#' @details Find and return all children for a given node (or list of nodes) in a network. If 
+#' no node is provided the function is applied to all nodes in the network.
+#'
+#' @param edgelist A network in edgelist format.
+#' @param node A single node id or list of node ids.
+#' @return An array of nodes or a list of arrays of nodes (if no node was provided).
+children <- function(edgelist, node) {
+	if (missing(node)) {
+		ns <- nodes(edgelist)
+		sapply(ns, function(x) children(edgelist, x))
+	} else {
+		ch <- edgelist[[1]] %in% node
+		edgelist[[2]][ch]
+	}
+}
+
+
+#' @title parents
+#'
+#' @description Find all direct parents of a node.
+#'
+#' @details Find and return all parents for a given node (or list of nodes) in a network. If 
+#' no node is provided the function is applied to all nodes in the network.
+#'
+#' @param edgelist A network in edgelist format.
+#' @param node A single node id or list of node ids.
+#' @return An array of nodes or a list of arrays of nodes (if no node was provided).
+parents <- function(edgelist, node) {
+	if (missing(node)) {
+		ns <- nodes(edgelist)
+		sapply(ns, function(x) parents(edgelist, x))
+	} else {
+		ch <- edgelist[[2]] %in% node
+		edgelist[[1]][ch]
+	}
+}
+
+
+#' @title depth
+#' 
+#' @description Calculate depth of a node.
+#'
+#' @details Calculate the depth of a node (or list of nodes) in a given network. The depth is
+#' here defined as the length of the shortest path that connects any of the given nodes to
+#' any root node. If no node is provided the function is applied to all nodes in the network.
+#'
+#' @param edgelist The network in edgelist format.
+#' @param node A node id or a list of node ids.
+#' @return The minimum depth as an integer or an array of integers (if no node was provided).
+depth <- function(edgelist, node) {
+	if (missing(node)) {
+		ns <- nodes(edgelist)
+		sapply(ns, function(x) depth(edgelist, x))
+	} else {
+		p <- parents(edgelist, node)
+		if (length(p) > 0) {
+			min(depth(edgelist, p)) + 1L }
+		else {
+			0L
+		}
+	}
+}
