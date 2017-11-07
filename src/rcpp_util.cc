@@ -11,6 +11,9 @@ vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names
 
 	for (size_t f : factor)
 		{
+		if (IntegerVector::is_na(f))
+			throw invalid_argument("missing value");
+
 		// take into account 1-based indexing in R
 		const string name = string(levels(f-1));
 

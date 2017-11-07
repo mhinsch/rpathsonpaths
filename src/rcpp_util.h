@@ -85,6 +85,7 @@ public:
 		if (_f)
 			return _names.size();
 
+		// strictly speaking this gives us the highest index
 		size_t n = 0;
 		for (size_t i=0; i<_from_raw.size(); i++)
 			{
