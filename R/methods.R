@@ -160,12 +160,22 @@ mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 #' @description get all descendants of a particular node in a graph
 #' 
 #' @details This function will return the graph reachable from a given node in a
+#' network. If no node argument is given the function is applied to each node in the
 #' network.
 #' @param edgelist The graph as an edgelist (a data frame consisting of a from and 
 #' a to column).
 #' @param node The node to find the descendants of.
 #' @return An edgelist containing the complete downstream graph of the given node.
 descendants <- function(edgelist, node){
+	if (any(is.na(edgelist))) {
+		stop("missing values in edgelist")
+	}
+
+	if (missing(node)) {
+		ns <- nodes(edgelist)
+		return (sapply(ns, function(x) descendants(edgelist, x)))
+	}
+
 	from <- c()
 	to <- c()
 
@@ -215,6 +225,10 @@ descendants <- function(edgelist, node){
 #' @param edgelist An edge list in dataframe format.
 #' @return An edge list in dataframe format.
 biggest_subnetwork <- function(edgelist){
+	if (any(is.na(edgelist))) {
+		stop("missing values")
+	}
+
 	cols <- colour_network(edgelist)
 	bigst <- which.max(tabulate(cols))
 	edgelist[cols==bigst,]
@@ -288,6 +302,10 @@ path_distances <- function(net) {
 #' @param node A single node id or list of node ids.
 #' @return An array of nodes or a list of arrays of nodes (if no node was provided).
 children <- function(edgelist, node) {
+	if (any(is.na(edgelist))) {
+		stop("missing values in edgelist")
+	}
+
 	if (missing(node)) {
 		ns <- nodes(edgelist)
 		sapply(ns, function(x) children(edgelist, x))
@@ -309,6 +327,10 @@ children <- function(edgelist, node) {
 #' @param node A single node id or list of node ids.
 #' @return An array of nodes or a list of arrays of nodes (if no node was provided).
 parents <- function(edgelist, node) {
+	if (any(is.na(edgelist))) {
+		stop("missing values in edgelist")
+	}
+
 	if (missing(node)) {
 		ns <- nodes(edgelist)
 		sapply(ns, function(x) parents(edgelist, x))
@@ -331,6 +353,10 @@ parents <- function(edgelist, node) {
 #' @param node A node id or a list of node ids.
 #' @return The minimum depth as an integer or an array of integers (if no node was provided).
 depth <- function(edgelist, node) {
+	if (any(is.na(edgelist))) {
+		stop("missing values in edgelist")
+	}
+
 	if (missing(node)) {
 		ns <- nodes(edgelist)
 		sapply(ns, function(x) depth(edgelist, x))

@@ -20,5 +20,6 @@ get all descendants of a particular node in a graph
 }
 \details{
 This function will return the graph reachable from a given node in a
+network. If no node argument is given the function is applied to each node in the
 network.
 }

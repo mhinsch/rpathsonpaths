@@ -14,7 +14,6 @@ test_that("sources are identified correctly", {
 	expect_equal(scsf, factor(c("0", "1"), levels=c("0", "1", "2", "3")))
 })
 
-
 test_that("sinks are identified correctly", {
 	sks <- sinks(edgelist)
 	sksf <- sinks(edgelistf)
@@ -38,6 +37,42 @@ test_that("cycles are found", {
 
 	expect_equal(sort(c[[1]]), c(0, 2, 3))
 	expect_equal(sort(as.character(cf[[1]])), c("0", "2", "3"))
+})
+
+edgelistna <- data.frame(c(0L, 1L, 2L, NA), c(2L, 2L, 3L, 3L))
+edgelistnaf <- data.frame(c("0", "1", "2", NA), c("2", "2", "3", "3"))
+
+# children
+
+# parents
+
+# descendants
+
+# biggest_subnetwork
+
+# depth
+
+test_that("NA produces errors", {
+	expect_error(sources(edgelistna))
+	expect_error(sources(edgelistnaf))
+
+	expect_error(sinks(edgelistna))
+	expect_error(sinks(edgelistnaf))
+
+	expect_error(cycles(edgelistna))
+	expect_error(cycles(edgelistnaf))
+
+	expect_error(depth(edgelistna))
+	expect_error(depth(edgelistnaf))
+
+	expect_error(children(edgelistna))
+	expect_error(children(edgelistnaf))
+
+	expect_error(parents(edgelistna))
+	expect_error(parents(edgelistnaf))
+
+	expect_error(descendants(edgelistna))
+	expect_error(descendants(edgelistnaf))
 })
 
 
