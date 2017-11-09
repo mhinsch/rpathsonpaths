@@ -197,15 +197,18 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 
 	Net_t * net = new Net_t;
 
+	R_ASSERT(links.size() > 1, "Network requires inputs and outputs!");
+
 	const IntegerVector inputs = links(0);
 	const IntegerVector outputs = links(1);
 	// this could be done slightly more efficiently but this looks way nicer
 	const NumericVector rates = links.size() > 2 ? links(2) :
 		NumericVector(inputs.size(), 1.0);
 
-	if (inputs.size() == 0)
-		stop("Empty network!");
-
+	R_ASSERT(inputs.size() != 0, "Empty network!");
+	
+	R_ASSERT(external.size() > 1, "External input requires nodes and rates!");
+	
 	const IntegerVector ext_nodes = external(0);
 	const NumericVector ext_rates_infd = external(1);
 	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
@@ -243,15 +246,19 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		// !!! el is empty below this line !!!
 		}
 	else
+		try {
 		for (size_t i=0; i<ext_nodes.size(); i++)
 			if (has_inp_rates)
 				net->set_source(ext_nodes[i], ext_rates_infd[i], ext_rates_inp[i]);
 			else
 				net->set_source(ext_nodes[i], ext_rates_infd[i]);
+		} catch (runtime_error & e) {
+			stop("Invalid node id in input specification!");
+			}
 
 	for (const auto & n : net->nodes)
 		if (n == 0)
-			stop("Invalid network, node not set!");
+			stop("Invalid network, nodes missing!");
 
 	if (decay >= 0.0 && decay < 1.0)
 		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
@@ -531,12 +538,14 @@ DataFrame node_list(const XPtr<Net_t> & p_net)
 	}
 
 
+// currently not public
 int SNP_distance(int g1, int g2)
 	{
 	return bitset<sizeof(int)*8>(g1 ^ g2).count();
 	}
 
 
+// currently not public
 double distance_SNP(const Node_t & n1, const Node_t & n2)
 	{
 	double d = 0.0;
@@ -549,6 +558,7 @@ double distance_SNP(const Node_t & n1, const Node_t & n2)
 	}
 
 
+// currently not public
 double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2)
 	{
 	double res = 0.0;
