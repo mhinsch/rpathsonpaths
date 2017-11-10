@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
 
 ```
 
+[![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths)
 
 # Installing the package
 
