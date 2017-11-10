@@ -7,3 +7,4 @@ cache: packages
 before_install:
     - sudo apt-get install libboost-dev
 
+warnings_are_errors: false
