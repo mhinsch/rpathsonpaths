@@ -11,11 +11,21 @@
 #' \item A list of all edges with ids of connected nodes, transfer rate and proportion of
 #' infected material being transferred.}
 #' @param x A popsnetwork object.
+#' @param ... Ignored for now.
 print.popsnetwork <- function(x, ...){
 	.printpopsnetwork(x)
 	}
 
 
+#' @title plot.popsnetwork
+#'
+#' @description Plot a popsnetwork object.
+#'
+#' @details This function will plot a popsnetwork object as a simple graph (using 
+#' \code{\link[igraph]{plot.igraph}}).
+#' @param x A popsnetwork object.
+#' @param ... Ignored for now.
+#' @return NULL
 plot.popsnetwork <- function(x, ...){
 	if (!requireNamespace("igraph")){
 		stop("This function requires the iGraph package.")
