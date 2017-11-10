@@ -102,7 +102,7 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' \item Simulate spread of genetic material through the network with 
 //' \code{\link{popgen_dirichlet}}.
 //' \item Draw samples from the simulated population using 
-//' \code{\link{draw_isolates.popsnetwork}}.}
+//' \code{\link{draw_isolates}}.}
 //'
 //' A worked example is available in the 'overview' vignette.
 //'
@@ -209,7 +209,7 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
 
 
-//' @title draw_isolates.popsnetwork
+//' @title draw_isolates
 //'
 //' @description Draw a set of isolates from the network.
 //' 
@@ -222,11 +222,11 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist 
 //' draw in the second column.
 //' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
 //' in $\code{allele_x}.
-// [[Rcpp::export(name="draw_isolates.popsnetwork")]]
-DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples);
+// [[Rcpp::export]]
+DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
 
 
-//' @title draw_alleles.popsnetwork
+//' @title draw_alleles
 //'
 //' @description Draw a set of alleles from the network.
 //' 
@@ -237,8 +237,8 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 //' @param nodes A vector of node ids (either integer or factor).
 //' @param n How many alleles to draw per node.
 //' @return A dataframe with one column per node containing a list of allele ids.
-// [[Rcpp::export(name="draw_alleles.popsnetwork")]]
-DataFrame draw_alleles_popsnetwork(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n=1);
+// [[Rcpp::export]]
+DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n=1);
 
 
 //' @title egdeList

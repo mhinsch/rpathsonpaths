@@ -361,7 +361,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	}
 
 
-DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
+DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
 	const Net_t * net = p_net.checked_get();
 	R_ASSERT(net && net->nodes.size()>0, "Invalid or empty network object");
@@ -416,7 +416,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 	}
 
 
-DataFrame draw_alleles_popsnetwork
+DataFrame draw_alleles
 	(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n)
 	{
 	const Net_t * net = p_net.checked_get();

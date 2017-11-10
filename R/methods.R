@@ -16,14 +16,6 @@ print.popsnetwork <- function(x, ...){
 	}
 
 
-draw_isolates <- function(obj, ...){
-	UseMethod("draw_isolates")
-	}
-
-draw_alleles<- function(obj, ...){
-	UseMethod("draw_alleles")
-	}
-
 plot.popsnetwork <- function(x, ...){
 	if (!requireNamespace("igraph")){
 		stop("This function requires the iGraph package.")
@@ -251,9 +243,9 @@ perfect_binary <- function(size){
 
 	count <- 1L
 	nodes <- c(0L)
-	for (i in 1:degree){
+	for (i in 1:size){
 		# next node id we can use
-		next_id <- tail(nodes, 1) + 1L
+		next_id <- utils::tail(nodes, 1) + 1L
 		# twice as many nodes on this level
 		n <- length(nodes) * 2L
 		new_nodes <- next_id : (next_id + n-1)
@@ -273,11 +265,11 @@ perfect_binary <- function(size){
 #'
 #' @description Obtain the shortest distances between all pairs of nodes.
 #'
-#' @details Uses \code{\link{igraph::distances}} to calculate the shortest path for
+#' @details Uses \code{\link[igraph]{distances}} to calculate the shortest path for
 #' all pairs of nodes in the network.
 #'
 #' @param net A popsnetwork object.
-#' @return The distances in a matrix (see \code{\link{igraph::distances}}).
+#' @return The distances in a matrix (see \code{\link[igraph]{distances}}).
 path_distances <- function(net) {
 	if (!requireNamespace("igraph")){
 		stop("This function requires the iGraph package.")

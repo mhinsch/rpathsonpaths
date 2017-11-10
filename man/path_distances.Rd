@@ -10,12 +10,12 @@ path_distances(net)
 \item{net}{A popsnetwork object.}
 }
 \value{
-The distances in a matrix (see \code{\link{igraph::distances}}).
+The distances in a matrix (see \code{\link[igraph]{distances}}).
 }
 \description{
 Obtain the shortest distances between all pairs of nodes.
 }
 \details{
-Uses \code{\link{igraph::distances}} to calculate the shortest path for
+Uses \code{\link[igraph]{distances}} to calculate the shortest path for
 all pairs of nodes in the network.
 }

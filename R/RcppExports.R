@@ -96,7 +96,7 @@ cycles <- function(edge_list, record = FALSE) {
 #' \item Simulate spread of genetic material through the network with 
 #' \code{\link{popgen_dirichlet}}.
 #' \item Draw samples from the simulated population using 
-#' \code{\link{draw_isolates.popsnetwork}}.}
+#' \code{\link{draw_isolates}}.}
 #'
 #' A worked example is available in the 'overview' vignette.
 #'
@@ -203,7 +203,7 @@ popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
     .Call('_rpathsonpaths_popgen_ibm_mixed', PACKAGE = 'rpathsonpaths', p_net, ini_dist)
 }
 
-#' @title draw_isolates.popsnetwork
+#' @title draw_isolates
 #'
 #' @description Draw a set of isolates from the network.
 #' 
@@ -216,11 +216,11 @@ popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
 #' draw in the second column.
 #' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
 #' in $\code{allele_x}.
-draw_isolates.popsnetwork <- function(p_net, samples) {
-    .Call('_rpathsonpaths_draw_isolates_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, samples)
+draw_isolates <- function(p_net, samples) {
+    .Call('_rpathsonpaths_draw_isolates', PACKAGE = 'rpathsonpaths', p_net, samples)
 }
 
-#' @title draw_alleles.popsnetwork
+#' @title draw_alleles
 #'
 #' @description Draw a set of alleles from the network.
 #' 
@@ -231,8 +231,8 @@ draw_isolates.popsnetwork <- function(p_net, samples) {
 #' @param nodes A vector of node ids (either integer or factor).
 #' @param n How many alleles to draw per node.
 #' @return A dataframe with one column per node containing a list of allele ids.
-draw_alleles.popsnetwork <- function(p_net, nodes, n = 1L) {
-    .Call('_rpathsonpaths_draw_alleles_popsnetwork', PACKAGE = 'rpathsonpaths', p_net, nodes, n)
+draw_alleles <- function(p_net, nodes, n = 1L) {
+    .Call('_rpathsonpaths_draw_alleles', PACKAGE = 'rpathsonpaths', p_net, nodes, n)
 }
 
 #' @title egdeList

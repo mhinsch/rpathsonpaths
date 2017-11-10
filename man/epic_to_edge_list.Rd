@@ -9,6 +9,9 @@ epic_to_edge_list(x)
 \arguments{
 \item{x}{An \code{epicontacts} object.}
 }
+\description{
+Convert epicontacts to edgelist.
+}
 \details{
 Extract an edgelist suitable for popsnetwork from an epicontacts object.
 Note that this will set all rates to 1.

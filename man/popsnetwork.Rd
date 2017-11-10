@@ -71,7 +71,7 @@ be set in the next step, allowing this step to be skipped.
 \item Simulate spread of genetic material through the network with 
 \code{\link{popgen_dirichlet}}.
 \item Draw samples from the simulated population using 
-\code{\link{draw_isolates.popsnetwork}}.}
+\code{\link{draw_isolates}}.}
 
 A worked example is available in the 'overview' vignette.
 }

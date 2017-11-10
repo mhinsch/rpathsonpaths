@@ -114,28 +114,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// draw_isolates_popsnetwork
-DataFrame draw_isolates_popsnetwork(const XPtr<Net_t>& p_net, const DataFrame& samples);
-RcppExport SEXP _rpathsonpaths_draw_isolates_popsnetwork(SEXP p_netSEXP, SEXP samplesSEXP) {
+// draw_isolates
+DataFrame draw_isolates(const XPtr<Net_t>& p_net, const DataFrame& samples);
+RcppExport SEXP _rpathsonpaths_draw_isolates(SEXP p_netSEXP, SEXP samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type samples(samplesSEXP);
-    rcpp_result_gen = Rcpp::wrap(draw_isolates_popsnetwork(p_net, samples));
+    rcpp_result_gen = Rcpp::wrap(draw_isolates(p_net, samples));
     return rcpp_result_gen;
 END_RCPP
 }
-// draw_alleles_popsnetwork
-DataFrame draw_alleles_popsnetwork(const XPtr<Net_t>& p_net, const IntegerVector& nodes, int n);
-RcppExport SEXP _rpathsonpaths_draw_alleles_popsnetwork(SEXP p_netSEXP, SEXP nodesSEXP, SEXP nSEXP) {
+// draw_alleles
+DataFrame draw_alleles(const XPtr<Net_t>& p_net, const IntegerVector& nodes, int n);
+RcppExport SEXP _rpathsonpaths_draw_alleles(SEXP p_netSEXP, SEXP nodesSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type nodes(nodesSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(draw_alleles_popsnetwork(p_net, nodes, n));
+    rcpp_result_gen = Rcpp::wrap(draw_alleles(p_net, nodes, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -224,8 +224,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rpathsonpaths_set_allele_freqs", (DL_FUNC) &_rpathsonpaths_set_allele_freqs, 2},
     {"_rpathsonpaths_popgen_dirichlet", (DL_FUNC) &_rpathsonpaths_popgen_dirichlet, 3},
     {"_rpathsonpaths_popgen_ibm_mixed", (DL_FUNC) &_rpathsonpaths_popgen_ibm_mixed, 2},
-    {"_rpathsonpaths_draw_isolates_popsnetwork", (DL_FUNC) &_rpathsonpaths_draw_isolates_popsnetwork, 2},
-    {"_rpathsonpaths_draw_alleles_popsnetwork", (DL_FUNC) &_rpathsonpaths_draw_alleles_popsnetwork, 3},
+    {"_rpathsonpaths_draw_isolates", (DL_FUNC) &_rpathsonpaths_draw_isolates, 2},
+    {"_rpathsonpaths_draw_alleles", (DL_FUNC) &_rpathsonpaths_draw_alleles, 3},
     {"_rpathsonpaths_edge_list", (DL_FUNC) &_rpathsonpaths_edge_list, 1},
     {"_rpathsonpaths_node_list", (DL_FUNC) &_rpathsonpaths_node_list, 1},
     {"_rpathsonpaths_distances_freqdist", (DL_FUNC) &_rpathsonpaths_distances_freqdist, 2},
