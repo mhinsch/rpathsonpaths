@@ -182,22 +182,20 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	{
 	if (checks)
 		{
-		if (as<bool>(cycles(links)))
-			stop("Cycles in network detected!");
+		R_ASSERT(!as<bool>(cycles(links)), "Cycles in network detected");
 
 		IntegerVector subn = colour_network(links);
-		if (subn.size() == 0)
-			stop("Empty network!");
+		R_ASSERT(subn.size() > 0, "Empty network");
 
 		const int col = subn[0];
 		for (int c : subn)
-			if (c != col)
-				stop("More than one network in data!");
+			R_ASSERT(c == col, "More than one network in data");
 		}
 
 	Net_t * net = new Net_t;
 
-	R_ASSERT(links.size() > 1, "Network requires inputs and outputs!");
+	R_ASSERT(links.size() > 1, 
+		"At least two columns required in parameter 'links'.");
 
 	const IntegerVector inputs = links(0);
 	const IntegerVector outputs = links(1);
@@ -205,23 +203,24 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	const NumericVector rates = links.size() > 2 ? links(2) :
 		NumericVector(inputs.size(), 1.0);
 
-	R_ASSERT(inputs.size() != 0, "Empty network!");
+	R_ASSERT(inputs.size() != 0, "Empty network.");
 	
-	R_ASSERT(external.size() > 1, "External input requires nodes and rates!");
+	R_ASSERT(external.size() > 1, "At least two columns required in parameter 'external'."); 
 	
 	const IntegerVector ext_nodes = external(0);
 	const NumericVector ext_rates_infd = external(1);
 	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
 	const bool has_inp_rates = ext_rates_inp.size() > 0;
 
-	if (ext_nodes.size() == 0)
-		stop("No external inputs provided!");
+	R_ASSERT(ext_nodes.size() != 0, "No external inputs provided.");
 
 	const int f = int(inputs.inherits("factor")) + outputs.inherits("factor") + 
 		ext_nodes.inherits("factor");
 
-	if (f!=0 && f!=3)
-		stop("All node lists have to be of the same type!");
+	R_ASSERT(f==0 || f==3, "All node lists have to be of the same type.");
+
+	for (auto i : ext_rates_infd)
+		R_ASSERT(i >= 0 && i <= 1, "Invalid infected rate.");
 
 	EdgeList el(inputs, outputs);
 
@@ -253,12 +252,11 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 			else
 				net->set_source(ext_nodes[i], ext_rates_infd[i]);
 		} catch (runtime_error & e) {
-			stop("Invalid node id in input specification!");
+			stop("Invalid node id in input specification.");
 			}
 
 	for (const auto & n : net->nodes)
-		if (n == 0)
-			stop("Invalid network, nodes missing!");
+		R_ASSERT(n != 0, "Invalid network, nodes missing.");
 
 	if (decay >= 0.0 && decay < 1.0)
 		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
@@ -272,7 +270,7 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		annotate_rates_ibmm(net->nodes.begin(), net->nodes.end(), transmission, rng);
 		}
 	else
-		stop("Unknown spread model!");
+		stop("Unknown spread model.");
 
 	return make_S3XPtr(net, "popsnetwork");
 	}
@@ -327,8 +325,7 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 	if (! iniDist.isNull())
 		_set_allele_freqs(net, iniDist.as());
 
-	if (!net->nodes.size())
-		stop("Error: empty network!");
+	R_ASSERT(net->nodes.size(), "Empty network.");
 
 //	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
 
@@ -348,8 +345,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	if (! iniDist.isNull())
 		_set_allele_freqs(net, iniDist.as());
 
-	if (!net->nodes.size())
-		stop("Error: empty network!");
+	R_ASSERT(net->nodes.size(), "Empty network");
 
 //	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
 
@@ -368,8 +364,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	{
 	const Net_t * net = p_net.checked_get();
-	if (!net || net->nodes.size()==0)
-		stop("Invalid or empty network object!");
+	R_ASSERT(net && net->nodes.size()>0, "Invalid or empty network object");
 
 	const IntegerVector nodes = samples(0);
 	const IntegerVector num = samples(1);
@@ -377,8 +372,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 	const StringVector levels = f ? nodes.attr("levels") : StringVector();
 
 	const size_t n_freq = net->nodes[0]->frequencies.size();
-	if (!n_freq)
-		stop("Empty node detected!");
+	R_ASSERT(n_freq, "Empty node detected");
 
 // *** prepare return data
 
@@ -394,8 +388,7 @@ DataFrame draw_isolates_popsnetwork(const XPtr<Net_t> & p_net, const DataFrame &
 		{
 		const size_t n = f ? net->id_by_name.at(string(levels[nodes[i]-1])):
 			nodes[i];
-		if (n >= net->nodes.size())
-			stop("Invalid node id!");
+		R_ASSERT (n < net->nodes.size(), "Invalid node id");
 
 		sample_node(*net->nodes[n], num[i], count);
 
@@ -427,16 +420,14 @@ DataFrame draw_alleles_popsnetwork
 	(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n)
 	{
 	const Net_t * net = p_net.checked_get();
-	if (!net || net->nodes.size()==0)
-		stop("Invalid or empty network object!");
+	R_ASSERT(net && net->nodes.size()>0, "Invalid or empty network object");
 
 	const bool f = nodes.inherits("factor");
 	const StringVector levels = f ? nodes.attr("levels") : StringVector();
 
 	// check nodes
 	for (auto n : net->nodes)
-		if (!n->frequencies.size())
-			stop("Empty node detected!");
+		R_ASSERT(n->frequencies.size(), "Empty node detected");
 
 // *** prepare return data
 
@@ -450,8 +441,8 @@ DataFrame draw_alleles_popsnetwork
 		{
 		const size_t nid = f ? net->id_by_name.at(string(levels[nodes[i]-1])):
 			nodes[i];
-		if (nid >= net->nodes.size())
-			stop("Invalid node id!");
+
+		R_ASSERT(nid < net->nodes.size(), "Invalid node id");
 
 		sample_alleles_node(*net->nodes[nid], data[i]);
 		}
@@ -494,14 +485,12 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 		{
 		const auto * l = net->links[i];
 
-		if (!l)
-			stop("Missing link detected!");
+		R_ASSERT(l, "Missing link detected");
 
 		const size_t f = net->find_node_id(l->from);
 		const size_t t = net->find_node_id(l->to);
 
-		if (f==n_nodes || t==n_nodes)
-			stop("Invalid link!");
+		R_ASSERT(f!=n_nodes && t!=n_nodes, "Invalid link");
 
 		from[i] = is_factor ? net->name_by_id[f] : to_string(f);
 		to[i] = is_factor ? net->name_by_id[t] : to_string(t);
@@ -692,12 +681,9 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float zero_appeal, bool
 	compact)
 	{
-	if (n_sources < 1)
-		stop("Number of sources has to be >= 1.");
-	if (n_nodes < 1)
-		stop("Number of nodes has to be >= 1.");
-	if (zero_appeal <= 0)
-		stop("zero_appeal has to be > 0.");
+	R_ASSERT(n_sources >= 1, "Number of sources has to be >= 1");
+	R_ASSERT(n_nodes >= 1, "Number of nodes has to be >= 1");
+	R_ASSERT(zero_appeal > 0, "zero_appeal has to be > 0");
 
 	vector<float> weight(n_nodes + n_sources, 0);
 
@@ -729,8 +715,7 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float ze
 			while (r_inp > weight[inp])
 				r_inp -= weight[inp++];
 
-			if (inp >= node)
-				stop("Internal error: invalid node!");
+			R_ASSERT(inp < node, "Invalid node");
 
 			from.push_back(inp);
 			to.push_back(node);

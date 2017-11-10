@@ -24,8 +24,8 @@ struct Drift
 
 	void operator()(const Node_t::freq_t & freqs, Node_t::freq_t & res)
 		{
-		if (res.size() != freqs.size())
-			stop("Drift: result vector has to be same size as input vector!");
+		R_ASSERT(res.size() == freqs.size(), 
+			"Drift: result vector has to be same size as input vector");
 
 		num_t norm = 0.0;		
 

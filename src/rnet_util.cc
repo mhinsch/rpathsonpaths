@@ -21,9 +21,8 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	const size_t n_all = freqs.ncol();
 
-	if (nodes.size() != freqs.nrow())
-		stop("Invalid parameter 'iniDist': "
-		"number of rows in frequencies and number of elements in nodes have to be equal!");	
+	R_ASSERT(nodes.size() == freqs.nrow(), "Invalid parameter 'iniDist': "
+		"number of rows in frequencies and number of elements in nodes have to be equal");	
 
 	// init nodes
 	for (auto n : net->nodes)
@@ -44,8 +43,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 		{
 		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] : nodes[i];
 
-		if (n > net->nodes.size())
-			stop("Invalid node index!");
+		R_ASSERT(n < net->nodes.size(), "Invalid node index");
 
 		Node_t * node = net->nodes[n];
 
@@ -67,15 +65,14 @@ size_t id_from_SEXP(const Net_t & net, SEXP id)
 	case STRSXP:
 		return net.id_by_name.at(as<string>(id));
 	default:
-		stop("Node id has to be integer or string!");
+		stop("Node id has to be integer or string");
 		}
 	}
 
 
 void sample_node(const Node_t & node, size_t n, vector<size_t> & count)
 	{
-	if (count.size() != node.frequencies.size())
-		stop("Invalid number of alleles in node!");
+	R_ASSERT(count.size() == node.frequencies.size(), "Invalid number of alleles in node");
 
 	ProportionalPick<> pick(0.000001, node.frequencies);
 	RRng r;

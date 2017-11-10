@@ -11,7 +11,7 @@
 using namespace std;
 using namespace Rcpp;
 
-#define R_ASSERT(cond, msg) {if (!(cond)) stop(msg);}
+#define R_ASSERT(cond, msg) ((cond) ? (void)0 : stop(msg))
 
 template<class T>
 XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
@@ -61,7 +61,7 @@ public:
 		{
 		_f = int(from.inherits("factor")) + to.inherits("factor");
 
-		R_ASSERT(_f != 1, "Both node lists have to be of the same type!");
+		R_ASSERT(_f != 1, "Both node lists have to be of the same type");
 
 		if (_f)
 			{
