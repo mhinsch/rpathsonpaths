@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{A popsnetwork object.}
+
+\item{...}{Ignored for now.}
 }
 \description{
 Print a popsnetwork object.
