@@ -1,6 +1,9 @@
 #ifndef RNET_UTIL_H
 #define RNET_UTIL_H
 
+/** @file Network utilities that require R/Rcpp. */
+
+
 #include <vector>
 
 #include <Rcpp.h>
@@ -13,15 +16,19 @@
 using namespace std;
 using namespace Rcpp;
 
+
+/** Drift operator for the continuous model. Implements a Dirichlet distribution using
+ * R::rgamma. */
 struct Drift
 	{
 	typedef typename Node_t::freq_t::value_type num_t;
-	num_t theta;
+	num_t theta;	//!< Scaling parameter for the Dirichlet distribution.
 
 	Drift(double t)
 		: theta(t)
 		{ }
 
+	/** Apply drift to dreqs and store result in res. */
 	void operator()(const Node_t::freq_t & freqs, Node_t::freq_t & res)
 		{
 		R_ASSERT(res.size() == freqs.size(), 
@@ -29,15 +36,18 @@ struct Drift
 
 		num_t norm = 0.0;		
 
+		// draw from a Gamma distribution
 		for (size_t i=0; i<freqs.size(); i++)
 			norm += (res[i] = R::rgamma(freqs[i] * theta, 1.0));
 
+		// normalize
 		for (num_t & f : res)
 			f /= norm;
 		}
 	};
 
-// binomial and hypergeometric dists for the ibm
+
+/** Binomial and hypergeometric distributions for the mechanistic model. */
 struct Rng
 	{
 	int binom(double p, int n) const
@@ -51,15 +61,29 @@ struct Rng
 		}
 	};
 
+
+/** Print (using R output) node i of network net. */
 void print_node_id(const Net_t * net, size_t i);
+
+/** Print a node. Does nothing at the moment. */
 void print_popsnode(const Node_t * n);
 
+
+/** Set a bunch of allele frequencies. ini has to contain a list of node ids as first and a
+ * matrix (node x alleles) of allele frequencies as second element. */
 void _set_allele_freqs(Net_t * net, const List & ini);
 
+
+/** Get a node id from an R SEXP containing either an integer or a string (for factors). */
 size_t id_from_SEXP(const Net_t & net, SEXP id);
 
+
+/** Obtain a number of random samples from a node, storing the number of times each allele
+ * was drawn in count. */
 void sample_node(const Node_t & node, size_t n, vector<size_t> & count);
 
+/** Obtain a number of random samples from a node, storing the allele id of each draw in 
+ * alleles. */
 template<class CONT>
 void sample_alleles_node(const Node_t & node, CONT & alleles)
 	{
@@ -71,8 +95,10 @@ void sample_alleles_node(const Node_t & node, CONT & alleles)
 	}
 
 
-double distance_SNP(const Node_t & n1, const Node_t & n2);
+/** Mean square difference in allele frequencies between two nodes. */
 double distance_freq(const Node_t & n1, const Node_t & n2);
+
+/** Expected value of the Hamming distance between two nodes. */
 double distance_EHamming(const Node_t & n1, const Node_t & n2);
 
 #endif	// RNET_UTIL_H

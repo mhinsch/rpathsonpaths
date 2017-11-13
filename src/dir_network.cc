@@ -527,45 +527,6 @@ DataFrame node_list(const XPtr<Net_t> & p_net)
 	}
 
 
-// currently not public
-int SNP_distance(int g1, int g2)
-	{
-	return bitset<sizeof(int)*8>(g1 ^ g2).count();
-	}
-
-
-// currently not public
-double distance_SNP(const Node_t & n1, const Node_t & n2)
-	{
-	double d = 0.0;
-
-	for (int i=0; i<n1.frequencies.size(); i++)
-		for (int j=0; j<n2.frequencies.size(); j++)
-			d += SNP_distance(i, j) * n1.frequencies[i] * n2.frequencies[j];
-
-	return d;
-	}
-
-
-// currently not public
-double SNP_distance_pop(const IntegerVector & p1, const IntegerVector & p2)
-	{
-	double res = 0.0;
-
-	for (int i1 : p1)
-		{
-		int sum = 0;
-		for (int i2 : p2)
-			sum += SNP_distance(i1, i2);
-		
-		// to avoid overflow we already scale a bit here
-		res += sum / p2.size();
-		}
-
-	return res/p1.size();
-	}
-
-
 NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();

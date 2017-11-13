@@ -102,3 +102,5 @@ double distance_EHamming(const Node_t & n1, const Node_t & n2)
 
 	return 1.0 - d;
 	}
+
+
