@@ -1,6 +1,12 @@
 #ifndef RPATHSONPATHS_TYPES_H
 #define RPATHSONPATHS_TYPES_H
 
+
+/** @file
+ * Here we plug all the various template types from pathonpaths together to
+ * create the types we need for the package. 
+ */
+
 #include "libpathsonpaths/genericgraph.h"
 #include "libpathsonpaths/transportgraph.h"
 #include "libpathsonpaths/driftapprox.h"
@@ -13,10 +19,13 @@
 
 using namespace std;
 
+
+// for some reason we need this
 template<class T>
 using StdVector = vector<T>;
 
 
+// assemble all required node components
 template<class GRAPH>
 struct MyDriftNode : 
 	public FreqNode<vector<double>>, 
@@ -24,6 +33,8 @@ struct MyDriftNode :
 	public Node<GRAPH, StdVector>
 	{};
 
+
+// we need a new constructor, so we actually have to implement a new class here
 template<class GRAPH>
 struct MyTranspLink : public TranspLink, public Link<GRAPH>
 	{
@@ -34,10 +45,13 @@ struct MyTranspLink : public TranspLink, public Link<GRAPH>
 	};
 
 
+// tie everything together
 typedef Graph<MyDriftNode, MyTranspLink> G_t;
 typedef G_t::node_t Node_t;
 typedef G_t::link_t Link_t;
 
+
+// our network type
 typedef RNetwork<Node_t, Link_t> Net_t;
 
 

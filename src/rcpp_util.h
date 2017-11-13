@@ -1,6 +1,10 @@
 #ifndef RCPP_UTIL_H
 #define RCPP_UTIL_H
 
+/** @file
+ * Some util code that requires Rcpp.
+ */
+
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -11,8 +15,16 @@
 using namespace std;
 using namespace Rcpp;
 
+/** Assert that forwards to R's stop. i
+ * @param cond Condition to evaluate. 
+ * @param msg Error message. */
 #define R_ASSERT(cond, msg) ((cond) ? (void)0 : stop(msg))
 
+/** Wrap an object into an R S3 pointer.
+ * @tparam Class of the object.
+ * @param obj Object to wrap.
+ * @param class_name S3 class name.
+ * @param GC Whether to garbage collect the object (Rcpp internal). */
 template<class T>
 XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	{
@@ -21,14 +33,16 @@ XPtr<T> make_S3XPtr(T * obj, const char * class_name, bool GC = true)
 	return xptr;
 	}
 
-
+/** Shallow wrapper for the R RNG. */
 struct RRng
 	{
+	/** Generate a uniform random double. */
 	double outOf(double mi, double ma) const
 		{
 		return R::runif(mi, ma);
 		}
 
+	/** Generate a uniform random integer. */
 	size_t operator()(size_t n) const
 		{
 		size_t r;
@@ -40,20 +54,27 @@ struct RRng
 	};
 
 
-// collect a map of factor names to indices from an R factor
+/** Collect a map of factor names to indices from an R factor.
+ * @param factor An R factor to adapt.
+ * @param names Will contain all names in the factor.
+ * @param idxs Will contain a map from names to indices.
+ * @return An ordered list of indices. */
 vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names, 
 	unordered_map<string, size_t> & idxs);
 
 
-// wrap an R edge list in order to allow for somewhat sane handling of factors
+/** A pragmatic wrapper for edgelists in either factor or integer vector format. 
+ *
+ * This wrapper class hides most of the complexities of having to deal with edgelists in two
+ * different formats. */
 class EdgeList
 	{
-	const IntegerVector & _from_raw, & _to_raw;
-	vector<size_t> _from, _to;
-	vector<string> _names;
-	unordered_map<string, size_t> _idxs;
+	const IntegerVector & _from_raw, & _to_raw; //!< Raw data as obtained from R.
+	vector<size_t> _from, _to;					//!< 
+	vector<string> _names;						//!< The factor's levels.
+	unordered_map<string, size_t> _idxs;		//!< Map from level to index.
 
-	size_t _f;
+	size_t _f;									//!< Whether we are wrapping a factor.
 
 public:
 	EdgeList(const IntegerVector & from, const IntegerVector & to)
