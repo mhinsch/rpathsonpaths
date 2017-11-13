@@ -14,22 +14,20 @@ IntegerVector sources(const DataFrame & edge_list)
 	const IntegerVector from = edge_list(0);
 	const IntegerVector to = edge_list(1);
 
+	// convert to EdgeList so we don't have to worry about factor/integer
 	EdgeList el(from, to);
 
 	const set<size_t> scs = find_sources(el);
 
 	IntegerVector res(scs.size());
 
-	// EdgeList uses 0-base so we might have to rescale here
 	size_t i = 0;
 	for (size_t s : scs)
+		// EdgeList uses 0-base so we might have to rescale here
 		res(i++) = el.factor() ? s+1 : s;
 
-	if (el.factor())
-		{
-		res.attr("class") = "factor";
-		res.attr("levels") = el.names();
-		}
+	// build a factor if necessary
+	el.make_factor(res);
 
 	return res;
 	}
@@ -50,11 +48,7 @@ IntegerVector sinks(const DataFrame & edge_list)
 	for (size_t s : scs)
 		res(i++) = el.factor() ? s+1 : s;
 
-	if (el.factor())
-		{
-		res.attr("class") = "factor";
-		res.attr("levels") = el.names();
-		}
+	el.make_factor(res);
 
 	return res;
 	}
@@ -66,6 +60,8 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	const IntegerVector to = edge_list(1);
 
 	EdgeList el(from, to);
+
+	// TODO factour out generic part
 
 	// colour of nodes
 	vector<int> colour;
@@ -142,9 +138,11 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 	// user wants a list of cycles
 	if (record)
 		{
+		// find cycles for each source node
 		for (size_t i : scs)
 			cycles.find_cycles(i);
 		
+		// build an R compatible list (of int vectors or factors) from the result
 		List res(cycles.res.size());
 		if (el.factor())
 			{
@@ -180,13 +178,17 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, 
 	double transmission, double decay, const string & spread_model, bool checks)
 	{
+	// do some slow sanity checks
 	if (checks)
 		{
+		// cycles
 		R_ASSERT(!as<bool>(cycles(links)), "Cycles in network detected");
 
+		// non-empty
 		IntegerVector subn = colour_network(links);
 		R_ASSERT(subn.size() > 0, "Empty network");
 
+		// no separate networks
 		const int col = subn[0];
 		for (int c : subn)
 			R_ASSERT(c == col, "More than one network in data");
@@ -197,18 +199,21 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	R_ASSERT(links.size() > 1, 
 		"At least two columns required in parameter 'links'.");
 
-	const IntegerVector inputs = links(0);
-	const IntegerVector outputs = links(1);
+// *** edge list, rates
+	const IntegerVector inputs = links(0);		// needed
+	const IntegerVector outputs = links(1);		// needed
+	// transfer rates are optional (default value is 1)
 	// this could be done slightly more efficiently but this looks way nicer
 	const NumericVector rates = links.size() > 2 ? links(2) :
 		NumericVector(inputs.size(), 1.0);
 
 	R_ASSERT(inputs.size() != 0, "Empty network.");
-	
 	R_ASSERT(external.size() > 1, "At least two columns required in parameter 'external'."); 
-	
-	const IntegerVector ext_nodes = external(0);
-	const NumericVector ext_rates_infd = external(1);
+
+// *** external input
+	const IntegerVector ext_nodes = external(0);		// nodes are needed
+	const NumericVector ext_rates_infd = external(1);	// rate of infectedness is needed
+	// input rates are optional
 	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
 	const bool has_inp_rates = ext_rates_inp.size() > 0;
 
@@ -216,7 +221,6 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 
 	const int f = int(inputs.inherits("factor")) + outputs.inherits("factor") + 
 		ext_nodes.inherits("factor");
-
 	R_ASSERT(f==0 || f==3, "All node lists have to be of the same type.");
 
 	for (auto i : ext_rates_infd)
@@ -224,10 +228,13 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 
 	EdgeList el(inputs, outputs);
 
+// *** basic topology
 	const size_t ni = inputs.size();
 	for (size_t i=0; i<ni; i++)
 		net->add_link(el.from(i), el.to(i), rates(i));
 
+// *** external inputs
+// TODO use a default value for external input rates (as for transfer)?
 	if (el.factor())
 		{
 		StringVector e_levels = ext_nodes.attr("levels");
@@ -255,14 +262,16 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 			stop("Invalid node id in input specification.");
 			}
 
+	// check for gaps in ids
 	for (const auto & n : net->nodes)
 		R_ASSERT(n != 0, "Invalid network, nodes missing.");
 
+	// this interpolates transfer rates
 	if (decay >= 0.0 && decay < 1.0)
 		preserve_mass(net->nodes.begin(), net->nodes.end(), decay);
 
+// *** generate rate of infectedness for all nodes
 	if (spread_model== "fluid")
-		// TODO maybe factor out, make constructor only build the net
 		annotate_rates(net->nodes.begin(), net->nodes.end(), transmission);
 	else if (spread_model == "units")
 		{
@@ -327,9 +336,9 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 
 	R_ASSERT(net->nodes.size(), "Empty network.");
 
-//	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
-
 	const size_t n_all = net->nodes[0]->frequencies.size();
+
+	R_ASSERT(n_all, "No genetic data in network.");
 
 	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
@@ -347,13 +356,15 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 
 	R_ASSERT(net->nodes.size(), "Empty network");
 
-//	print_popsnetwork(make_S3XPtr(net, "popsnetwork", true));
-
 	const size_t n_all = net->nodes[0]->frequencies.size();
 
+	R_ASSERT(n_all, "No genetic data in network.");
+
 	Rng rng;
+	// scale frequencies to absolute numbers
 	freq_to_popsize_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	annotate_frequencies_ibmm(net->nodes.begin(), net->nodes.end(), rng);
+	// scale back to frequencies
 	for (auto node : net->nodes)
 		node->normalize();
 	
@@ -395,6 +406,7 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples)
 		for (size_t j=0; j<n_freq; j++)
 			data[j][i] = count[j];
 
+		// reset for next round
 		fill(count.begin(), count.end(), 0);
 		}
 
@@ -416,8 +428,7 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples)
 	}
 
 
-DataFrame draw_alleles
-	(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n)
+DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n)
 	{
 	const Net_t * net = p_net.checked_get();
 	R_ASSERT(net && net->nodes.size()>0, "Invalid or empty network object");

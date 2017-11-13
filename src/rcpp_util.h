@@ -119,6 +119,12 @@ public:
 		return _names;
 		}
 
+	/** Get all names. Will be empty if not a factor. */
+	const vector<string> & names() const
+		{
+		return _names;
+		}
+
 	/** Get map name -> index. Empty of not a factor */
 	unordered_map<string, size_t> & idxs()
 		{
@@ -176,12 +182,21 @@ public:
 		{
 		return _names[idx];
 		}
+
+	/** Convert IntegerVector to factor if necessary. */
+	void make_factor(IntegerVector & v) const
+		{
+		if (factor())
+			{
+			v.attr("class") = "factor";
+			v.attr("levels") = names();
+			}
+		}
 	};
 
 /** Find all sources in an edge list. */
 set<size_t> find_sources(const EdgeList & el);
 /** Find all sinks in an edge list. */
 set<size_t> find_sinks(const EdgeList & el);
-
 
 #endif	// RCPP_UTIL_H
