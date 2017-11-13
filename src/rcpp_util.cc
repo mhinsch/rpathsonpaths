@@ -23,30 +23,40 @@ vector<size_t> adapt_factor(const IntegerVector & factor, vector<string> & names
 		if (ins_it.second)
 			names.push_back(name);
 
+		// Index of name can be != names.size() if the name already existed.
 		nodes.push_back(ins_it.first->second);
 		}
 
+	// RVO
 	return nodes;
 	}
 
 
 set<size_t> find_sinks(const EdgeList & el)
 	{
+	// all sources (i.e. all nodes in the from list
 	vector<bool> is_source;
+
+	// *** collect all sources
 
 	for (size_t i=0; i<el.n_edges(); i++)
 		{
 		const size_t n = el.from(i);
 		if (n >= is_source.size())
+			// gaps are filled with false
 			is_source.resize(n+1, false);
+		// but this one is a source
 		is_source[n] = true;
 		}
+
+	// *** now collect sinks
 
 	set<size_t> scs;
 
 	for (size_t i=0; i<el.n_edges(); i++)
 		{
 		const size_t n = el.to(i);
+		// if it's not in the sources list is has to be a sink
 		if (n >= is_source.size() || !is_source[n])
 			scs.insert(n);
 		}
@@ -54,7 +64,7 @@ set<size_t> find_sinks(const EdgeList & el)
 	return scs;
 	}
 
-
+// works exactly like find_sinks but the other way around
 set<size_t> find_sources(const EdgeList & el)
 	{
 	vector<bool> is_sink;
