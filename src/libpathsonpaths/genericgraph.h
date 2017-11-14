@@ -70,6 +70,7 @@ struct Node
 		return 0;
 		}
 
+	/** Find first output link that connects to node @a to. */
 	link_t * find_link_to(Node * to)
 		{
 		return find_link<true>(to, outputs);
@@ -79,6 +80,7 @@ struct Node
 		return find_link<true>(to, outputs);
 		}
 
+	/** Find first input link that connects to node @a from. */
 	link_t * find_link_from(Node * from)
 		{
 		return find_link<false>(from, inputs);
@@ -133,6 +135,7 @@ struct Graph
 	};
 	
 
+/** Reset NODE::done in this and all downstream nodes. */
 template<class NODE>
 void reset_downstream(NODE & node, bool to=false)
 	{
@@ -142,7 +145,7 @@ void reset_downstream(NODE & node, bool to=false)
 		reset_downstream(*l->to, to);
 	}
 
-
+/** Reset NODE::done in this and all upstream nodes. */
 template<class NODE>
 void reset_upstream(NODE & node, bool to=false)
 	{
@@ -152,6 +155,7 @@ void reset_upstream(NODE & node, bool to=false)
 		reset_upstream(*l->from, to);
 	}
 
+/** Apply a function to this and all downstream nodes. Uses NODE::done. */
 template<bool PREORDER=true, class NODE, class FUNC>
 void apply_downstream(NODE & node, FUNC func)
 	{
@@ -171,6 +175,7 @@ void apply_downstream(NODE & node, FUNC func)
 	}
 
 
+/** Apply a function to this and all upstream nodes. Uses NODE::done. */
 template<bool PREORDER=true, class NODE, class FUNC>
 void apply_upstream(NODE & node, FUNC func)
 	{
