@@ -87,7 +87,7 @@ void preserve_mass(NODE * node, double decay)
 	node->done = true;
 	}
 
-
+/** Run preserve_mass for a range of nodes. */
 template<class ITER>
 void preserve_mass(const ITER & beg, const ITER & end, double decay)
 	{

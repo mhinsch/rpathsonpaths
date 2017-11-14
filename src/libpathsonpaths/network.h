@@ -10,8 +10,17 @@ using std::size_t;
 /** Abstract base class for Network. */
 struct AbstractNetwork
 	{
+	/** Add a link to the network. 
+	 * @param from Start node.
+	 * @param to End node.
+	 * @param rate Transport rate. */
 	virtual void add_link(size_t from, size_t to, double rate) = 0;
+	/** Mark a node as source. 
+	 * @param s Source node.
+	 * @param p Proportion of infected material.
+	 * @param i Overall input at this node. */
 	virtual void set_source(size_t s, double p, double i=1.0) = 0;
+	/** Plain destructor. */
 	virtual ~AbstractNetwork()
 		{
 		}
@@ -63,6 +72,7 @@ struct Network : public AbstractNetwork
 
 	void set_source(size_t s, double p, double i) {}
 
+	/** Find index of link @a l. */
 	size_t find_link(L * l) const
 		{
 		for (size_t i=0; i<links.size(); i++)
@@ -72,6 +82,7 @@ struct Network : public AbstractNetwork
 		return links.size();
 		}
 
+	/** Find index of node @a n. */
 	size_t find_node_id(const N * n) const
 		{
 		for (size_t i=0; i<nodes.size(); i++)
@@ -81,12 +92,14 @@ struct Network : public AbstractNetwork
 		return nodes.size();
 		}
 
+	/** Reset done status to false for all nodes. */
 	void reset_done()
 		{
 		for (auto n : nodes)
 			n->done = false;
 		}
 
+	/** Destructor. Deletes all nodes and links. */
 	~Network()
 		{
 		for (N * n : nodes)
@@ -95,6 +108,8 @@ struct Network : public AbstractNetwork
 			delete l;
 		}
 
+	/** Deep copy the content of this network into another one. Any previous content in the 
+	 * other network will be lost. */
 	void clone_into(Network & nn) const
 		{
 		nn.nodes.resize(nodes.size(), 0);

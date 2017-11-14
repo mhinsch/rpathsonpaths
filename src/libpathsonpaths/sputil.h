@@ -16,6 +16,7 @@
 
 using boost::lexical_cast;
 
+/** Integer powers. */
 template<unsigned N>
 inline double pow(double x)
 	{
@@ -28,13 +29,13 @@ inline double pow(double x)
 	}
 
 
+/** Get the current time and put only the day number and time in smess. */
 inline void get_time_short(std::string & smess)
-	/*get the current time and put only the day number and time in smess*/
 	{
 	smess = lexical_cast<std::string>(time(NULL));
 	}
 
-// split string into two halves at position pos and cast results to T
+/** Split string into two halves at position pos and cast results to T. */
 template<typename T>
 void splitStr(const std::string & str, int pos, T & x1, T & x2)
 	{
@@ -42,7 +43,7 @@ void splitStr(const std::string & str, int pos, T & x1, T & x2)
 	x2 = lexical_cast<T>(str.substr(pos+1, str.size()-pos-1));
 	}
 
-// split string at separator sep and feed pieces into iterator iter
+/** Split string at separator sep and feed pieces into iterator iter. */
 template<typename ITER>
 void splitStr(const std::string & str, char sep, ITER & iter)
 	{
@@ -56,12 +57,13 @@ void splitStr(const std::string & str, char sep, ITER & iter)
 			}
 	}
 
-// read next non-blank line
+/** Read next non-blank line. */
 inline void skip_space(std::istream & inp, std::string & str)
 	{
 	while(getline(inp, str) && boost::all(str, boost::is_space()));
 	}
 
+/** Get a value of type T out of a stream. */
 template<typename T> 
 bool get_value (std::istream & inp_file, T & value)
 	{

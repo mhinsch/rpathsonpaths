@@ -8,14 +8,13 @@
 //#include <iostream>
 
 
+/** Network class that supports transfer rates. */
 template<class N, class L>
 struct TransportNetwork : public Network<N, L>
 	{
 	/** Make node @a s an external source with rate of infected set to @a r_infd. */
 	void set_source(size_t s, double r_infd, double r_in = 1.0)
 		{
-//		std::cout << "#" << s << ", inf: " << r_infd << ", in: " << r_in << "\n";
-
 		myassert(this->nodes.size() > s && this->nodes[s] != 0);
 		
 		this->nodes[s]->rate_in = r_in;

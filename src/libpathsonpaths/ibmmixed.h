@@ -5,7 +5,7 @@
 
 #include "util.h"
 
-
+/** Run mechanistic infection and spread simulation on node (and ancestors). */
 template<class NODE, class RNG>
 void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	{
@@ -100,6 +100,7 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	}
 
 
+/** Run mechanistic infection and spread simulation on a range of nodes. */
 template<class ITER, class RNG>
 void annotate_rates_ibmm(const ITER & beg, const ITER & end, double transm_rate, RNG & rng)
 	{
@@ -111,7 +112,7 @@ void annotate_rates_ibmm(const ITER & beg, const ITER & end, double transm_rate,
 	}
 
 
-// assign infd randomly according to frequencies
+/** Stochastically scale from frequency of infected individuals to absolute numbers. */
 template<class NODE, class RNG>
 void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	{
@@ -157,6 +158,7 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 	}
 
 
+/** Scale frequencies to absolute numbers for a range of nodes. */
 template<class ITER, class BINOM_FUNC>
 void freq_to_popsize_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
 	{
@@ -165,7 +167,7 @@ void freq_to_popsize_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom
 		freq_to_popsize_ibmm(*i, binom);
 	}
 
-
+i/** Run mechanistic genetics simulation. */
 template<class NODE, class RNG>
 void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	{
@@ -321,6 +323,7 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	}
 
 
+/** Run mechanistic genetics simulation on a range of nodes. */
 template<class ITER, class BINOM_FUNC>
 void annotate_frequencies_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom)
 	{

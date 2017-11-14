@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+/** @file Custom exception-based assert macros. */
+
 #include <stdexcept>
 
 template <class STR>

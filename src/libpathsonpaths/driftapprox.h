@@ -3,7 +3,11 @@
 
 #include <numeric>
 
-
+/** Simulate genetic drift (or any other change in allele frequencies) for a node.
+ * All unprocessed ancestors of this node will be processed recursively. This implementation
+ * is deprecated.
+ * @param node The node to operate on.
+ * @param drift A function object to simulate one step of change in allele frequencies. */
 template<class NODE, class DRIFT_FUNC>
 void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	{
@@ -16,10 +20,11 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 		return;
 		}
 
-	// do parents in any case
+	// do parents in any case (will immediately return if they are done already)
 	for (auto * link : node->inputs)
 		annotate_frequencies(link->from, drift);
 
+	// this node has been pre-set => no simulation
 	if (node->blocked) 
 		{
 		node->done = true;
@@ -63,6 +68,12 @@ void annotate_frequencies(NODE * node, DRIFT_FUNC & drift)
 	}
 
 
+/** Simulate genetic drift (or any other change in allele frequencies) for a node.
+ * All unprocessed ancestors of this node will be processed recursively. This is an 
+ * alternative implementation that operates forward instead of backwards and could therefore
+ * in the future be unified with the mechanistic simulation.
+ * @param node The node to operate on.
+ * @param drift A function object to simulate one step of change in allele frequencies. */
 template<class NODE, class DRIFT_FUNC>
 void annotate_frequencies_push(NODE * node, DRIFT_FUNC & drift)
 	{
@@ -128,7 +139,7 @@ void annotate_frequencies_push(NODE * node, DRIFT_FUNC & drift)
 	node->done = true;
 	}
 
-
+/** Run genetics for a range of nodes. */
 template<class ITER, class DRIFT_FUNC>
 void annotate_frequencies(const ITER & beg, const ITER & end, DRIFT_FUNC & drift)
 	{
