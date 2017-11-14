@@ -192,8 +192,7 @@ descendants <- function(edgelist, node){
 	repeat {
 		desc <- edgelist[edgelist[[1]] %in% nodes,]
 
-		if (nrow(desc) == 0)
-			break;
+		if (nrow(desc) == 0) { break }
 
 		if (use_factor){
 			d1 <- as.character(desc[[1]])

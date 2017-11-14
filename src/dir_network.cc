@@ -340,6 +340,7 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 
 	R_ASSERT(n_all, "No genetic data in network.");
 
+	// simulate
 	Drift drift(theta);
 	annotate_frequencies(net->nodes.begin(), net->nodes.end(), drift);
 	
@@ -363,6 +364,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	Rng rng;
 	// scale frequencies to absolute numbers
 	freq_to_popsize_ibmm(net->nodes.begin(), net->nodes.end(), rng);
+	// simulate
 	annotate_frequencies_ibmm(net->nodes.begin(), net->nodes.end(), rng);
 	// scale back to frequencies
 	for (auto node : net->nodes)
@@ -492,6 +494,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 
 	const size_t n_nodes = net->nodes.size();
 
+	// fill lists
 	for (size_t i=0; i<net->links.size(); i++)
 		{
 		const auto * l = net->links[i];
@@ -516,7 +519,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 		Named("rates_infected") = rates_i);
 	}
 
-
+// TODO: optionally return IntegerVector for non-factors (might be useful in some situations)
 DataFrame node_list(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
@@ -530,6 +533,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net)
 		{
 		const Node_t * n = net->nodes[i];
 
+		// we use only names for now
 		id[i] = is_factor ? net->name_by_id[i] : to_string(i);
 		inf[i] = n->rate_in_infd;
 		}
@@ -544,6 +548,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
+	// allele counts per node
 	vector<vector<size_t>> counts(net->nodes.size());
 	for (size_t i=0; i<counts.size(); i++)
 		{
@@ -551,12 +556,15 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 			continue;
 
 		counts[i].resize(net->nodes[i]->frequencies.size(), 0);
+		// draw n samples from node, count occurence of each allele
 		sample_node(*net->nodes[i], n, counts[i]);
 		}
 
+	// calculate distances
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
 			{
+			// one or both empty => NA
 			if (counts[j].empty() || counts[i].empty())
 				{
 				res(i, j) = res(j, i) = NA_REAL;
@@ -570,9 +578,10 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 			res(j, i) = res(i, j);
 			}
 
+	// col/row names
 	StringVector cn(net->nodes.size()), rn(net->nodes.size());
 
-	if (net->name_by_id.size())
+	if (net->name_by_id.size())		// factor
 		{
 		// StringVector is clearly missing a constructor here
 		cn = net->name_by_id;
@@ -580,7 +589,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 		}
 	// we need to name cols and rows even for non-factors, otherwise
 	// subscripting won't work (0-based vs. 1-based)
-	else
+	else							// not factor
 		for (size_t i=0; i<net->nodes.size(); i++)
 			cn(i) = rn(i) = to_string(i);
 
@@ -596,6 +605,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty)
 
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
+	// distances
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
 			res(i, j) = res(j, i) = 
@@ -622,6 +632,7 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
+	// distances
 	for (int i=0; i<net->nodes.size(); i++)
 		for (int j=i; j<net->nodes.size(); j++)
 			res(i, j) = res(j, i) = 
@@ -667,8 +678,10 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float ze
 	for (size_t i=0; i<n_sources; i++)
 		weight[i] = zero_appeal;
 
+	// we need to keep track of the sum of all weights
 	double sum = n_sources * zero_appeal;
 
+	// distribution for #input links
 	ProportionalPick<> pick(0.000001, m_dist);
 	RRng r;
 
@@ -681,6 +694,7 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float ze
 
 		for (size_t j=0; j<n_inp; j++)
 			{
+			// random node
 			size_t r_inp = r.outOf(0, sum);
 			size_t inp = 0;
 			// find previous node in weight list

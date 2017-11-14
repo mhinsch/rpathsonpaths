@@ -24,7 +24,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 	R_ASSERT(nodes.size() == freqs.nrow(), "Invalid parameter 'iniDist': "
 		"number of rows in frequencies and number of elements in nodes have to be equal");	
 
-	// init nodes
+	// init and reset nodes
 	for (auto n : net->nodes)
 		{
 		// set all to 0
@@ -39,6 +39,7 @@ void _set_allele_freqs(Net_t * net, const List & ini)
 
 	StringVector levels = f ? nodes.attr("levels") : StringVector();
 
+	// assign ini frequencies
 	for (size_t i=0; i<nodes.size(); i++)
 		{
 		const size_t n = f ? net->id_by_name[string(levels(nodes(i)-1))] : nodes[i];
