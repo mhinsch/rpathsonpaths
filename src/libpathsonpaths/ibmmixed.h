@@ -167,7 +167,7 @@ void freq_to_popsize_ibmm(const ITER & beg, const ITER & end, BINOM_FUNC & binom
 		freq_to_popsize_ibmm(*i, binom);
 	}
 
-i/** Run mechanistic genetics simulation. */
+/** Run mechanistic genetics simulation. */
 template<class NODE, class RNG>
 void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 	{
