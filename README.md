@@ -1,8 +1,5 @@
 
-[![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths)
-
-Installing the package
-======================
+[![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths) [![Coverage Status](https://codecov.io/github/mhinsch/rpathsonpaths/coverage.svg?branch=master)](https://codecov.io/github/mhinsch/rpathsonpaths?branch=master) \# Installing the package
 
 Prerequisites:
 
@@ -153,10 +150,10 @@ netdir1
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.00162633  0.0995237   0.508113    0.390737
-#> 2    0.595   2   0.25112 0.620695    0.00135567  0.12683
-#> 3    0.6355  0.6 0.0758687   0.0889155   0.0142789   0.820937
-#> 4    0.668636    1.1 0.0010684   0.25515 0.0142712   0.72951
+#> 1    0.595   1   0.0237963   0.696965    0.264197    0.0150416
+#> 2    0.595   2   0.0440794   0.215   0.524701    0.21622
+#> 3    0.6355  0.6 3.09116e-10 0.373277    0.617755    0.00896845
+#> 4    0.668636    1.1 4.99059e-47 0.243214    0.504238    0.252548
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -175,10 +172,10 @@ netdir2
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.0257071   0.00527239  0.00192251  0.967098
-#> 2    0.595   2   0.157011    0.51551 0.0656875   0.261791
-#> 3    0.6355  0.6 0.0226906   0.104864    6.00565e-11 0.872445
-#> 4    0.668636    1.1 1.83311e-12 0.0123462   7.32917e-07 0.987653
+#> 1    0.595   1   0.574624    0.262972    0.0087844   0.15362
+#> 2    0.595   2   0.177175    0.172351    0.00117787  0.649297
+#> 3    0.6355  0.6 0.1018  0.311304    1.72026e-10 0.586896
+#> 4    0.668636    1.1 0.00904151  0.545499    1.15237e-12 0.445459
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -202,12 +199,12 @@ Finally we can draw samples from our simulated population.
 samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        1        8        0        1
-#> 2    4        0        3        0        7
+#> 1    2        0        1        7        2
+#> 2    4        0        5        4        1
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        0        8        0        2
-#> 2    4        0        0        0       10
+#> 1    2        3        1        0        6
+#> 2    4        0        5        0        5
 ```
 
 Contributors (in alphabetic order):
