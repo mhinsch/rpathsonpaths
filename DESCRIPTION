@@ -1,9 +1,9 @@
 Package: rpathsonpaths
 Type: Package
-Title: Simulate population genetics of foodborne diseases.
+Title: Simulate population genetics of foodborne diseases
 Version: 1.0
-Author: Martin Hinsch
-Maintainer: Martin Hinsch <hinsch.martin@gmail.com>
+Authors@R: c(person("Martin", "Hinsch", role=c("aut", "cre"), email="hinsch.martin@gmail.com"),
+			person("Thibaut", "Jombart", role=c("ctb")))
 Description: Rpathsonpaths is a population genetics simulator for foodborne diseases. It 
 	provides methods to simulate how infections spread on a food transport network and what
 	the genetic structure of an outbreak will look like.

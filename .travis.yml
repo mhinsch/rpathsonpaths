@@ -8,3 +8,10 @@ before_install:
     - sudo apt-get install libboost-dev
 
 warnings_are_errors: false
+
+r_github_packages:
+      - r-lib/covr
+
+after_success:
+      - Rscript -e 'covr::codecov()'
+
