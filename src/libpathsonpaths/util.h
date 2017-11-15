@@ -24,4 +24,6 @@ inline void assert_failed(const STR & str)
 
 #endif
 
+#define ensure(cond, msg) ((cond) ? (void)0 : assert_failed(msg))
+
 #endif	// UTIL_H

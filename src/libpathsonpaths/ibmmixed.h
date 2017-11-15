@@ -34,7 +34,7 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 		}
 
 	const int in_infd = node->rate_in_infd;
-	const int in = node->rate_in;
+	//const int inp = node->rate_in;
 
 // *** transmission
 //     NOTE that this also happens for sources
@@ -49,7 +49,8 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	node->rate_in_infd = in_infd + newly_infd;
 	node->d_rate_in_infd = newly_infd;
 
-	myassert(uninfd >= 0 && newly_infd >=0);
+	ensure(uninfd >= 0, "transport rate smaller than number of infected");
+	ensure(newly_infd >=0, "negative number of new infections");
 
 // *** output
 
@@ -58,6 +59,8 @@ void annotate_rates_ibmm(NODE * node, double transm_rate, RNG & rng)
 	double outp = 0.0;
 	for (const auto & l : node->outputs)
 		outp += l->rate;
+
+	ensure(outp <= node->rate_in, "output can't be bigger than input");
 
 	// no output, done
 	if (outp <= 0)
@@ -129,7 +132,7 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 
 	double rem = std::accumulate(node->frequencies.begin(), node->frequencies.end(), 0.0);
 
-	myassert(rem >= 0);
+	ensure(rem >= 0, "negative number of infected units");
 
 	// invalid or already scaled
 	// (we have to special case 1 since that's the canonical sum of frequencies)
@@ -143,7 +146,7 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 		// if this is the last positive frequency
 		const int add = n>0 && rem >0 ? rng.binom(std::min(1.0, p/rem), n) : 0;
 
-		myassert(add >= 0);
+		ensure(add >= 0, "internal error while scaling frequencies");
 
 		node->frequencies[i] = add;
 
@@ -151,7 +154,7 @@ void freq_to_popsize_ibmm(NODE * node, RNG & rng)
 		rem -= p;
 		}
 
-	myassert(n>=0 && rem>-0.0001); 
+	ensure(n>=0 && rem>-0.0001, "internal error while scaling frequencies"); 
 	// R binom does weird stuff when rem and p are very close so we
 	// skip the last step and just assign n directly
 	node->frequencies.back() = n;
