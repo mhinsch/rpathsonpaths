@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
 
 [![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths)
 [![Coverage Status](https://codecov.io/github/mhinsch/rpathsonpaths/coverage.svg?branch=master)](https://codecov.io/github/mhinsch/rpathsonpaths?branch=master)
+
+
 # Installing the package
 
 Prerequisites:

@@ -1,5 +1,8 @@
 
-[![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths) [![Coverage Status](https://codecov.io/github/mhinsch/rpathsonpaths/coverage.svg?branch=master)](https://codecov.io/github/mhinsch/rpathsonpaths?branch=master) \# Installing the package
+[![Travis-CI Build Status](https://travis-ci.org/mhinsch/rpathsonpaths.svg?branch=master)](https://travis-ci.org/mhinsch/rpathsonpaths) [![Coverage Status](https://codecov.io/github/mhinsch/rpathsonpaths/coverage.svg?branch=master)](https://codecov.io/github/mhinsch/rpathsonpaths?branch=master)
+
+Installing the package
+======================
 
 Prerequisites:
 
@@ -150,10 +153,10 @@ netdir1
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.0237963   0.696965    0.264197    0.0150416
-#> 2    0.595   2   0.0440794   0.215   0.524701    0.21622
-#> 3    0.6355  0.6 3.09116e-10 0.373277    0.617755    0.00896845
-#> 4    0.668636    1.1 4.99059e-47 0.243214    0.504238    0.252548
+#> 1    0.595   1   0.435863    0.177953    0.0285719   0.357613
+#> 2    0.595   2   0.0494234   0.00209904  0.243706    0.704772
+#> 3    0.6355  0.6 0.624743    0.11165 0.153423    0.110185
+#> 4    0.668636    1.1 0.206538    0.0218089   0.762037    0.00961572
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -172,10 +175,10 @@ netdir2
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.574624    0.262972    0.0087844   0.15362
-#> 2    0.595   2   0.177175    0.172351    0.00117787  0.649297
-#> 3    0.6355  0.6 0.1018  0.311304    1.72026e-10 0.586896
-#> 4    0.668636    1.1 0.00904151  0.545499    1.15237e-12 0.445459
+#> 1    0.595   1   0.201408    0.535593    0.0472339   0.215764
+#> 2    0.595   2   0.0875015   0.183128    0.0739343   0.655437
+#> 3    0.6355  0.6 0.00418866  0.48722 0.00812594  0.500465
+#> 4    0.668636    1.1 0.0257419   0.880264    5.14877e-19 0.0939945
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -199,12 +202,12 @@ Finally we can draw samples from our simulated population.
 samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        0        1        7        2
-#> 2    4        0        5        4        1
+#> 1    2        1        0        2        7
+#> 2    4        3        0        7        0
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        3        1        0        6
-#> 2    4        0        5        0        5
+#> 1    2        0        1        3        6
+#> 2    4        0       10        0        0
 ```
 
 Contributors (in alphabetic order):
