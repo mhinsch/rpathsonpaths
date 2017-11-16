@@ -22,3 +22,14 @@ Calculate the depth of a node (or list of nodes) in a given network. The depth i
 here defined as the length of the shortest path that connects any of the given nodes to
 any root node. If no node is provided the function is applied to all nodes in the network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+# get minimum depth of specific nodes
+depth(el, "A")
+depth(el, c("A", "B"))
+# apply to all nodes in the network
+# returns a vector, not a number
+depth(el)
+# to get the network's min depth apply directly to the list of nodes
+depth(el, nodes(el))
+}

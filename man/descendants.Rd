@@ -23,3 +23,11 @@ This function will return the graph reachable from a given node in a
 network. If no node argument is given the function is applied to each node in the
 network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+# get descendants of specific nodes
+descendants(el, "A")
+descendants(el, c("A", "B"))
+# apply to all nodes in the network
+descendants(el)
+}

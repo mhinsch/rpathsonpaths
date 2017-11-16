@@ -1,12 +1,12 @@
 Package: rpathsonpaths
 Type: Package
-Title: Simulate population genetics of foodborne diseases
+Title: Simulate Population Genetics of Foodborne Diseases
 Version: 1.0
 Authors@R: c(person("Martin", "Hinsch", role=c("aut", "cre"), email="hinsch.martin@gmail.com"),
 			person("Thibaut", "Jombart", role=c("ctb")))
-Description: Rpathsonpaths is a population genetics simulator for foodborne diseases. It 
-	provides methods to simulate how infections spread on a food transport network and what
-	the genetic structure of an outbreak will look like.
+Description: A population genetics simulator for foodborne diseases. It 
+	provides methods to simulate the spread of pathogens on a food transport network and the 
+	resulting genetic structure of an outbreak.
 License: GPL (>= 2)
 Imports: methods, utils, Rcpp (>= 0.12.9)
 Suggests: igraph, knitr, rmarkdown, testthat, outbreaks, epicontacts

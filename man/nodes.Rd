@@ -18,3 +18,7 @@ return a list of nodes
 \details{
 Returns a list of node ids for a graph.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+nodes(el)
+}

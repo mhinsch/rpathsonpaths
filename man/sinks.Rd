@@ -20,3 +20,7 @@ Get a list of sink (i.e. leave) nodes from a network.
 Extract a list of sink nodes, i.e. nodes that do not have any
 outputs, from a network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+sinks(el)
+}

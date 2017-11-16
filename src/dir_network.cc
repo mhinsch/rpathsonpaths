@@ -223,9 +223,6 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		ext_nodes.inherits("factor");
 	R_ASSERT(f==0 || f==3, "All node lists have to be of the same type.");
 
-	for (auto i : ext_rates_infd)
-		R_ASSERT(i >= 0 && i <= 1, "Invalid infected rate.");
-
 	EdgeList el(inputs, outputs);
 
 // *** basic topology

@@ -28,5 +28,25 @@ of pathogens as they spread through the transport network starting at the
 external sources (see \code{\link{popsnetwork}}). At each node founder
 effects are assumed to change composition of the population. This change is 
 simulated by directly drawing from the distribution of genotypes and unfected units,
-respectively.
+respectively. Note that for numerical reasons this model will not work for small
+absolute numbers of units (input and transfer rates). It is also strongly recommended
+to only run this model on networks that have been generated with the "units" method
+(see \code{\link{popsnetwork}}).
+}
+\examples{
+# create network
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 200))
+ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+net <- popsnetwork(el, ext, spread_model="units")
+
+# set allele frequencies (2 nodes, 3 alleles)
+freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+ini_freqs <- list(as.factor(c("A", "C")), freqs)
+
+# run simulation on initialized net
+ini_net <- set_allele_freqs(net, ini_freqs)
+popgen_ibm_mixed(ini_net)
+
+# or we can initialize and run in one call
+popgen_ibm_mixed(net, ini_freqs)
 }

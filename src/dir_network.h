@@ -18,6 +18,10 @@ using namespace Rcpp;
 //' for a description of possible formats).
 //'
 //' @return A list of ids of all source nodes in the network.
+//'
+//' @examples
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+//' sources(el)
 // [[Rcpp::export]]
 IntegerVector sources(const DataFrame & edge_list);
 
@@ -33,6 +37,10 @@ IntegerVector sources(const DataFrame & edge_list);
 //' for a description of possible formats).
 //'
 //' @return A list of ids of all sink nodes in the network.
+//'
+//' @examples
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+//' sinks(el)
 // [[Rcpp::export]]
 IntegerVector sinks(const DataFrame & edge_list);
 
@@ -65,6 +73,10 @@ IntegerVector colour_network(const DataFrame & edge_list);
 //' 
 //' @return If record is FALSE: TRUE if a cycle was found, FALSE otherwise. If record is TRUE:
 //' a list of cycles (as vectors of node ids, see \code{\link{popsnetwork}}) is returned.
+//'
+//' @examples
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+//' cycles(el)
 // [[Rcpp::export]]
 SEXP cycles(const DataFrame & edge_list, bool record=false);
 
@@ -107,21 +119,38 @@ SEXP cycles(const DataFrame & edge_list, bool record=false);
 //' A worked example is available in the 'overview' vignette.
 //'
 //' @examples
-//'
+//' # 1) fluid model
+//' # this model is pretty resilient to numerical issues
 //' inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
 //' outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
 //' rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
 //' edgelist <- data.frame(inp, outp, rates)
 //' ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
 //' net <- popsnetwork(edgelist, ext, 0.1)
+//'
+//' # 2) units model
+//' # for this model absolute numbers are relevant
+//' # note that whether we use integer or string node ids is completely arbitrary 
 //' 
+//' \dontrun{
+//' # this will produce an error in popsnetwork since node C's output is larger than
+//' # its input (300 > 250)
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 300))
+//' ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+//' net <- popsnetwork(el, ext, spread_model="units")
+//' }
+//' 
+//' # if we reduce C's output a bit it works fine
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 200))
+//' ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+//' net <- popsnetwork(el, ext, spread_model="units")
 //'
 //' @param links A dataframe describing all edges in the graph as well as transfer rates
 //' between them. The first two columns are read as inputs and outputs. If there are only 
 //' two columns all rates are assumed to be 1.
 //' @param external A dataframe describing external inputs into the network. The first column
 //' is expected to contain node ids (as indices or factors), the second column specifies 
-//' the amount of infected material in the input. If there is a third column present it
+//' the amount of infected material in the input. If there is a third column present it can
 //' be used to set overall input rates on the respective nodes (this is relevant for the ibm).
 //' @param transmission Rate of infection within nodes (i.e. proportion of uninfected material
 //' becoming infected).
@@ -157,6 +186,15 @@ void print_popsnetwork(const XPtr<Net_t> & p_net);
 //' they will be marked as blocked, i.e. they will not receive input in genetic material 
 //' (but will produce output themselves).
 //' @return A new popsnetwork object.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+//' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+//' net <- popsnetwork(el, ext)
+//' # set allele frequencies (2 nodes, 3 alleles)
+//' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+//' set_allele_freqs(net, list(as.factor(c("A", "C")), freqs))
 // [[Rcpp::export]]
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 
@@ -182,6 +220,23 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
 //' way will effectively be treated as a source and hide nodes that are further upstream.
 //' @return A new popsnetwork object with allele frequencies set for each node.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+//' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+//' net <- popsnetwork(el, ext)
+//'
+//' # set allele frequencies (2 nodes, 3 alleles)
+//' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+//' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+//'
+//' # run simulation on initialized net
+//' ini_net <- set_allele_freqs(net, ini_freqs)
+//' popgen_dirichlet(ini_net, 0.3)
+//'
+//' # or we can initialize and run in one call
+//' popgen_dirichlet(net, 0.3, ini_freqs)
 // [[Rcpp::export]]
 XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
 
@@ -196,7 +251,10 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' external sources (see \code{\link{popsnetwork}}). At each node founder
 //' effects are assumed to change composition of the population. This change is 
 //' simulated by directly drawing from the distribution of genotypes and unfected units,
-//' respectively.
+//' respectively. Note that for numerical reasons this model will not work for small
+//' absolute numbers of units (input and transfer rates). It is also strongly recommended
+//' to only run this model on networks that have been generated with the "units" method
+//' (see \code{\link{popsnetwork}}).
 //' 
 //' @param p_net A popsnetwork object.
 //' @param ini_dist Initial distribution of allele frequencies (optional). ini_dist has to be 
@@ -205,6 +263,23 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
 //' way will effectively be treated as a source and hide nodes that are further upstream.
 //' @return A new popsnetwork object with allele frequencies set for each node.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 200))
+//' ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+//' net <- popsnetwork(el, ext, spread_model="units")
+//'
+//' # set allele frequencies (2 nodes, 3 alleles)
+//' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+//' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+//'
+//' # run simulation on initialized net
+//' ini_net <- set_allele_freqs(net, ini_freqs)
+//' popgen_ibm_mixed(ini_net)
+//'
+//' # or we can initialize and run in one call
+//' popgen_ibm_mixed(net, ini_freqs)
 // [[Rcpp::export]]
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
 
@@ -222,6 +297,22 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist 
 //' draw in the second column.
 //' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
 //' in $\code{allele_x}.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+//' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+//' net <- popsnetwork(el, ext)
+//'
+//' # set allele frequencies (2 nodes, 3 alleles)
+//' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+//' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+//'
+//' # simulate
+//' res <- popgen_dirichlet(net, 0.3, ini_freqs)
+//'
+//' # get some data
+//' draw_isolates(res, data.frame(c("C", "D"), c(10, 10)))
 // [[Rcpp::export]]
 DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
 
@@ -237,6 +328,22 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
 //' @param nodes A vector of node ids (either integer or factor).
 //' @param n How many alleles to draw per node.
 //' @return A dataframe with one column per node containing a list of allele ids.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+//' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+//' net <- popsnetwork(el, ext)
+//'
+//' # set allele frequencies (2 nodes, 3 alleles)
+//' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+//' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+//'
+//' # simulate
+//' res <- popgen_dirichlet(net, 0.3, ini_freqs)
+//'
+//' # get some data
+//' draw_alleles(res, as.factor(c("C", "D")))
 // [[Rcpp::export]]
 DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n=1);
 
@@ -328,6 +435,9 @@ NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true
 //' @param zero_appeal Constant to be added to the nodes' attractiveness.
 //' @param compact Whether to remove isolated source nodes.
 //' @return An edgelist as a dataframe. 
+//'
+//' @examples
+//' generate_PA(20, 5, c(3, 1))
 // [[Rcpp::export]]
 DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float zero_appeal=1,
 	bool compact=true);

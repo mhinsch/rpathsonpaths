@@ -21,3 +21,11 @@ Find all direct parents of a node.
 Find and return all parents for a given node (or list of nodes) in a network. If 
 no node is provided the function is applied to all nodes in the network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+# get parents of specific nodes
+parents(el, "A")
+parents(el, c("A", "B"))
+# apply to all nodes in the network
+parents(el)
+}

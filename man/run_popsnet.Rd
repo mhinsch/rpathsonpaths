@@ -55,3 +55,10 @@ Create a popsnetwork and run the transport simulation.
 This function creates a popsnetwork object from the given parameters and runs 
 either the ibm or dirichlet simulation on it.
 }
+\examples{
+# the network
+edgelist <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+# allele frequencies, 3 alleles x 2 source nodes (A, B)
+freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+run_popsnet(edgelist, 10, 0.1, freqs)
+}

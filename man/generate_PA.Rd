@@ -30,3 +30,6 @@ This function generates a random scale-free network. It uses the Barabasi-Albert
 preferential attachment algorithm, slightly modified to allow for directedness and 
 isolated initial nodes.
 }
+\examples{
+generate_PA(20, 5, c(3, 1))
+}

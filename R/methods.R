@@ -12,6 +12,15 @@
 #' infected material being transferred.}
 #' @param x A popsnetwork object.
 #' @param ... Ignored for now.
+#'
+#' @examples
+#' from <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+#' to <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+#' rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
+#' edgelist <- data.frame(from, to, rates)
+#' ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+#' net <- popsnetwork(edgelist, ext)
+#' print(net)
 print.popsnetwork <- function(x, ...){
 	.printpopsnetwork(x)
 	}
@@ -26,6 +35,15 @@ print.popsnetwork <- function(x, ...){
 #' @param x A popsnetwork object.
 #' @param ... Ignored for now.
 #' @return NULL
+#'
+#' @examples
+#' from <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+#' to <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+#' rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
+#' edgelist <- data.frame(from, to, rates)
+#' ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+#' net <- popsnetwork(edgelist, ext)
+#' plot(net)
 plot.popsnetwork <- function(x, ...){
 	if (!requireNamespace("igraph")){
 		stop("This function requires the iGraph package.")
@@ -73,6 +91,13 @@ plot.popsnetwork <- function(x, ...){
 #' @param checks Whether to perform some sanity checks on the graph before simulating (slow).
 #' @return A list containing the result of the simulation(s) as first and the raw network as
 #' the second element.
+#'
+#' @examples
+#' # the network
+#' edgelist <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' # allele frequencies, 3 alleles x 2 source nodes (A, B)
+#' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+#' run_popsnet(edgelist, 10, 0.1, freqs)
 run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmission=0.0, 
 						decay=-1.0, theta=1.0, spread_model="units", drift_model="units", 
 						checks=FALSE) {
@@ -122,6 +147,10 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 #' @details Returns a list of node ids for a graph.
 #' @param edgelist An edgelist as two columns of node ids (from, to).
 #' @return A list or vector of node ids.
+#'
+#' @examples
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' nodes(el)
 nodes <- function(edgelist) {
 	if (is.factor(edgelist[[1]])){
 		factor(unique(c(as.character(edgelist[[1]]), as.character(edgelist[[2]]))))
@@ -168,6 +197,14 @@ mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 #' a to column).
 #' @param node The node to find the descendants of.
 #' @return An edgelist containing the complete downstream graph of the given node.
+#'
+#' @examples
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' # get descendants of specific nodes
+#' descendants(el, "A")
+#' descendants(el, c("A", "B"))
+#' # apply to all nodes in the network
+#' descendants(el)
 descendants <- function(edgelist, node){
 	if (any(is.na(edgelist))) {
 		stop("missing values in edgelist")
@@ -302,6 +339,14 @@ path_distances <- function(net) {
 #' @param edgelist A network in edgelist format.
 #' @param node A single node id or list of node ids.
 #' @return An array of nodes or a list of arrays of nodes (if no node was provided).
+#'
+#' @examples
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' # get children of specific nodes
+#' children(el, "A")
+#' children(el, c("A", "B"))
+#' # apply to all nodes in the network
+#' children(el)
 children <- function(edgelist, node) {
 	if (any(is.na(edgelist))) {
 		stop("missing values in edgelist")
@@ -327,6 +372,14 @@ children <- function(edgelist, node) {
 #' @param edgelist A network in edgelist format.
 #' @param node A single node id or list of node ids.
 #' @return An array of nodes or a list of arrays of nodes (if no node was provided).
+#'
+#' @examples
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' # get parents of specific nodes
+#' parents(el, "A")
+#' parents(el, c("A", "B"))
+#' # apply to all nodes in the network
+#' parents(el)
 parents <- function(edgelist, node) {
 	if (any(is.na(edgelist))) {
 		stop("missing values in edgelist")
@@ -353,6 +406,17 @@ parents <- function(edgelist, node) {
 #' @param edgelist The network in edgelist format.
 #' @param node A node id or a list of node ids.
 #' @return The minimum depth as an integer or an array of integers (if no node was provided).
+#'
+#' @examples
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+#' # get minimum depth of specific nodes
+#' depth(el, "A")
+#' depth(el, c("A", "B"))
+#' # apply to all nodes in the network
+#' # returns a vector, not a number
+#' depth(el)
+#' # to get the network's min depth apply directly to the list of nodes
+#' depth(el, nodes(el))
 depth <- function(edgelist, node) {
 	if (any(is.na(edgelist))) {
 		stop("missing values in edgelist")

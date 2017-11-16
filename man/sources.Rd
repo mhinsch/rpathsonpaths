@@ -20,3 +20,7 @@ Get a list of source nodes from a network.
 Extract a list of source nodes, i.e. nodes that do not have any
 inputs, from a network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+sources(el)
+}

@@ -14,7 +14,7 @@ two columns all rates are assumed to be 1.}
 
 \item{external}{A dataframe describing external inputs into the network. The first column
 is expected to contain node ids (as indices or factors), the second column specifies 
-the amount of infected material in the input. If there is a third column present it
+the amount of infected material in the input. If there is a third column present it can
 be used to set overall input rates on the respective nodes (this is relevant for the ibm).}
 
 \item{transmission}{Rate of infection within nodes (i.e. proportion of uninfected material
@@ -77,7 +77,8 @@ A worked example is available in the 'overview' vignette.
 }
 
 \examples{
-
+# 1) fluid model
+# this model is pretty resilient to numerical issues
 inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
 outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
 rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
@@ -85,5 +86,21 @@ edgelist <- data.frame(inp, outp, rates)
 ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
 net <- popsnetwork(edgelist, ext, 0.1)
 
+# 2) units model
+# for this model absolute numbers are relevant
+# note that whether we use integer or string node ids is completely arbitrary 
+
+\dontrun{
+# this will produce an error in popsnetwork since node C's output is larger than
+# its input (300 > 250)
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 300))
+ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+net <- popsnetwork(el, ext, spread_model="units")
+}
+
+# if we reduce C's output a bit it works fine
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(150, 100, 200))
+ext <- data.frame(node=c("A", "B"), rate=c(300, 100), input=c(1000, 1000))
+net <- popsnetwork(el, ext, spread_model="units")
 
 }

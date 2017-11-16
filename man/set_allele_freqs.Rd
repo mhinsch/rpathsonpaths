@@ -25,3 +25,12 @@ Pre-set allele frequencies for some nodes.
 \details{
 Use this function to initialize allele frequencies for some nodes of the network.
 }
+\examples{
+# create network
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+net <- popsnetwork(el, ext)
+# set allele frequencies (2 nodes, 3 alleles)
+freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+set_allele_freqs(net, list(as.factor(c("A", "C")), freqs))
+}

@@ -18,3 +18,12 @@ Plot a popsnetwork object.
 This function will plot a popsnetwork object as a simple graph (using 
 \code{\link[igraph]{plot.igraph}}).
 }
+\examples{
+from <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+to <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
+edgelist <- data.frame(from, to, rates)
+ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+net <- popsnetwork(edgelist, ext)
+plot(net)
+}

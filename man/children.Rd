@@ -21,3 +21,11 @@ Find all direct children of a node.
 Find and return all children for a given node (or list of nodes) in a network. If 
 no node is provided the function is applied to all nodes in the network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+# get children of specific nodes
+children(el, "A")
+children(el, c("A", "B"))
+# apply to all nodes in the network
+children(el)
+}

@@ -33,3 +33,20 @@ external sources (see \code{\link{popsnetwork}}). At each node founder
 effects are assumed to change composition of the population. This change is 
 approximated by drawing a set of allele frequencies from a Dirichlet distribution.
 }
+\examples{
+# create network
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+net <- popsnetwork(el, ext)
+
+# set allele frequencies (2 nodes, 3 alleles)
+freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+ini_freqs <- list(as.factor(c("A", "C")), freqs)
+
+# run simulation on initialized net
+ini_net <- set_allele_freqs(net, ini_freqs)
+popgen_dirichlet(ini_net, 0.3)
+
+# or we can initialize and run in one call
+popgen_dirichlet(net, 0.3, ini_freqs)
+}

@@ -22,3 +22,7 @@ Detect cycles in a network.
 \details{
 This function detects circular connections in a network.
 }
+\examples{
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
+cycles(el)
+}

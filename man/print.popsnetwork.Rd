@@ -24,3 +24,12 @@ of infected material present, overall input rate and genetic composition.
 \item A list of all edges with ids of connected nodes, transfer rate and proportion of
 infected material being transferred.}
 }
+\examples{
+from <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+to <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
+edgelist <- data.frame(from, to, rates)
+ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+net <- popsnetwork(edgelist, ext)
+print(net)
+}
