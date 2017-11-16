@@ -212,6 +212,8 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		return;
 		}
 
+	ensure(outp <= node->rate_in, "output can't be bigger than input");
+
 	// pre-transmission infected
 	const double infd = node->rate_in_infd - node->d_rate_in_infd;
 
@@ -290,11 +292,12 @@ void annotate_frequencies_ibmm(NODE * node, RNG & rng)
 		// first n-1 alleles
 		for (size_t i=0; i<left_by_gene.size()-1; i++)
 			{
+			myassert(pick <= all_infd);
+
 			// split leftover into two groups
 			all_infd -= left_by_gene[i];
 			
 			myassert(all_infd >= 0);
-			myassert(pick <= all_infd+left_by_gene[i]);
 
 			// picked units are either allele i or allele >i
 			const int add = rng.hypergeom(int(left_by_gene[i]), int(all_infd), int(pick));
