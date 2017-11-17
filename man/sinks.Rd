@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{sinks}
 \alias{sinks}
-\title{get sink nodes}
+\title{sinks}
 \usage{
 sinks(edge_list)
 }

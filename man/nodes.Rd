@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{nodes}
 \alias{nodes}
-\title{get all nodes}
+\title{nodes}
 \usage{
 nodes(edgelist)
 }

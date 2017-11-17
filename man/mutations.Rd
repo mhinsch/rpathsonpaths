@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{mutations}
 \alias{mutations}
-\title{prepare mutations}
+\title{mutations}
 \usage{
 mutations(edgelist, n_alleles, freq_mutant, n_muts)
 }

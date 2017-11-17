@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{path_distances}
 \alias{path_distances}
-\title{calculate path distances}
+\title{path_distances}
 \usage{
 path_distances(net)
 }

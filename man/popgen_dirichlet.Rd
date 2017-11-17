@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{popgen_dirichlet}
 \alias{popgen_dirichlet}
-\title{run dirichlet model}
+\title{popgen_dirichlet}
 \usage{
 popgen_dirichlet(p_net, theta, ini_dist = NULL)
 }

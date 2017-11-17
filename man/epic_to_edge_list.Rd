@@ -2,7 +2,7 @@
 % Please edit documentation in R/conversions.R
 \name{epic_to_edge_list}
 \alias{epic_to_edge_list}
-\title{epicontact to edge list}
+\title{epic_to_edge_list}
 \usage{
 epic_to_edge_list(x)
 }

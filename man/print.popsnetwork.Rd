@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{print.popsnetwork}
 \alias{print.popsnetwork}
-\title{print popsnetwork}
+\title{print.popsnetwork}
 \usage{
 \method{print}{popsnetwork}(x, ...)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{parents}
 \alias{parents}
-\title{parents of a node}
+\title{parents}
 \usage{
 parents(edgelist, node)
 }

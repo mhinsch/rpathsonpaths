@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{popgen_ibm_mixed}
 \alias{popgen_ibm_mixed}
-\title{run mechanistic model}
+\title{popgen_ibm_mixed}
 \usage{
 popgen_ibm_mixed(p_net, ini_dist = NULL)
 }

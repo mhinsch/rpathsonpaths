@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{popsnetwork}
 \alias{popsnetwork}
-\title{create popsnetwork}
+\title{popsnetwork}
 \usage{
 popsnetwork(links, external, transmission = 0, decay = -1,
   spread_model = "fluid", checks = FALSE)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{distances_EHamming}
 \alias{distances_EHamming}
-\title{calculate expected Hamming distances}
+\title{distances_EHamming}
 \usage{
 distances_EHamming(p_net, skip_empty = TRUE)
 }

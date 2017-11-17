@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{distances_sample}
 \alias{distances_sample}
-\title{calculate sample distances}
+\title{distances_sample}
 \usage{
 distances_sample(p_net, n = 1L, skip_empty = TRUE)
 }

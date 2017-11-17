@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{plot.popsnetwork}
 \alias{plot.popsnetwork}
-\title{plot popsnetwork}
+\title{plot.popsnetwork}
 \usage{
 \method{plot}{popsnetwork}(x, ...)
 }
