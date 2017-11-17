@@ -2,3 +2,4 @@ src/current.vim
 .gdb_history
 
 ^\.travis\.yml$
+^docs$

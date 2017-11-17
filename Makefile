@@ -19,7 +19,10 @@ mans:
 vignette: 
 	${RSCRIPT} -e 'library(rmarkdown); render("vignettes/overview.Rmd")'
 
-docs: mans vignette
+html:
+	${RSCRIPT} -e 'pkgdown::build_site()'
+
+docs: mans vignette html
 
 install: man/popsnetwork.Rd 
 	R CMD INSTALL .
