@@ -351,6 +351,13 @@ draw_alleles <- function(p_net, nodes, n = 1L) {
 #'
 #' @param p_net A PopsNet object.
 #' @return A dataframe with from, to, rates and rates_infected.
+#'
+#' @examples
+#' # create network
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+#' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+#' net <- popsnetwork(el, ext)
+#' edge_list(net)
 edge_list <- function(p_net) {
     .Call('_rpathsonpaths_edge_list', PACKAGE = 'rpathsonpaths', p_net)
 }
@@ -364,6 +371,13 @@ edge_list <- function(p_net) {
 #'
 #' @param p_net A PopsNet object.
 #' @return A dataframe with id and rate_infected.
+#'
+#' @examples
+#' # create network
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+#' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+#' net <- popsnetwork(el, ext)
+#' node_list(net)
 node_list <- function(p_net) {
     .Call('_rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
 }
@@ -378,6 +392,22 @@ node_list <- function(p_net) {
 #' @param p_net A popsnetwork object.
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
+#'
+#' @examples
+#' # create network
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+#' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+#' net <- popsnetwork(el, ext)
+#'
+#' # set allele frequencies (2 nodes, 3 alleles)
+#' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+#' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+#'
+#' # simulate
+#' res <- popgen_dirichlet(net, 0.3, ini_freqs)
+#'
+#' # get distances
+#' distances_freqdist(res)
 distances_freqdist <- function(p_net, skip_empty = TRUE) {
     .Call('_rpathsonpaths_distances_freqdist', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }
@@ -393,6 +423,22 @@ distances_freqdist <- function(p_net, skip_empty = TRUE) {
 #' @param n How many samples per node to use for comparison.
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
+#'
+#' @examples
+#' # create network
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+#' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+#' net <- popsnetwork(el, ext)
+#'
+#' # set allele frequencies (2 nodes, 3 alleles)
+#' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+#' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+#'
+#' # simulate
+#' res <- popgen_dirichlet(net, 0.3, ini_freqs)
+#'
+#' # get distances
+#' distances_sample(res)
 distances_sample <- function(p_net, n = 1L, skip_empty = TRUE) {
     .Call('_rpathsonpaths_distances_sample', PACKAGE = 'rpathsonpaths', p_net, n, skip_empty)
 }
@@ -410,6 +456,22 @@ distances_sample <- function(p_net, n = 1L, skip_empty = TRUE) {
 #' @param p_net A popsnetwork object.
 #' @param skip_empty Whether to return NA for empty nodes.
 #' @return A matrix of all distances.
+#'
+#' @examples
+#' # create network
+#' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+#' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+#' net <- popsnetwork(el, ext)
+#'
+#' # set allele frequencies (2 nodes, 3 alleles)
+#' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+#' ini_freqs <- list(as.factor(c("A", "C")), freqs)
+#'
+#' # simulate
+#' res <- popgen_dirichlet(net, 0.3, ini_freqs)
+#'
+#' # get distances
+#' distances_EHamming(res)
 distances_EHamming <- function(p_net, skip_empty = TRUE) {
     .Call('_rpathsonpaths_distances_EHamming', PACKAGE = 'rpathsonpaths', p_net, skip_empty)
 }

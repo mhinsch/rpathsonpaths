@@ -23,3 +23,19 @@ Calculate genetic distances within a network.
 This function calculates the genetic distance of all pairs of nodes in a 
 network by comparing a number of random samples from each node (using Hamming distance).
 }
+\examples{
+# create network
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+net <- popsnetwork(el, ext)
+
+# set allele frequencies (2 nodes, 3 alleles)
+freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+ini_freqs <- list(as.factor(c("A", "C")), freqs)
+
+# simulate
+res <- popgen_dirichlet(net, 0.3, ini_freqs)
+
+# get distances
+distances_sample(res)
+}

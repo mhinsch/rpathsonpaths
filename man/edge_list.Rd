@@ -19,3 +19,10 @@ Get a list of edges in a dataframe.
 This function returns a list of the edges in the network in a format
 that is suitable for plotting with e.g. iGraph.
 }
+\examples{
+# create network
+el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+net <- popsnetwork(el, ext)
+edge_list(net)
+}

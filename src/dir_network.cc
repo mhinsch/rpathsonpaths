@@ -545,12 +545,16 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty
 
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
+	R_ASSERT(net->nodes.size(), "empty network detected");
+
 	// allele counts per node
 	vector<vector<size_t>> counts(net->nodes.size());
 	for (size_t i=0; i<counts.size(); i++)
 		{
 		if (skip_empty && net->nodes[i]->rate_in_infd <= 0)
 			continue;
+
+		R_ASSERT(net->nodes[i]->frequencies.size(), "no genetic data in network");
 
 		counts[i].resize(net->nodes[i]->frequencies.size(), 0);
 		// draw n samples from node, count occurence of each allele
@@ -600,6 +604,8 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();
 
+	R_ASSERT(net->nodes.size(), "empty network detected");
+
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
 	// distances
@@ -626,6 +632,8 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty)
 NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();
+
+	R_ASSERT(net->nodes.size(), "empty network detected");
 
 	NumericMatrix res(net->nodes.size(), net->nodes.size());
 
