@@ -1,7 +1,7 @@
 context("Edgelist utility functions")
 
-edgelist <- data.frame(c(0L, 1L, 2L), c(2L, 2L, 3L))
-edgelistf <- data.frame(c("0", "1", "2"), c("2", "2", "3"))
+edgelist <- data.frame(f=c(0L, 1L, 2L), t=c(2L, 2L, 3L))
+edgelistf <- data.frame(f=c("0", "1", "2"), t=c("2", "2", "3"))
 
 test_that("sources are identified correctly", {
 	scs <- sources(edgelist)
@@ -64,7 +64,13 @@ test_that("descendants are found", {
 		data.frame()))
 })
 
+edgelist_sn <- data.frame(f=c(0L, 1L, 2L, 4L), t=c(2L, 2L, 3L, 5L))
+
 # biggest_subnetwork
+
+test_that("biggest_subnetwork works", {
+	expect_equal(biggest_subnetwork(edgelist_sn), edgelist)
+})
 
 # depth
 
