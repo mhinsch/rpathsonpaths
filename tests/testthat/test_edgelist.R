@@ -44,13 +44,36 @@ edgelistnaf <- data.frame(c("0", "1", "2", NA), c("2", "2", "3", "3"))
 
 # children
 
+test_that("children are found", {
+	expect_equal(children(edgelist), c(list(2L), list(2L), list(3L), list(integer(0))))
+})
+
 # parents
 
+test_that("parents are found", {
+	expect_equal(parents(edgelist), c(list(integer(0)), list(integer(0)), list(c(0L, 1L)), list(2L)))
+})
+
 # descendants
+
+test_that("descendants are found", {
+	expect_equal(descendants(edgelist), list(
+		data.frame(from=c(0L, 2L), to=c(2L, 3L)),
+		data.frame(from=c(1L, 2L), to=c(2L, 3L)),
+		data.frame(from=2L, to=3L),
+		data.frame()))
+})
 
 # biggest_subnetwork
 
 # depth
+
+test_that("depth works", {
+	expect_equal(depth(edgelist, nodes(edgelist)), 2L)
+	expect_equal(depth(edgelistf, nodes(edgelist)), 2L)
+})
+
+# NA for all
 
 test_that("NA produces errors", {
 	expect_error(sources(edgelistna))

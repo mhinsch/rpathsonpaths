@@ -405,17 +405,17 @@ parents <- function(edgelist, node) {
 #'
 #' @param edgelist The network in edgelist format.
 #' @param node A node id or a list of node ids.
-#' @return The minimum depth as an integer or an array of integers (if no node was provided).
+#' @return The depth as an integer or an array of integers (if no node was provided).
 #'
 #' @examples
 #' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
-#' # get minimum depth of specific nodes
+#' # get min depth of specific nodes
 #' depth(el, "A")
 #' depth(el, c("A", "B"))
 #' # apply to all nodes in the network
 #' # returns a vector, not a number
 #' depth(el)
-#' # to get the network's min depth apply directly to the list of nodes
+#' # to get the network's depth apply to the list of nodes
 #' depth(el, nodes(el))
 depth <- function(edgelist, node) {
 	if (any(is.na(edgelist))) {

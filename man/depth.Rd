@@ -12,7 +12,7 @@ depth(edgelist, node)
 \item{node}{A node id or a list of node ids.}
 }
 \value{
-The minimum depth as an integer or an array of integers (if no node was provided).
+The depth as an integer or an array of integers (if no node was provided).
 }
 \description{
 Calculate depth of a node.
@@ -24,12 +24,12 @@ any root node. If no node is provided the function is applied to all nodes in th
 }
 \examples{
 el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
-# get minimum depth of specific nodes
+# get min depth of specific nodes
 depth(el, "A")
 depth(el, c("A", "B"))
 # apply to all nodes in the network
 # returns a vector, not a number
 depth(el)
-# to get the network's min depth apply directly to the list of nodes
+# to get the network's depth apply to the list of nodes
 depth(el, nodes(el))
 }
