@@ -54,7 +54,9 @@ Websites
 
 The following websites are available:
 
--   The *rpathsonpaths* project on *github*, useful for developers, contributors, and users wanting to post issues, bug reports and feature requests: <br> [http://github.com/mhinsch/rpathsonpaths](http://github.com/reconhub/rpathsonpaths)
+-   The *rpathsonpaths* project on *github*, useful for developers, contributors, and users wanting to post issues, bug reports and feature requests: <br> <http://github.com/mhinsch/rpathsonpaths>
+
+-   To browse the package documentation online visit: <br> <https://mhinsch.github.io/rpathsonpaths/>
 
 Getting help online
 -------------------
@@ -153,10 +155,10 @@ netdir1
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.435863    0.177953    0.0285719   0.357613
-#> 2    0.595   2   0.0494234   0.00209904  0.243706    0.704772
-#> 3    0.6355  0.6 0.624743    0.11165 0.153423    0.110185
-#> 4    0.668636    1.1 0.206538    0.0218089   0.762037    0.00961572
+#> 1    0.595   1   0.117968    0.601951    0.00533272  0.274749
+#> 2    0.595   2   0.113447    0.190231    0.111485    0.584837
+#> 3    0.6355  0.6 0.0206444   0.870718    0.00284579  0.105792
+#> 4    0.668636    1.1 9.21451e-05 0.922622    1.80231e-55 0.0772862
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -175,10 +177,10 @@ netdir2
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.201408    0.535593    0.0472339   0.215764
-#> 2    0.595   2   0.0875015   0.183128    0.0739343   0.655437
-#> 3    0.6355  0.6 0.00418866  0.48722 0.00812594  0.500465
-#> 4    0.668636    1.1 0.0257419   0.880264    5.14877e-19 0.0939945
+#> 1    0.595   1   0.00836899  0.0109629   0.113517    0.867151
+#> 2    0.595   2   0.152673    0.0590317   0.376565    0.41173
+#> 3    0.6355  0.6 0.0161074   0.0111557   0.753534    0.219203
+#> 4    0.668636    1.1 0.000542755 0.00064282  0.437505    0.561309
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -202,12 +204,12 @@ Finally we can draw samples from our simulated population.
 samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        1        0        2        7
-#> 2    4        3        0        7        0
+#> 1    2        1        3        0        6
+#> 2    4        0        8        0        2
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        0        1        3        6
-#> 2    4        0       10        0        0
+#> 1    2        2        1        3        4
+#> 2    4        0        0        5        5
 ```
 
 Contributors (in alphabetic order):
