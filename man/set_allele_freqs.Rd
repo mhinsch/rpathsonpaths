@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{set_allele_freqs}
 \alias{set_allele_freqs}
-\title{set_allele_freqs}
+\title{set allele frequencies}
 \usage{
 set_allele_freqs(p_net, ini_dist)
 }

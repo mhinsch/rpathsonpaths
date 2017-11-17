@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{draw_isolates}
 \alias{draw_isolates}
-\title{draw_isolates}
+\title{draw isolates}
 \usage{
 draw_isolates(p_net, samples)
 }

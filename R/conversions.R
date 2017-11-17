@@ -1,4 +1,4 @@
-#' @title epic_to_edge_list
+#' @title epicontact to edge list
 #'
 #' @description Convert epicontacts to edgelist.
 #'

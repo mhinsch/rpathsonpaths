@@ -7,7 +7,7 @@
 
 using namespace Rcpp;
 
-//' @title sources
+//' @title get source nodes
 //'
 //' @description Get a list of source nodes from a network.
 //'
@@ -26,7 +26,7 @@ using namespace Rcpp;
 IntegerVector sources(const DataFrame & edge_list);
 
 
-//' @title sinks 
+//' @title get sink nodes 
 //'
 //' @description Get a list of sink (i.e. leave) nodes from a network.
 //'
@@ -45,7 +45,7 @@ IntegerVector sources(const DataFrame & edge_list);
 IntegerVector sinks(const DataFrame & edge_list);
 
 
-//' @title colour_network
+//' @title colour subnetworks
 //'
 //' @description Identify separate sub-networks.
 //'
@@ -61,7 +61,7 @@ IntegerVector sinks(const DataFrame & edge_list);
 IntegerVector colour_network(const DataFrame & edge_list);
 
 
-//' @title cycles
+//' @title find cycles
 //' 
 //' @description Detect cycles in a network.
 //' 
@@ -81,7 +81,7 @@ IntegerVector colour_network(const DataFrame & edge_list);
 SEXP cycles(const DataFrame & edge_list, bool record=false);
 
 
-//' @title popsnetwork 
+//' @title create popsnetwork 
 //'
 //' @description Create a popsnetwork object.
 //'
@@ -172,7 +172,7 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external, dou
 void print_popsnetwork(const XPtr<Net_t> & p_net);
 
 
-//' @title set_allele_freqs
+//' @title set allele frequencies
 //' 
 //' @description Pre-set allele frequencies for some nodes.
 //' 
@@ -199,7 +199,7 @@ void print_popsnetwork(const XPtr<Net_t> & p_net);
 XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 
 
-//' @title popgen_dirichlet
+//' @title run dirichlet model
 //' 
 //' @description Simulate spread of pathogens on the network using a Dirichlet
 //' distribution to approximate genetic drift.
@@ -241,7 +241,7 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<List> ini_dist = R_NilValue);
 
 
-//' @title popgen_ibm_mixed
+//' @title run mechanistic model
 //' 
 //' @description Simulate spread of pathogens on the network using a (very) simple individual-based
 //' model.
@@ -284,7 +284,7 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist = R_NilValue);
 
 
-//' @title draw_isolates
+//' @title draw isolates
 //'
 //' @description Draw a set of isolates from the network.
 //' 
@@ -317,7 +317,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist 
 DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
 
 
-//' @title draw_alleles
+//' @title draw alleles
 //'
 //' @description Draw a set of alleles from the network.
 //' 
@@ -348,7 +348,7 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
 DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, int n=1);
 
 
-//' @title egdeList
+//' @title get list of edges
 //'
 //' @description Get a list of edges in a dataframe.
 //'
@@ -367,7 +367,7 @@ DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, i
 // [[Rcpp::export]]
 DataFrame edge_list(const XPtr<Net_t> & p_net);
 
-//' @title node_list
+//' @title get list of nodes 
 //'
 //' @description Get a list of nodes in a dataframe.
 //'
@@ -387,7 +387,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net);
 DataFrame node_list(const XPtr<Net_t> & p_net);
 
 
-//' @title distances_freqdist
+//' @title calculate frequency distances
 //'
 //' @description Calculate genetic dissimilarities within a network.
 //' 
@@ -417,7 +417,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net);
 NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
 
-//' @title distances_sample
+//' @title calculate sample distances
 //'
 //' @description Calculate genetic distances within a network.
 //' 
@@ -448,7 +448,7 @@ NumericMatrix distances_freqdist(const XPtr<Net_t> & p_net, bool skip_empty=true
 NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_empty=true);
 
 
-//' @title distances_EHamming
+//' @title calculate expected Hamming distances
 //'
 //' @description Calculate genetic distances within a network as expected values of Hamming
 //' distances.
@@ -481,7 +481,7 @@ NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n=1, bool skip_emp
 NumericMatrix distances_EHamming(const XPtr<Net_t> & p_net, bool skip_empty=true);
 
 
-//' @title generate_PA
+//' @title generate random network
 //'
 //' @description Generate a random transport network using preferential attachment.
 //'

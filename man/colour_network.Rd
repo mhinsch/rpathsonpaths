@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{colour_network}
 \alias{colour_network}
-\title{colour_network}
+\title{colour subnetworks}
 \usage{
 colour_network(edge_list)
 }

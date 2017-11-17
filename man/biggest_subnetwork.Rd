@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{biggest_subnetwork}
 \alias{biggest_subnetwork}
-\title{biggest_subnetwork}
+\title{find biggest subnetwork}
 \usage{
 biggest_subnetwork(edgelist)
 }

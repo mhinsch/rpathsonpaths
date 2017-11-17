@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{run_popsnet}
 \alias{run_popsnet}
-\title{run_popsnet}
+\title{run simulation}
 \usage{
 run_popsnet(edgelist, ini_input, ini_infd, ini_freqs, n = 1L,
   transmission = 0, decay = -1, theta = 1, spread_model = "units",

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{edge_list}
 \alias{edge_list}
-\title{egdeList}
+\title{get list of edges}
 \usage{
 edge_list(p_net)
 }

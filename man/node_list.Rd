@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{node_list}
 \alias{node_list}
-\title{node_list}
+\title{get list of nodes}
 \usage{
 node_list(p_net)
 }

@@ -1,4 +1,4 @@
-#' @title print.popsnetwork
+#' @title print popsnetwork
 #'
 #' @description Print a popsnetwork object.
 #'
@@ -26,7 +26,7 @@ print.popsnetwork <- function(x, ...){
 	}
 
 
-#' @title plot.popsnetwork
+#' @title plot popsnetwork
 #'
 #' @description Plot a popsnetwork object.
 #'
@@ -59,7 +59,7 @@ plot.popsnetwork <- function(x, ...){
 						vertex.label.cex=0.5)
 	}
 
-#' @title run_popsnet
+#' @title run simulation
 #'
 #' @description Create a popsnetwork and run the transport simulation.
 #'
@@ -140,7 +140,7 @@ run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmis
 	list(result=res, raw=net_raw, meta = meta)
 }
 
-#' @title nodes
+#' @title get all nodes
 #' 
 #' @description return a list of nodes
 #' 
@@ -159,7 +159,7 @@ nodes <- function(edgelist) {
 	}
 }
 
-#' @title mutations
+#' @title prepare mutations
 #' 
 #' @description generate a list of random mutations on a given graph
 #' 
@@ -186,7 +186,7 @@ mutations <- function(edgelist, n_alleles, freq_mutant, n_muts){
 }
 
 
-#' @title descendants
+#' @title get descendants of a node
 #'
 #' @description get all descendants of a particular node in a graph
 #' 
@@ -253,7 +253,7 @@ descendants <- function(edgelist, node){
 	data.frame(from, to)
 }
 
-#' @title biggest_subnetwork
+#' @title find biggest subnetwork
 #'
 #' @description Find and return the biggest (in terms of number of edges) connected subnetwork
 #' of a given network.
@@ -272,7 +272,7 @@ biggest_subnetwork <- function(edgelist){
 	edgelist[cols==bigst,]
 }
 
-#' @title perfect_binary
+#' @title create binary tree
 #'
 #' @description Create a perfect binary tree of a given size.
 #'
@@ -307,7 +307,7 @@ perfect_binary <- function(size){
 	data.frame(from, to)
 }
 
-#' @title path_distances
+#' @title calculate path distances
 #'
 #' @description Obtain the shortest distances between all pairs of nodes.
 #'
@@ -329,7 +329,7 @@ path_distances <- function(net) {
 }
 
 
-#' @title children
+#' @title children of a node
 #'
 #' @description Find all direct children of a node.
 #'
@@ -362,7 +362,7 @@ children <- function(edgelist, node) {
 }
 
 
-#' @title parents
+#' @title parents of a node
 #'
 #' @description Find all direct parents of a node.
 #'
@@ -395,9 +395,9 @@ parents <- function(edgelist, node) {
 }
 
 
-#' @title depth
+#' @title depth of a node
 #' 
-#' @description Calculate depth of a node.
+#' @description Calculate depth of a node or network.
 #'
 #' @details Calculate the depth of a node (or list of nodes) in a given network. The depth is
 #' here defined as the length of the shortest path that connects any of the given nodes to

@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{descendants}
 \alias{descendants}
-\title{descendants}
+\title{get descendants of a node}
 \usage{
 descendants(edgelist, node)
 }

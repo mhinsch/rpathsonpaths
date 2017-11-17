@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{children}
 \alias{children}
-\title{children}
+\title{children of a node}
 \usage{
 children(edgelist, node)
 }

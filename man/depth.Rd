@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{depth}
 \alias{depth}
-\title{depth}
+\title{depth of a node}
 \usage{
 depth(edgelist, node)
 }
@@ -15,7 +15,7 @@ depth(edgelist, node)
 The depth as an integer or an array of integers (if no node was provided).
 }
 \description{
-Calculate depth of a node.
+Calculate depth of a node or network.
 }
 \details{
 Calculate the depth of a node (or list of nodes) in a given network. The depth is

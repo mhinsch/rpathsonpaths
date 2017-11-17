@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods.R
 \name{perfect_binary}
 \alias{perfect_binary}
-\title{perfect_binary}
+\title{create binary tree}
 \usage{
 perfect_binary(size)
 }

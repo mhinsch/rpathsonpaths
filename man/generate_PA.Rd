@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{generate_PA}
 \alias{generate_PA}
-\title{generate_PA}
+\title{generate random network}
 \usage{
 generate_PA(n_nodes, n_sources, m_dist, zero_appeal = 1, compact = TRUE)
 }

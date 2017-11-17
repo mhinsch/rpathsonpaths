@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{cycles}
 \alias{cycles}
-\title{cycles}
+\title{find cycles}
 \usage{
 cycles(edge_list, record = FALSE)
 }

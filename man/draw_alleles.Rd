@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{draw_alleles}
 \alias{draw_alleles}
-\title{draw_alleles}
+\title{draw alleles}
 \usage{
 draw_alleles(p_net, nodes, n = 1L)
 }

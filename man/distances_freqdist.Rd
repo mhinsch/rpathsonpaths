@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{distances_freqdist}
 \alias{distances_freqdist}
-\title{distances_freqdist}
+\title{calculate frequency distances}
 \usage{
 distances_freqdist(p_net, skip_empty = TRUE)
 }

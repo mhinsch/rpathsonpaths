@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{sources}
 \alias{sources}
-\title{sources}
+\title{get source nodes}
 \usage{
 sources(edge_list)
 }
