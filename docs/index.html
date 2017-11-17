@@ -114,8 +114,8 @@
 <a href="#websites" class="anchor"></a>Websites</h2>
 <p>The following websites are available:</p>
 <ul>
-<li>The <em>rpathsonpaths</em> project on <em>github</em>, useful for developers, contributors, and users wanting to post issues, bug reports and feature requests: <br><a href="http://github.com/reconhub/rpathsonpaths">http://github.com/mhinsch/rpathsonpaths</a>
-</li>
+<li><p>The <em>rpathsonpaths</em> project on <em>github</em>, useful for developers, contributors, and users wanting to post issues, bug reports and feature requests: <br><a href="http://github.com/mhinsch/rpathsonpaths" class="uri">http://github.com/mhinsch/rpathsonpaths</a></p></li>
+<li><p>To browse the package documentation online visit: <br><a href="https://mhinsch.github.io/rpathsonpaths/" class="uri">https://mhinsch.github.io/rpathsonpaths/</a></p></li>
 </ul>
 </div>
 <div id="getting-help-online" class="section level2">
@@ -201,10 +201,10 @@ netdir1
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.0165701   0.144625    0.00473641  0.834069</span>
-<span class="co">#&gt; 2    0.595   2   0.0200887   0.0601112   0.578239    0.341561</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.0776216   3.32041e-05 0.147576    0.774769</span>
-<span class="co">#&gt; 4    0.668636    1.1 0.00124974  2.0022e-05  0.000307546 0.998423</span>
+<span class="co">#&gt; 1    0.595   1   0.160481    0.0299436   0.30306 0.506515</span>
+<span class="co">#&gt; 2    0.595   2   0.0633452   0.316317    0.0734719   0.546866</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.254427    0.0378379   0.0619252   0.64581</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.020697    4.52636e-06 0.212305    0.766993</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -223,10 +223,10 @@ netdir2
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   8.83491e-06 0.901684    0.00456828  0.0937388</span>
-<span class="co">#&gt; 2    0.595   2   0.014417    0.290936    0.169947    0.524701</span>
-<span class="co">#&gt; 3    0.6355  0.6 1.31466e-27 0.936172    0.0104342   0.0533934</span>
-<span class="co">#&gt; 4    0.668636    1.1 0   0.999999    4.37143e-30 7.06198e-07</span>
+<span class="co">#&gt; 1    0.595   1   1.27652e-07 0.0274304   0.539467    0.433103</span>
+<span class="co">#&gt; 2    0.595   2   0.113146    0.473688    0.0960062   0.31716</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.000774476 0.0855873   0.00661663  0.907022</span>
+<span class="co">#&gt; 4    0.668636    1.1 2.95865e-113    0.360437    0.0393761   0.600186</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -247,12 +247,12 @@ netdir2
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">nodes=</span><span class="kw">c</span>(2L, 4L), <span class="dt">N=</span><span class="kw">c</span>(10L, 10L))
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir1, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        1        1        6        2</span>
-<span class="co">#&gt; 2    4        0        0        0       10</span>
+<span class="co">#&gt; 1    2        0        2        0        8</span>
+<span class="co">#&gt; 2    4        1        0        2        7</span>
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir2, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        0        4        2        4</span>
-<span class="co">#&gt; 2    4        0       10        0        0</span></code></pre></div>
+<span class="co">#&gt; 1    2        2        5        1        2</span>
+<span class="co">#&gt; 2    4        0        2        0        8</span></code></pre></div>
 </div>
 </div>
 <div id="contributors-in-alphabetic-order" class="section level1">

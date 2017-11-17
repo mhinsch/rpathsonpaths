@@ -69,7 +69,10 @@ vignette("overview", package="rpathsonpaths")
 The following websites are available:
 
 - The *rpathsonpaths* project on *github*, useful for developers, contributors, and users wanting to post issues, bug reports and feature requests: <br>
-[http://github.com/mhinsch/rpathsonpaths](http://github.com/reconhub/rpathsonpaths)
+[http://github.com/mhinsch/rpathsonpaths](http://github.com/mhinsch/rpathsonpaths)
+
+- To browse the package documentation online visit: <br>
+  [https://mhinsch.github.io/rpathsonpaths/](https://mhinsch.github.io/rpathsonpaths/)
 
 
 ## Getting help online
