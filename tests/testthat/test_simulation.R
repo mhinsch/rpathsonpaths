@@ -3,6 +3,13 @@ context("simulator functions")
 
 el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
 ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+ext_err1 <- data.frame(node=c("A", "B"), rate=c(1.3, 0.1))
+ext_err2 <- data.frame(node=c("A", "B"), rate_inf=c(1.3, 0.1), rate_inp=c(2.0, 0.05))
+
+test_that("input rates are checked", {
+	expect_error(popsnetwork(el, ext_err1))
+	expect_error(popsnetwork(el, ext_err2))
+})
 
 test_that("network gets constructed", {
 	net <- popsnetwork(el, ext)

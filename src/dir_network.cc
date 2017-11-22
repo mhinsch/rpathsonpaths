@@ -214,8 +214,9 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	const IntegerVector ext_nodes = external(0);		// nodes are needed
 	const NumericVector ext_rates_infd = external(1);	// rate of infectedness is needed
 	// input rates are optional
-	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : NumericVector();
-	const bool has_inp_rates = ext_rates_inp.size() > 0;
+	const NumericVector ext_rates_inp = external.size() > 2 ? external(2) : 
+		NumericVector(ext_nodes.size(), 1.0);
+	const bool has_inp_rates = external.size() > 2;
 
 	R_ASSERT(ext_nodes.size() != 0, "No external inputs provided.");
 
@@ -231,17 +232,16 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 		net->add_link(el.from(i), el.to(i), rates(i));
 
 // *** external inputs
-// TODO use a default value for external input rates (as for transfer)?
 	if (el.factor())
 		{
 		StringVector e_levels = ext_nodes.attr("levels");
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			if (has_inp_rates)
-				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
-					ext_rates_infd[i], ext_rates_inp[i]);
-			else
-				net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
-					ext_rates_infd[i]);
+			{
+			R_ASSERT(ext_rates_infd[i] <= ext_rates_inp[i], 
+				"input of infected material larger than overall input");
+			net->set_source(el.index(string(e_levels(ext_nodes(i)-1))), 
+				ext_rates_infd[i], ext_rates_inp[i]);
+			}
 
 		// TODO not pretty, should be done better
 		swap(el.idxs(), net->id_by_name);
@@ -251,10 +251,11 @@ XPtr<Net_t> popsnetwork(const DataFrame & links, const DataFrame & external,
 	else
 		try {
 		for (size_t i=0; i<ext_nodes.size(); i++)
-			if (has_inp_rates)
-				net->set_source(ext_nodes[i], ext_rates_infd[i], ext_rates_inp[i]);
-			else
-				net->set_source(ext_nodes[i], ext_rates_infd[i]);
+			{
+			R_ASSERT(ext_rates_infd[i] <= ext_rates_inp[i], 
+				"input of infected material larger than overall input");
+			net->set_source(ext_nodes[i], ext_rates_infd[i], ext_rates_inp[i]);
+			}
 		} catch (runtime_error & e) {
 			stop("Invalid node id in input specification.");
 			}
