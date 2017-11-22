@@ -3,3 +3,4 @@ exportPattern("^[[:alpha:]]+")
 import(methods, Rcpp)
 
 S3method("print", "popsnetwork")
+S3method("plot", "popsnetwork")
