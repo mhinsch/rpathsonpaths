@@ -220,7 +220,8 @@ XPtr<Net_t> set_allele_freqs(const XPtr<Net_t> & p_net, const List & ini_dist);
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will effectively be treated as a source and hide nodes that are further upstream.
+//' way will effectively be treated as a source and hide nodes that are further upstream (see
+//' \code{\link{set_allele_freqs}}).
 //' @return A new popsnetwork object with allele frequencies set for each node.
 //'
 //' @examples
@@ -263,7 +264,8 @@ XPtr<Net_t> popgen_dirichlet(const XPtr<Net_t> & p_net, double theta, Nullable<L
 //' a list
 //' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 //' a matrix of allele frequencies. Note that *any* node pre-set in this
-//' way will effectively be treated as a source and hide nodes that are further upstream.
+//' way will effectively be treated as a source and hide nodes that are further upstream (see
+//' \code{\link{set_allele_freqs}}).
 //' @return A new popsnetwork object with allele frequencies set for each node.
 //'
 //' @examples

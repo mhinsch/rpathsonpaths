@@ -92,40 +92,61 @@ First, we prepare an edge list describing the network, and the initial state of 
 ```{r, prepare}
 library(rpathsonpaths)
 
+# from nodes
 inp <- c(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+# to nodes
 outp <- c(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+# rate of transport, this is optional
 rates <- c(1, 1.5, 0.5, 0.1, 1, 0.1, 0.5)
 edgelist <- data.frame(inp, outp, rates)
-ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
+```
 
+We have to provide some external input into the network (otherwise the
+simulation will be quite boring). In this case we only give the IDs of the
+input nodes and the (absolute) amount of infected material which means 1 will
+be assumed for net input rates (infected + uninfected). This is fine since we
+intend to run the Dirichlet model so absolute numbers are irrelevant. If we
+wanted to run the mechanistic model we would need both sets of numbers.
+
+```{r, prepare2}
+# external input (node IDS, infected input)
+ext <- data.frame(c(0L, 5L), c(0.5, 0.5))
 ```
 
 Now we can create a *popsnetwork* object:
 
 ```{r, popsnetwork}
-
+# create network using infection rate (within nodes) of 0.1
+# this already calculates the amount of infected/unifected for
+# all nodes
 netraw <- popsnetwork(edgelist, ext, 0.1)
 netraw
 plot(netraw)
-
 ```
+
+We have now set up the network topology and determined the amount of infected
+and uninfected material in each node. In the next step we have to set allele
+frequencies at the input nodes. Then we can run the simulation to obtain
+genetic composisition at the leaf nodes.
 
 
 ## Injecting initial populations and simulating spread
 
-We set up the initial populations of the source nodes:
+We set up the initial genetic composition of the input nodes. In this case we
+assume all root nodes have external input.
 
 ```{r, inipop}
+# allele frequencies, rows=nodes, columns=alleles
 freqs <- matrix(c(0.1, 0.4, 0.3, 0.1, 0.2, 0.2, 0.4, 0.3), ncol=4, nrow=2)
 netini <- set_allele_freqs(netraw, list(c(0L, 5L), freqs))
 netini
-
 ```
 
 Now we are ready to simulate spread of genetic material in the network. Note that every call to popgen_dirichlet
 will generally produce a different allele frequency distribution.
 
 ```{r, dirichlet}
+# simulate with a theta of 1.7
 netdir1 <- popgen_dirichlet(netini, 1.7)
 netdir1
 netdir2 <- popgen_dirichlet(netini, 1.7)
@@ -138,6 +159,7 @@ netdir2
 Finally we can draw samples from our simulated population.
 
 ```{r, isolates}
+# 10 samples from nodes 2 and 4
 samplconf <- data.frame(c(2L, 4L), c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 draw_isolates(netdir2, samplconf)
@@ -146,12 +168,16 @@ draw_isolates(netdir2, samplconf)
 
 # An example using real data
 
+## Obtain and clean up data
+
 Let's load the data:
 
 ```{r}
 library(outbreaks)
 data(s_enteritidis_pt59)
+# outbreaks stores node lists as string vectors...
 raw_graph = s_enteritidis_pt59$graph
+# ...but putting them into a dataframe will convert them to factors
 sent_graph = data.frame(from=raw_graph[[1]], to=raw_graph[[2]])
 ```
 
@@ -159,7 +185,9 @@ Just in case we do some sanity checks.
 
 ```{r}
 library(rpathsonpaths)
+# check for separate subnetworks
 colour_network(sent_graph)
+# check for cycles
 cycles(sent_graph)
 ```
 
@@ -167,12 +195,16 @@ Ok, we do have one contiguous network. Unfortunately, however, there's a cycle.
 This will make rpathsonpaths very unhappy so we have to get rid of it.
 
 ```{r}
+# output cycles
 cycles(sent_graph, TRUE)
 sent_graph2 <- subset(sent_graph, !(from=="13dc78" & to=="0b6e5a"))
+# success?
 cycles(sent_graph2)
 ```
 
-Ok, this is solved. Now let's see how many sources we have in the network.
+## Create network
+
+Ok, this is solved. Now let's see how many root nodes we have in the network.
 
 ```{r}
 sg_sources <- sources(sent_graph2)
@@ -180,9 +212,10 @@ sg_sources
 ```
 
 In order to be able to construct a popsnetwork object we have to provide at least the rate of
-infected material for each source.
+input of infected material for each source.
 
 ```{r}
+# this is the lazy way
 sg_ext <- data.frame(sg_sources, rep(0.5, length(sg_sources)))
 sg_ext
 ```
@@ -190,14 +223,19 @@ sg_ext
 Now we can create the network.
 
 ```{r}
+# some mild infection within nodes
 sg_net <- popsnetwork(sent_graph2, sg_ext, 0.1)
 plot(sg_net)
 ```
 
+## Run simulation
+
 The only thing left to do in order to run the simulation is to provide initial allele frequency distributions for the source nodes.
 
 ```{r}
+# it's just an example so let's make things easy
 sg_freqs <- matrix(rep(c(0.25, 0.25, 0.5), each=7), nrow=7)
+# we can provide allele frequencies when calling the simulation
 sg_net_dir <- popgen_dirichlet(sg_net, 1.3, list(sg_sources, sg_freqs))
 sg_net_dir
 ```
@@ -205,6 +243,14 @@ sg_net_dir
 Now we are ready to draw lots of isolates.
 
 ```{r}
+# leaf nodes
 sg_sinks <- sinks(sent_graph2)
+# 20 samples from each sink node
 draw_isolates(sg_net_dir, data.frame(sg_sinks, rep(20, length(sg_sinks))))
 ```
+
+## Produce results
+
+A single simulation is not particularly interesting. In this section we will
+run a whole set of simulations and see whether we can find some patterns in the
+results.
