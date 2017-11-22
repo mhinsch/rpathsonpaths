@@ -1,4 +1,4 @@
-PACKAGE := $(shell grep '^Package:' DESCRIPTION | sed -E 's/^Package:[[:space:]]+//')
+PACKAGE = rpathsonpaths
 RSCRIPT = Rscript --no-init-file
 
 all: install
