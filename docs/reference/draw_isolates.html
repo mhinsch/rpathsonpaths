@@ -72,6 +72,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -99,7 +102,7 @@
     <p>Draw a set of isolates from the network.</p>
     
 
-    <pre class="usage"><span class='fu'>draw_isolates</span>(<span class='no'>p_net</span>, <span class='no'>samples</span>)</pre>
+    <pre class="usage"><span class='fu'>draw_isolates</span>(<span class='no'>p_net</span>, <span class='no'>samples</span>, <span class='kw'>aggregate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -114,12 +117,21 @@
 with node ids (see <code><a href='popsnetwork.html'>popsnetwork</a></code>) in the first and number of isolates to 
 draw in the second column.</p></td>
     </tr>
+    <tr>
+      <th>aggregate</th>
+      <td><p>Whether to return one line per sample taken or to sum up allele counts 
+per node.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A dataframe containing node id in $node and number of isolates with allele <code>x</code>
-in $<code>allele_x</code>.</p>
+    <p>A dataframe containing</p><ul>
+<li><p>if aggregate==TRUE: node id in <code>$node</code> and number of isolates with allele 
+	<code>x</code> in <code>$allele_x</code>.</p></li>
+<li><p>if aggregate==FALSE: node id in <code>$node</code> and</p></li>
+</ul>
+
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 

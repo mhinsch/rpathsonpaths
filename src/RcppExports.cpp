@@ -115,14 +115,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // draw_isolates
-DataFrame draw_isolates(const XPtr<Net_t>& p_net, const DataFrame& samples);
-RcppExport SEXP _rpathsonpaths_draw_isolates(SEXP p_netSEXP, SEXP samplesSEXP) {
+DataFrame draw_isolates(const XPtr<Net_t>& p_net, const DataFrame& samples, bool aggregate);
+RcppExport SEXP _rpathsonpaths_draw_isolates(SEXP p_netSEXP, SEXP samplesSEXP, SEXP aggregateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
     Rcpp::traits::input_parameter< const DataFrame& >::type samples(samplesSEXP);
-    rcpp_result_gen = Rcpp::wrap(draw_isolates(p_net, samples));
+    Rcpp::traits::input_parameter< bool >::type aggregate(aggregateSEXP);
+    rcpp_result_gen = Rcpp::wrap(draw_isolates(p_net, samples, aggregate));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,24 +141,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // edge_list
-DataFrame edge_list(const XPtr<Net_t>& p_net);
-RcppExport SEXP _rpathsonpaths_edge_list(SEXP p_netSEXP) {
+DataFrame edge_list(const XPtr<Net_t>& p_net, bool as_string);
+RcppExport SEXP _rpathsonpaths_edge_list(SEXP p_netSEXP, SEXP as_stringSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(edge_list(p_net));
+    Rcpp::traits::input_parameter< bool >::type as_string(as_stringSEXP);
+    rcpp_result_gen = Rcpp::wrap(edge_list(p_net, as_string));
     return rcpp_result_gen;
 END_RCPP
 }
 // node_list
-DataFrame node_list(const XPtr<Net_t>& p_net);
-RcppExport SEXP _rpathsonpaths_node_list(SEXP p_netSEXP) {
+DataFrame node_list(const XPtr<Net_t>& p_net, bool as_string);
+RcppExport SEXP _rpathsonpaths_node_list(SEXP p_netSEXP, SEXP as_stringSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
-    rcpp_result_gen = Rcpp::wrap(node_list(p_net));
+    Rcpp::traits::input_parameter< bool >::type as_string(as_stringSEXP);
+    rcpp_result_gen = Rcpp::wrap(node_list(p_net, as_string));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -224,10 +227,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rpathsonpaths_set_allele_freqs", (DL_FUNC) &_rpathsonpaths_set_allele_freqs, 2},
     {"_rpathsonpaths_popgen_dirichlet", (DL_FUNC) &_rpathsonpaths_popgen_dirichlet, 3},
     {"_rpathsonpaths_popgen_ibm_mixed", (DL_FUNC) &_rpathsonpaths_popgen_ibm_mixed, 2},
-    {"_rpathsonpaths_draw_isolates", (DL_FUNC) &_rpathsonpaths_draw_isolates, 2},
+    {"_rpathsonpaths_draw_isolates", (DL_FUNC) &_rpathsonpaths_draw_isolates, 3},
     {"_rpathsonpaths_draw_alleles", (DL_FUNC) &_rpathsonpaths_draw_alleles, 3},
-    {"_rpathsonpaths_edge_list", (DL_FUNC) &_rpathsonpaths_edge_list, 1},
-    {"_rpathsonpaths_node_list", (DL_FUNC) &_rpathsonpaths_node_list, 1},
+    {"_rpathsonpaths_edge_list", (DL_FUNC) &_rpathsonpaths_edge_list, 2},
+    {"_rpathsonpaths_node_list", (DL_FUNC) &_rpathsonpaths_node_list, 2},
     {"_rpathsonpaths_distances_freqdist", (DL_FUNC) &_rpathsonpaths_distances_freqdist, 2},
     {"_rpathsonpaths_distances_sample", (DL_FUNC) &_rpathsonpaths_distances_sample, 3},
     {"_rpathsonpaths_distances_EHamming", (DL_FUNC) &_rpathsonpaths_distances_EHamming, 2},

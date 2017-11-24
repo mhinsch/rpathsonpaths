@@ -72,6 +72,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -99,7 +102,7 @@
     <p>Get a list of edges in a dataframe.</p>
     
 
-    <pre class="usage"><span class='fu'>edge_list</span>(<span class='no'>p_net</span>)</pre>
+    <pre class="usage"><span class='fu'>edge_list</span>(<span class='no'>p_net</span>, <span class='kw'>as_string</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -107,6 +110,12 @@
     <tr>
       <th>p_net</th>
       <td><p>A PopsNet object.</p></td>
+    </tr>
+    <tr>
+      <th>as_string</th>
+      <td><p>Whether to return the list of nodes as string vector. If this is FALSE
+(the default) a factor or plain integer vector (depending on how the net was constructed)
+will be returned.</p></td>
     </tr>
     </table>
     
@@ -116,8 +125,8 @@
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function returns a list of the edges in the network in a format
-that is suitable for plotting with e.g. iGraph.</p>
+    <p>This function returns a list of the edges in the network and the corresponding
+transport rates.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -125,7 +134,12 @@ that is suitable for plotting with e.g. iGraph.</p>
 <span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>from</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>), <span class='kw'>to</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"C"</span>, <span class='st'>"C"</span>, <span class='st'>"D"</span>), <span class='kw'>rates</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1.5</span>, <span class='fl'>1</span>, <span class='fl'>3</span>))
 <span class='no'>ext</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>node</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>), <span class='kw'>rate</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.3</span>, <span class='fl'>0.1</span>))
 <span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='popsnetwork.html'>popsnetwork</a></span>(<span class='no'>el</span>, <span class='no'>ext</span>)
+<span class='co'># get nodes as factor</span>
 <span class='fu'>edge_list</span>(<span class='no'>net</span>)</div><div class='output co'>#&gt;   from to rates rates_infected
+#&gt; 1    A  A   1.5           0.45
+#&gt; 2    B  B   1.0           0.10
+#&gt; 3    C  C   3.0           0.66</div><div class='input'><span class='co'># get nodes as string</span>
+<span class='fu'>edge_list</span>(<span class='no'>net</span>, <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   from to rates rates_infected
 #&gt; 1    A  C   1.5           0.45
 #&gt; 2    B  C   1.0           0.10
 #&gt; 3    C  D   3.0           0.66</div></pre>

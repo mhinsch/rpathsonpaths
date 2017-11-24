@@ -4,10 +4,14 @@
 \alias{edge_list}
 \title{egdeList}
 \usage{
-edge_list(p_net)
+edge_list(p_net, as_string = FALSE)
 }
 \arguments{
 \item{p_net}{A PopsNet object.}
+
+\item{as_string}{Whether to return the list of nodes as string vector. If this is FALSE
+(the default) a factor or plain integer vector (depending on how the net was constructed)
+will be returned.}
 }
 \value{
 A dataframe with from, to, rates and rates_infected.
@@ -16,13 +20,16 @@ A dataframe with from, to, rates and rates_infected.
 Get a list of edges in a dataframe.
 }
 \details{
-This function returns a list of the edges in the network in a format
-that is suitable for plotting with e.g. iGraph.
+This function returns a list of the edges in the network and the corresponding
+transport rates.
 }
 \examples{
 # create network
 el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
 ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
 net <- popsnetwork(el, ext)
+# get nodes as factor
 edge_list(net)
+# get nodes as string
+edge_list(net, TRUE)
 }

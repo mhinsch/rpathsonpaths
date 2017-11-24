@@ -49,6 +49,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -72,7 +75,7 @@
       <h1>Overview of the rpathsonpaths package</h1>
                         <h4 class="author">Martin Hinsch</h4>
             
-            <h4 class="date">2017-11-17</h4>
+            <h4 class="date">2017-11-24</h4>
           </div>
 
     
@@ -118,13 +121,20 @@
 <p>First, we prepare an edge list describing the network, and the initial state of the source nodes:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rpathsonpaths)
 
+<span class="co"># from nodes</span>
 inp &lt;-<span class="st"> </span><span class="kw">c</span>(0L, 0L, 1L, 2L, 3L, 1L, 5L)
+<span class="co"># to nodes</span>
 outp &lt;-<span class="st"> </span><span class="kw">c</span>(1L, 2L, 3L, 3L, 4L, 4L, 2L)
+<span class="co"># rate of transport, this is optional</span>
 rates &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">1.5</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="dv">1</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>)
-edgelist &lt;-<span class="st"> </span><span class="kw">data.frame</span>(inp, outp, rates)
+edgelist &lt;-<span class="st"> </span><span class="kw">data.frame</span>(inp, outp, rates)</code></pre></div>
+<p>We have to provide some external input into the network (otherwise the simulation will be quite boring). In this case we only give the IDs of the input nodes and the (absolute) amount of infected material which means 1 will be assumed for net input rates (infected + uninfected). This is fine since we intend to run the Dirichlet model so absolute numbers are irrelevant. If we wanted to run the mechanistic model we would need both sets of numbers.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># external input (node IDS, infected input)</span>
 ext &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">c</span>(0L, 5L), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>))</code></pre></div>
 <p>Now we can create a <em>popsnetwork</em> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># create network using infection rate (within nodes) of 0.1</span>
+<span class="co"># this already calculates the amount of infected/unifected for</span>
+<span class="co"># all nodes</span>
 netraw &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popsnetwork.html">popsnetwork</a></span>(edgelist, ext, <span class="fl">0.1</span>)
 netraw
 <span class="co">#&gt; Nodes:</span>
@@ -150,12 +160,14 @@ netraw
 <span class="kw">plot</span>(netraw)
 <span class="co">#&gt; Loading required namespace: igraph</span></code></pre></div>
 <p><img src="figs-overview/popsnetwork-1.png" width="672"></p>
+<p>We have now set up the network topology and determined the amount of infected and uninfected material in each node. In the next step we have to set allele frequencies at the input nodes. Then we can run the simulation to obtain genetic composisition at the leaf nodes.</p>
 </div>
 <div id="injecting-initial-populations-and-simulating-spread" class="section level2">
 <h2 class="hasAnchor">
 <a href="#injecting-initial-populations-and-simulating-spread" class="anchor"></a>Injecting initial populations and simulating spread</h2>
-<p>We set up the initial populations of the source nodes:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">freqs &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>), <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">nrow=</span><span class="dv">2</span>)
+<p>We set up the initial genetic composition of the input nodes. In this case we assume all root nodes have external input.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># allele frequencies, rows=nodes, columns=alleles</span>
+freqs &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>), <span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">nrow=</span><span class="dv">2</span>)
 netini &lt;-<span class="st"> </span><span class="kw"><a href="../reference/set_allele_freqs.html">set_allele_freqs</a></span>(netraw, <span class="kw">list</span>(<span class="kw">c</span>(0L, 5L), freqs))
 netini
 <span class="co">#&gt; Nodes:</span>
@@ -179,16 +191,17 @@ netini
 <span class="co">#&gt; 1    4   0.1 0.595</span>
 <span class="co">#&gt; 5    2   0.5 0.55</span></code></pre></div>
 <p>Now we are ready to simulate spread of genetic material in the network. Note that every call to popgen_dirichlet will generally produce a different allele frequency distribution.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">netdir1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popgen_dirichlet.html">popgen_dirichlet</a></span>(netini, <span class="fl">1.7</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># simulate with a theta of 1.7</span>
+netdir1 &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popgen_dirichlet.html">popgen_dirichlet</a></span>(netini, <span class="fl">1.7</span>)
 netdir1
 <span class="co">#&gt; Nodes:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.0164354   0.618853    0.169703    0.195009</span>
-<span class="co">#&gt; 2    0.595   2   0.0315208   0.681183    0.186286    0.101011</span>
-<span class="co">#&gt; 3    0.6355  0.6 9.40395e-18 0.825727    0.0741663   0.100107</span>
-<span class="co">#&gt; 4    0.668636    1.1 3.15029e-16 0.920167    1.24834e-05 0.079821</span>
+<span class="co">#&gt; 1    0.595   1   0.0592875   0.187339    1.7562e-05  0.753356</span>
+<span class="co">#&gt; 2    0.595   2   0.0239367   0.0898127   0.858415    0.027836</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.763484    0.000173999 0.166333    0.0700092</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.563239    0.0541904   0.276906    0.105664</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -207,10 +220,10 @@ netdir2
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   4.8463e-07  0.926522    0.0503442   0.0231335</span>
-<span class="co">#&gt; 2    0.595   2   0.207686    0.294043    0.0703513   0.42792</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.0517904   0.789506    0.0456129   0.113091</span>
-<span class="co">#&gt; 4    0.668636    1.1 0.000386095 0.999375    7.759e-14   0.000239371</span>
+<span class="co">#&gt; 1    0.595   1   1.73671e-13 0.228804    0.291357    0.479839</span>
+<span class="co">#&gt; 2    0.595   2   0.0405803   0.252053    0.266343    0.441024</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.0158178   0.00644606  0.252473    0.725263</span>
+<span class="co">#&gt; 4    0.668636    1.1 6.1604e-13  0.0523564   0.372299    0.575345</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -228,48 +241,63 @@ netdir2
 <h2 class="hasAnchor">
 <a href="#drawing-samples" class="anchor"></a>Drawing samples</h2>
 <p>Finally we can draw samples from our simulated population.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">c</span>(2L, 4L), <span class="kw">c</span>(10L, 10L))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># 10 samples from nodes 2 and 4</span>
+samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">c</span>(2L, 4L), <span class="kw">c</span>(10L, 10L))
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(netdir1, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        0        8        1        1</span>
-<span class="co">#&gt; 2    4        0       10        0        0</span>
+<span class="co">#&gt; 1    2        0        1        9        0</span>
+<span class="co">#&gt; 2    4        4        2        2        2</span>
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(netdir2, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        2        4        3        1</span>
-<span class="co">#&gt; 2    4        0       10        0        0</span></code></pre></div>
+<span class="co">#&gt; 1    2        1        1        4        4</span>
+<span class="co">#&gt; 2    4        0        0        4        6</span></code></pre></div>
 </div>
 </div>
 <div id="an-example-using-real-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#an-example-using-real-data" class="anchor"></a>An example using real data</h1>
+<div id="obtain-and-clean-up-data" class="section level2">
+<h2 class="hasAnchor">
+<a href="#obtain-and-clean-up-data" class="anchor"></a>Obtain and clean up data</h2>
 <p>Let’s load the data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(outbreaks)
 <span class="kw">data</span>(s_enteritidis_pt59)
+<span class="co"># outbreaks stores node lists as string vectors...</span>
 raw_graph =<span class="st"> </span>s_enteritidis_pt59$graph
+<span class="co"># ...but putting them into a dataframe will convert them to factors</span>
 sent_graph =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">from=</span>raw_graph[[<span class="dv">1</span>]], <span class="dt">to=</span>raw_graph[[<span class="dv">2</span>]])</code></pre></div>
 <p>Just in case we do some sanity checks.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rpathsonpaths)
+<span class="co"># check for separate subnetworks</span>
 <span class="kw"><a href="../reference/colour_network.html">colour_network</a></span>(sent_graph)
 <span class="co">#&gt;   [1] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
 <span class="co">#&gt;  [36] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
 <span class="co">#&gt;  [71] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3</span>
+<span class="co"># check for cycles</span>
 <span class="kw"><a href="../reference/cycles.html">cycles</a></span>(sent_graph)
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>Ok, we do have one contiguous network. Unfortunately, however, there’s a cycle. This will make rpathsonpaths very unhappy so we have to get rid of it.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/cycles.html">cycles</a></span>(sent_graph, <span class="ot">TRUE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># output cycles</span>
+<span class="kw"><a href="../reference/cycles.html">cycles</a></span>(sent_graph, <span class="ot">TRUE</span>)
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; [1] 0b6e5a 13dc78</span>
 <span class="co">#&gt; 98 Levels: 2e7967 cd48bf dd73b6 7ba446 642cb4 c7cd02 5b44d7 ... 486c07</span>
 sent_graph2 &lt;-<span class="st"> </span><span class="kw">subset</span>(sent_graph, !(from==<span class="st">"13dc78"</span> &amp;<span class="st"> </span>to==<span class="st">"0b6e5a"</span>))
+<span class="co"># success?</span>
 <span class="kw"><a href="../reference/cycles.html">cycles</a></span>(sent_graph2)
 <span class="co">#&gt; [1] FALSE</span></code></pre></div>
-<p>Ok, this is solved. Now let’s see how many sources we have in the network.</p>
+</div>
+<div id="create-network" class="section level2">
+<h2 class="hasAnchor">
+<a href="#create-network" class="anchor"></a>Create network</h2>
+<p>Ok, this is solved. Now let’s see how many root nodes we have in the network.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sg_sources &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sources.html">sources</a></span>(sent_graph2)
 sg_sources
 <span class="co">#&gt; [1] 2e7967 fc7f8f 53d0b4 3301f4 c190fa d2d08f 238842</span>
 <span class="co">#&gt; 98 Levels: 2e7967 cd48bf dd73b6 7ba446 642cb4 c7cd02 5b44d7 ... 486c07</span></code></pre></div>
-<p>In order to be able to construct a popsnetwork object we have to provide at least the rate of infected material for each source.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sg_ext &lt;-<span class="st"> </span><span class="kw">data.frame</span>(sg_sources, <span class="kw">rep</span>(<span class="fl">0.5</span>, <span class="kw">length</span>(sg_sources)))
+<p>In order to be able to construct a popsnetwork object we have to provide at least the rate of input of infected material for each source.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this is the lazy way</span>
+sg_ext &lt;-<span class="st"> </span><span class="kw">data.frame</span>(sg_sources, <span class="kw">rep</span>(<span class="fl">0.5</span>, <span class="kw">length</span>(sg_sources)))
 sg_ext
 <span class="co">#&gt;   sg_sources rep.0.5..length.sg_sources..</span>
 <span class="co">#&gt; 1     2e7967                          0.5</span>
@@ -280,114 +308,121 @@ sg_ext
 <span class="co">#&gt; 6     d2d08f                          0.5</span>
 <span class="co">#&gt; 7     238842                          0.5</span></code></pre></div>
 <p>Now we can create the network.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sg_net &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popsnetwork.html">popsnetwork</a></span>(sent_graph2, sg_ext, <span class="fl">0.1</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># some mild infection within nodes</span>
+sg_net &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popsnetwork.html">popsnetwork</a></span>(sent_graph2, sg_ext, <span class="fl">0.1</span>)
 <span class="kw">plot</span>(sg_net)</code></pre></div>
 <p><img src="figs-overview/unnamed-chunk-7-1.png" width="672"></p>
+</div>
+<div id="run-simulation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#run-simulation" class="anchor"></a>Run simulation</h2>
 <p>The only thing left to do in order to run the simulation is to provide initial allele frequency distributions for the source nodes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sg_freqs &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>), <span class="dt">each=</span><span class="dv">7</span>), <span class="dt">nrow=</span><span class="dv">7</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># it's just an example so let's make things easy</span>
+sg_freqs &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rep</span>(<span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>), <span class="dt">each=</span><span class="dv">7</span>), <span class="dt">nrow=</span><span class="dv">7</span>)
+<span class="co"># we can provide allele frequencies when calling the simulation</span>
 sg_net_dir &lt;-<span class="st"> </span><span class="kw"><a href="../reference/popgen_dirichlet.html">popgen_dirichlet</a></span>(sg_net, <span class="fl">1.3</span>, <span class="kw">list</span>(sg_sources, sg_freqs))
 sg_net_dir
 <span class="co">#&gt; Nodes:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 2e7967   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; cd48bf   0.595   1   0.485997    0.212736    0.301266</span>
-<span class="co">#&gt; dd73b6   0.595   2   0.483149    0.200855    0.315996</span>
-<span class="co">#&gt; 7ba446   0.595   1   0.00988648  7.32917e-05 0.99004</span>
-<span class="co">#&gt; 642cb4   0.6355  1   9.70383e-05 0.159846    0.840057</span>
-<span class="co">#&gt; c7cd02   0.595   2   0.0909566   0.372026    0.537017</span>
-<span class="co">#&gt; 5b44d7   0.64765 1   0.0206328   0.82579 0.153577</span>
-<span class="co">#&gt; 2afba4   0.6085  3   0.290593    0.185194    0.524212</span>
+<span class="co">#&gt; cd48bf   0.595   1   0.103482    0.141483    0.755035</span>
+<span class="co">#&gt; dd73b6   0.595   2   0.258491    0.254744    0.486765</span>
+<span class="co">#&gt; 7ba446   0.595   1   0.284663    0.0189394   0.696398</span>
+<span class="co">#&gt; 642cb4   0.6355  1   0.0604951   0.779623    0.159882</span>
+<span class="co">#&gt; c7cd02   0.595   2   0.119182    0.471042    0.409776</span>
+<span class="co">#&gt; 5b44d7   0.64765 1   0.600358    0.199077    0.200565</span>
+<span class="co">#&gt; 2afba4   0.6085  3   0.356489    0.081445    0.562066</span>
 <span class="co">#&gt; fc7f8f   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 963c41   0.714597    1   0   0.985092    0.0149077</span>
-<span class="co">#&gt; f60e85   0.659193    1   0.542992    0.0111323   0.445876</span>
-<span class="co">#&gt; 4941c6   0.693273    1   0.0341076   0.400247    0.565645</span>
+<span class="co">#&gt; 963c41   0.714597    1   0.988785    0.0112149   1.28935e-07</span>
+<span class="co">#&gt; f60e85   0.659193    1   0.992683    0.00441839  0.00289892</span>
+<span class="co">#&gt; 4941c6   0.693273    1   1   1.20403e-217    0</span>
 <span class="co">#&gt; 53d0b4   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 13dc78   0.67195 1   0.999665    0   0.000335109</span>
-<span class="co">#&gt; 9c0e59   0.6355  1   0   1.20178e-12 1</span>
-<span class="co">#&gt; 6ddfa3   0.704755    1   1   6.84813e-56 0</span>
+<span class="co">#&gt; 13dc78   0.67195 1   0.376774    0   0.623226</span>
+<span class="co">#&gt; 9c0e59   0.6355  1   1   2.13211e-314    4.16976e-07</span>
+<span class="co">#&gt; 6ddfa3   0.704755    1   0   1.98386e-06 0.999998</span>
 <span class="co">#&gt; 3301f4   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 874918   0.6355  1   0.266627    0.0479197   0.685454</span>
-<span class="co">#&gt; f46d1e   0.6355  1   0.000238756 0.000664315 0.999097</span>
-<span class="co">#&gt; 0b6e5a   0.6355  1   0.830126    2.32493e-27 0.169874</span>
+<span class="co">#&gt; 874918   0.6355  1   0.449142    8.84582e-06 0.550849</span>
+<span class="co">#&gt; f46d1e   0.6355  1   1.99126e-15 0.0551624   0.944838</span>
+<span class="co">#&gt; 0b6e5a   0.6355  1   0.46677 0   0.53323</span>
 <span class="co">#&gt; c190fa   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 337cac   0.6355  2   0.00892236  0.886771    0.104307</span>
-<span class="co">#&gt; 03eee3   0.595   1   0.775367    0.00860651  0.216026</span>
-<span class="co">#&gt; c1dc98   0.64765 1   0.997589    0.000289587 0.0021212</span>
-<span class="co">#&gt; a7a903   0.734279    1   1   0   0</span>
+<span class="co">#&gt; 337cac   0.6355  2   0.0944331   0.0570525   0.848514</span>
+<span class="co">#&gt; 03eee3   0.595   1   0.18754 0.00125756  0.811202</span>
+<span class="co">#&gt; c1dc98   0.64765 1   0.85209 9.31991e-07 0.147909</span>
+<span class="co">#&gt; a7a903   0.734279    1   0   0   1</span>
 <span class="co">#&gt; d2d08f   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 030327   0.64765 1   0.00871064  0.0896772   0.901612</span>
-<span class="co">#&gt; 6d4b91   0.595   1   0.0007095   0.0585281   0.940762</span>
-<span class="co">#&gt; 76a432   0.682885    1   1   8.26916e-197    5.2491e-110</span>
-<span class="co">#&gt; 7fa3b1   0.6355  1   2.67541e-10 7.5203e-05  0.999925</span>
-<span class="co">#&gt; f83f2e   0.6355  1   1.34388e-47 0   1</span>
-<span class="co">#&gt; 881955   0.595   1   0.157455    0.406392    0.436153</span>
-<span class="co">#&gt; e42c72   0.6355  1   0.96778 0.0254741   0.00674602</span>
-<span class="co">#&gt; 4df851   0.595   1   0.0023545   0.204616    0.79303</span>
-<span class="co">#&gt; d4d75e   0.6355  1   0.572086    0.12409 0.303824</span>
-<span class="co">#&gt; 7be343   0.67195 1   0.675801    0.286532    0.0376665</span>
-<span class="co">#&gt; 735807   0.64765 1   0.396964    0.303084    0.299952</span>
+<span class="co">#&gt; 030327   0.64765 1   7.96494e-05 0.00195105  0.997969</span>
+<span class="co">#&gt; 6d4b91   0.595   1   0.985136    0.000481082 0.0143827</span>
+<span class="co">#&gt; 76a432   0.682885    1   0.993085    0   0.00691529</span>
+<span class="co">#&gt; 7fa3b1   0.6355  1   4.49676e-14 8.37372e-06 0.999992</span>
+<span class="co">#&gt; f83f2e   0.6355  1   0.25156 3.32374e-18 0.74844</span>
+<span class="co">#&gt; 881955   0.595   1   0.0575775   0.258693    0.68373</span>
+<span class="co">#&gt; e42c72   0.6355  1   8.26377e-06 0.387041    0.612951</span>
+<span class="co">#&gt; 4df851   0.595   1   0.343091    0.612001    0.0449074</span>
+<span class="co">#&gt; d4d75e   0.6355  1   0.694513    2.10125e-11 0.305487</span>
+<span class="co">#&gt; 7be343   0.67195 1   0.859859    0   0.140141</span>
+<span class="co">#&gt; 735807   0.64765 1   3.28998e-07 1.72256e-09 1</span>
 <span class="co">#&gt; 238842   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 3e93ce   0.595   1   0.0625624   0.795188    0.14225</span>
-<span class="co">#&gt; f7fc94   0.682885    1   6.35455e-11 0.464433    0.535567</span>
-<span class="co">#&gt; 8e02f0   0.6355  1   0.000233347 0.352066    0.647701</span>
-<span class="co">#&gt; b16cf0   0.64765 1   0.00609187  0.0216652   0.972243</span>
-<span class="co">#&gt; 51ca98   0.682885    1   3.90568e-10 4.84275e-12 1</span>
-<span class="co">#&gt; 81e071   0.665268    2   0.515583    0.29471 0.189706</span>
-<span class="co">#&gt; dc72e8   0.714597    1   0   1   0</span>
-<span class="co">#&gt; 4e2918   0.6355  1   6.12796e-223    0.112956    0.887044</span>
-<span class="co">#&gt; 2fabc7   0.682885    1   1.84592e-13 0.999987    1.27234e-05</span>
-<span class="co">#&gt; ad208a   0.595   1   0.320432    0.0795574   0.600011</span>
-<span class="co">#&gt; 48f980   0.595   2   0.434639    0.35682 0.208541</span>
-<span class="co">#&gt; 24dba7   0.682885    1   0   2.31564e-68 1</span>
-<span class="co">#&gt; 327734   0.67195 1   0   8.71688e-06 0.999991</span>
-<span class="co">#&gt; 4e8dc8   0.67195 1   0.996355    0.00364524  2.5082e-36</span>
-<span class="co">#&gt; 206e37   0.64765 1   0.000407314 0.000422649 0.99917</span>
-<span class="co">#&gt; 958de8   0.621325    2   0.516718    0.0677261   0.415556</span>
-<span class="co">#&gt; 2d3187   0.595   1   0.121463    0.598876    0.279661</span>
-<span class="co">#&gt; 7d21f1   0.6085  3   0.159013    0.356998    0.483989</span>
-<span class="co">#&gt; acf7bb   0.743137    1   0   1   2.86156e-08</span>
-<span class="co">#&gt; 9f5aad   0.743137    1   0   0.999799    0.00020146</span>
-<span class="co">#&gt; 0b57e4   0.723946    1   9.78608e-10 0.00281439  0.997186</span>
-<span class="co">#&gt; 78e5ba   0.704755    1   1   0   0</span>
-<span class="co">#&gt; ca432a   0.704755    1   1   0   3.58159e-84</span>
-<span class="co">#&gt; e45c54   0.704755    1   1   0   0</span>
-<span class="co">#&gt; 80afad   0.685345    2   0.0179382   0.15391 0.828152</span>
-<span class="co">#&gt; cede47   0.67195 1   0.466373    0.329925    0.203702</span>
-<span class="co">#&gt; 82b4fc   0.67195 1   0.240769    2.95583e-06 0.759228</span>
-<span class="co">#&gt; 732379   0.67195 1   0.0089043   4.80682e-07 0.991095</span>
-<span class="co">#&gt; 9199be   0.67195 1   0.19733 1.89081e-14 0.80267</span>
-<span class="co">#&gt; 7d3df0   0.67195 1   0   2.54572e-193    1</span>
-<span class="co">#&gt; c77a84   0.67195 1   9.39011e-12 1   3.22357e-08</span>
-<span class="co">#&gt; 6f5824   0.67195 1   0.000367391 0.999553    7.95435e-05</span>
-<span class="co">#&gt; 3b712b   0.760852    1   1   0   0</span>
-<span class="co">#&gt; 1e7431   0.682885    1   1.32478e-07 0.00473502  0.995265</span>
-<span class="co">#&gt; 37aad9   0.682885    1   0.369291    0.0784425   0.552267</span>
-<span class="co">#&gt; 44060b   0.714597    1   1   0   0</span>
-<span class="co">#&gt; 905296   0.714597    1   1   0   0</span>
-<span class="co">#&gt; f951d8   0.714597    1   1   0   0</span>
-<span class="co">#&gt; b4e5d5   0.714597    1   1   0   0</span>
+<span class="co">#&gt; 3e93ce   0.595   1   0.0385841   0.66906 0.292356</span>
+<span class="co">#&gt; f7fc94   0.682885    1   0.581699    0.346869    0.0714314</span>
+<span class="co">#&gt; 8e02f0   0.6355  1   0.692861    0.307139    2.64814e-09</span>
+<span class="co">#&gt; b16cf0   0.64765 1   0.862732    0.0554539   0.0818138</span>
+<span class="co">#&gt; 51ca98   0.682885    1   0.64817 0.000378688 0.351452</span>
+<span class="co">#&gt; 81e071   0.665268    2   0.736672    0.0102743   0.253054</span>
+<span class="co">#&gt; dc72e8   0.714597    1   0.539741    1.34271e-45 0.460259</span>
+<span class="co">#&gt; 4e2918   0.6355  1   0.397466    0.602523    1.14292e-05</span>
+<span class="co">#&gt; 2fabc7   0.682885    1   0.928494    0.00221415  0.0692915</span>
+<span class="co">#&gt; ad208a   0.595   1   0.757898    0.151902    0.0901999</span>
+<span class="co">#&gt; 48f980   0.595   2   0.470791    0.0233451   0.505863</span>
+<span class="co">#&gt; 24dba7   0.682885    1   0.644665    0   0.355335</span>
+<span class="co">#&gt; 327734   0.67195 1   0.000363508 0.759779    0.239857</span>
+<span class="co">#&gt; 4e8dc8   0.67195 1   0   0.069593    0.930407</span>
+<span class="co">#&gt; 206e37   0.64765 1   0.340606    7.4046e-07  0.659394</span>
+<span class="co">#&gt; 958de8   0.621325    2   0.557605    0.161057    0.281338</span>
+<span class="co">#&gt; 2d3187   0.595   1   0.857729    0.0094827   0.132788</span>
+<span class="co">#&gt; 7d21f1   0.6085  3   0.120115    0.255392    0.624493</span>
+<span class="co">#&gt; acf7bb   0.743137    1   0.181339    0.818661    0</span>
+<span class="co">#&gt; 9f5aad   0.743137    1   1   2.98225e-60 0</span>
+<span class="co">#&gt; 0b57e4   0.723946    1   1   0   0</span>
+<span class="co">#&gt; 78e5ba   0.704755    1   0.0166096   0   0.98339</span>
+<span class="co">#&gt; ca432a   0.704755    1   0.73846 0   0.26154</span>
+<span class="co">#&gt; e45c54   0.704755    1   0.515627    0   0.484373</span>
+<span class="co">#&gt; 80afad   0.685345    2   0.99998 2.90791e-152    2.00253e-05</span>
+<span class="co">#&gt; cede47   0.67195 1   0.900427    0   0.0995733</span>
+<span class="co">#&gt; 82b4fc   0.67195 1   0.00381304  0   0.996187</span>
+<span class="co">#&gt; 732379   0.67195 1   0.653209    0   0.346791</span>
+<span class="co">#&gt; 9199be   0.67195 1   0.333293    0   0.666707</span>
+<span class="co">#&gt; 7d3df0   0.67195 1   0   2.1922e-11  1</span>
+<span class="co">#&gt; c77a84   0.67195 1   0.02384 1.57929e-20 0.97616</span>
+<span class="co">#&gt; 6f5824   0.67195 1   0.73009 2.64617e-08 0.26991</span>
+<span class="co">#&gt; 3b712b   0.760852    1   0   0   1</span>
+<span class="co">#&gt; 1e7431   0.682885    1   2.63195e-85 9.27419e-16 1</span>
+<span class="co">#&gt; 37aad9   0.682885    1   0   0   1</span>
+<span class="co">#&gt; 44060b   0.714597    1   1   0   6.76424e-19</span>
+<span class="co">#&gt; 905296   0.714597    1   1   0   3.09822e-77</span>
+<span class="co">#&gt; f951d8   0.714597    1   1   0   9.79723e-37</span>
+<span class="co">#&gt; b4e5d5   0.714597    1   1   0   2.67001e-10</span>
 <span class="co">#&gt; 1b55d2   0.67195 1   0   0   1</span>
-<span class="co">#&gt; a6fcaf   0.67195 1   0   0   1</span>
-<span class="co">#&gt; 24876f   0.704755    1   0.493947    0.506053    2.19377e-13</span>
-<span class="co">#&gt; 0fffca   0.682885    1   0.543533    0.110769    0.345698</span>
-<span class="co">#&gt; 09f4a0   0.6355  1   0.389334    0.554387    0.0562782</span>
-<span class="co">#&gt; 38881f   0.67195 1   0   0.516186    0.483814</span>
-<span class="co">#&gt; d81c17   0.67195 1   0   0.149475    0.850525</span>
-<span class="co">#&gt; 1569a5   0.67195 1   0   0.0842893   0.915711</span>
-<span class="co">#&gt; 064974   0.67195 1   0   0.0796307   0.920369</span>
-<span class="co">#&gt; 161814   0.67195 1   1.59677e-43 0.648286    0.351714</span>
-<span class="co">#&gt; c09e12   0.67195 1   0   0.13509 0.86491</span>
-<span class="co">#&gt; b08945   0.714597    1   0   0   1</span>
-<span class="co">#&gt; f80b2e   0.714597    1   0   0   1</span>
-<span class="co">#&gt; 35a9b6   0.698741    1   0.28513 0.516034    0.198836</span>
-<span class="co">#&gt; 6e0643   0.698741    1   0.0635034   0.146838    0.789658</span>
-<span class="co">#&gt; efee6b   0.698741    1   0.999825    4.02062e-06 0.000171244</span>
-<span class="co">#&gt; 252679   0.698741    1   0.597089    0.386742    0.0161693</span>
-<span class="co">#&gt; f59e4b   0.743137    1   0   1   0</span>
-<span class="co">#&gt; ef7028   0.67195 1   0   0.00753258  0.992467</span>
-<span class="co">#&gt; 1f4d22   0.714597    1   0   0   1</span>
-<span class="co">#&gt; 486c07   0.704755    1   0   0   1</span>
+<span class="co">#&gt; a6fcaf   0.67195 1   0.0515218   0   0.948478</span>
+<span class="co">#&gt; 24876f   0.704755    1   0.999999    0   1.31492e-06</span>
+<span class="co">#&gt; 0fffca   0.682885    1   0   0   1</span>
+<span class="co">#&gt; 09f4a0   0.6355  1   1.16991e-09 0.712014    0.287986</span>
+<span class="co">#&gt; 38881f   0.67195 1   0.442486    0.557514    0</span>
+<span class="co">#&gt; d81c17   0.67195 1   0.878502    0.121498    0</span>
+<span class="co">#&gt; 1569a5   0.67195 1   0.945382    0.0546179   0</span>
+<span class="co">#&gt; 064974   0.67195 1   0.869289    0.130711    0</span>
+<span class="co">#&gt; 161814   0.67195 1   0.211044    0.788956    0</span>
+<span class="co">#&gt; c09e12   0.67195 1   0.47071 0.52929 0</span>
+<span class="co">#&gt; b08945   0.714597    1   0.929305    0   0.0706946</span>
+<span class="co">#&gt; f80b2e   0.714597    1   0.747783    0   0.252217</span>
+<span class="co">#&gt; 35a9b6   0.698741    1   0.999617    3.5093e-17  0.000382908</span>
+<span class="co">#&gt; 6e0643   0.698741    1   0.57933 1.0775e-54  0.42067</span>
+<span class="co">#&gt; efee6b   0.698741    1   0.999859    8.43732e-08 0.000141058</span>
+<span class="co">#&gt; 252679   0.698741    1   0.998848    3.70466e-35 0.0011518</span>
+<span class="co">#&gt; f59e4b   0.743137    1   0.57487 0   0.42513</span>
+<span class="co">#&gt; ef7028   0.67195 1   0.0291987   0.970801    0</span>
+<span class="co">#&gt; 1f4d22   0.714597    1   0.866091    0   0.133909</span>
+<span class="co">#&gt; 486c07   0.704755    1   3.76701e-103    1   7.56398e-08</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
 <span class="co">#&gt; </span>
@@ -495,51 +530,59 @@ sg_net_dir
 <span class="co">#&gt; 7d21f1   735807  1   0.6085</span>
 <span class="co">#&gt; 7d21f1   81e071  1   0.6085</span></code></pre></div>
 <p>Now we are ready to draw lots of isolates.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sg_sinks &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sinks.html">sinks</a></span>(sent_graph2)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># leaf nodes</span>
+sg_sinks &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sinks.html">sinks</a></span>(sent_graph2)
+<span class="co"># 20 samples from each sink node</span>
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(sg_net_dir, <span class="kw">data.frame</span>(sg_sinks, <span class="kw">rep</span>(<span class="dv">20</span>, <span class="kw">length</span>(sg_sinks))))
 <span class="co">#&gt;      node allele_0 allele_1 allele_2</span>
-<span class="co">#&gt; 1  acf7bb        0       20        0</span>
-<span class="co">#&gt; 2  9f5aad        0       20        0</span>
-<span class="co">#&gt; 3  0b57e4        0        0       20</span>
-<span class="co">#&gt; 4  78e5ba       20        0        0</span>
-<span class="co">#&gt; 5  ca432a       20        0        0</span>
-<span class="co">#&gt; 6  e45c54       20        0        0</span>
-<span class="co">#&gt; 7  80afad        0        1       19</span>
-<span class="co">#&gt; 8  cede47        9        5        6</span>
-<span class="co">#&gt; 9  82b4fc        5        0       15</span>
-<span class="co">#&gt; 10 732379        1        0       19</span>
-<span class="co">#&gt; 11 9199be        3        0       17</span>
+<span class="co">#&gt; 1  acf7bb        4       16        0</span>
+<span class="co">#&gt; 2  9f5aad       20        0        0</span>
+<span class="co">#&gt; 3  0b57e4       20        0        0</span>
+<span class="co">#&gt; 4  78e5ba        0        0       20</span>
+<span class="co">#&gt; 5  ca432a       17        0        3</span>
+<span class="co">#&gt; 6  e45c54       12        0        8</span>
+<span class="co">#&gt; 7  80afad       20        0        0</span>
+<span class="co">#&gt; 8  cede47       19        0        1</span>
+<span class="co">#&gt; 9  82b4fc        2        0       18</span>
+<span class="co">#&gt; 10 732379       16        0        4</span>
+<span class="co">#&gt; 11 9199be       12        0        8</span>
 <span class="co">#&gt; 12 7d3df0        0        0       20</span>
-<span class="co">#&gt; 13 c77a84        0       20        0</span>
-<span class="co">#&gt; 14 6f5824        0       20        0</span>
-<span class="co">#&gt; 15 3b712b       20        0        0</span>
+<span class="co">#&gt; 13 c77a84        0        0       20</span>
+<span class="co">#&gt; 14 6f5824       17        0        3</span>
+<span class="co">#&gt; 15 3b712b        0        0       20</span>
 <span class="co">#&gt; 16 1e7431        0        0       20</span>
-<span class="co">#&gt; 17 37aad9        5        1       14</span>
+<span class="co">#&gt; 17 37aad9        0        0       20</span>
 <span class="co">#&gt; 18 44060b       20        0        0</span>
 <span class="co">#&gt; 19 905296       20        0        0</span>
 <span class="co">#&gt; 20 f951d8       20        0        0</span>
 <span class="co">#&gt; 21 b4e5d5       20        0        0</span>
 <span class="co">#&gt; 22 1b55d2        0        0       20</span>
 <span class="co">#&gt; 23 a6fcaf        0        0       20</span>
-<span class="co">#&gt; 24 24876f        9       11        0</span>
-<span class="co">#&gt; 25 0fffca       10        1        9</span>
-<span class="co">#&gt; 26 09f4a0       10       10        0</span>
-<span class="co">#&gt; 27 38881f        0       10       10</span>
-<span class="co">#&gt; 28 d81c17        0        1       19</span>
-<span class="co">#&gt; 29 1569a5        0        2       18</span>
-<span class="co">#&gt; 30 064974        0        5       15</span>
-<span class="co">#&gt; 31 161814        0       14        6</span>
-<span class="co">#&gt; 32 c09e12        0        2       18</span>
-<span class="co">#&gt; 33 b08945        0        0       20</span>
-<span class="co">#&gt; 34 f80b2e        0        0       20</span>
-<span class="co">#&gt; 35 35a9b6        5        8        7</span>
-<span class="co">#&gt; 36 6e0643        3        3       14</span>
+<span class="co">#&gt; 24 24876f       20        0        0</span>
+<span class="co">#&gt; 25 0fffca        0        0       20</span>
+<span class="co">#&gt; 26 09f4a0        0       14        6</span>
+<span class="co">#&gt; 27 38881f        6       14        0</span>
+<span class="co">#&gt; 28 d81c17       18        2        0</span>
+<span class="co">#&gt; 29 1569a5       18        2        0</span>
+<span class="co">#&gt; 30 064974       16        4        0</span>
+<span class="co">#&gt; 31 161814        2       18        0</span>
+<span class="co">#&gt; 32 c09e12       10       10        0</span>
+<span class="co">#&gt; 33 b08945       20        0        0</span>
+<span class="co">#&gt; 34 f80b2e       15        0        5</span>
+<span class="co">#&gt; 35 35a9b6       20        0        0</span>
+<span class="co">#&gt; 36 6e0643       14        0        6</span>
 <span class="co">#&gt; 37 efee6b       20        0        0</span>
-<span class="co">#&gt; 38 252679       10        9        1</span>
-<span class="co">#&gt; 39 f59e4b        0       20        0</span>
-<span class="co">#&gt; 40 ef7028        0        0       20</span>
-<span class="co">#&gt; 41 1f4d22        0        0       20</span>
-<span class="co">#&gt; 42 486c07        0        0       20</span></code></pre></div>
+<span class="co">#&gt; 38 252679       20        0        0</span>
+<span class="co">#&gt; 39 f59e4b       14        0        6</span>
+<span class="co">#&gt; 40 ef7028        1       19        0</span>
+<span class="co">#&gt; 41 1f4d22       14        0        6</span>
+<span class="co">#&gt; 42 486c07        0       20        0</span></code></pre></div>
+</div>
+<div id="produce-results" class="section level2">
+<h2 class="hasAnchor">
+<a href="#produce-results" class="anchor"></a>Produce results</h2>
+<p>A single simulation is not particularly interesting. In this section we will run a whole set of simulations and see whether we can find some patterns in the results.</p>
+</div>
 </div>
 </div>
   </div>
@@ -558,7 +601,14 @@ sg_net_dir
       <li><a href="#drawing-samples">Drawing samples</a></li>
       </ul>
 </li>
-      <li><a href="#an-example-using-real-data">An example using real data</a></li>
+      <li>
+<a href="#an-example-using-real-data">An example using real data</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#obtain-and-clean-up-data">Obtain and clean up data</a></li>
+      <li><a href="#create-network">Create network</a></li>
+      <li><a href="#run-simulation">Run simulation</a></li>
+      <li><a href="#produce-results">Produce results</a></li>
+      </ul>
+</li>
       </ul>
 </div>
       </div>

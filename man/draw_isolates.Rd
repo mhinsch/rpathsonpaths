@@ -4,7 +4,7 @@
 \alias{draw_isolates}
 \title{draw_isolates}
 \usage{
-draw_isolates(p_net, samples)
+draw_isolates(p_net, samples, aggregate = TRUE)
 }
 \arguments{
 \item{p_net}{a PopsNet object.}
@@ -12,10 +12,16 @@ draw_isolates(p_net, samples)
 \item{samples}{Number of samples to draw from each node. This has to be a dataframe
 with node ids (see \code{\link{popsnetwork}}) in the first and number of isolates to 
 draw in the second column.}
+
+\item{aggregate}{Whether to return one line per sample taken or to sum up allele counts 
+per node.}
 }
 \value{
-A dataframe containing node id in $node and number of isolates with allele \code{x}
-in $\code{allele_x}.
+A dataframe containing 
+\itemize{ 
+\item if aggregate==TRUE: node id in \code{$node} and number of isolates with allele 
+	\code{x} in \code{$allele_x}.
+\item if aggregate==FALSE: node id in \code{$node} and }
 }
 \description{
 Draw a set of isolates from the network.

@@ -299,8 +299,13 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist 
 //' @param samples Number of samples to draw from each node. This has to be a dataframe
 //' with node ids (see \code{\link{popsnetwork}}) in the first and number of isolates to 
 //' draw in the second column.
-//' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
-//' in $\code{allele_x}.
+//' @param aggregate Whether to return one line per sample taken or to sum up allele counts 
+//' per node.
+//' @return A dataframe containing 
+//' \itemize{ 
+//' \item if aggregate==TRUE: node id in \code{$node} and number of isolates with allele 
+//' 	\code{x} in \code{$allele_x}.
+//' \item if aggregate==FALSE: node id in \code{$node} and }
 //'
 //' @examples
 //' # create network
@@ -318,7 +323,8 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> ini_dist 
 //' # get some data
 //' draw_isolates(res, data.frame(c("C", "D"), c(10, 10)))
 // [[Rcpp::export]]
-DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples);
+DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples, 
+	bool aggregate=true);
 
 
 //' @title draw_alleles
@@ -356,10 +362,13 @@ DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, i
 //'
 //' @description Get a list of edges in a dataframe.
 //'
-//' @details This function returns a list of the edges in the network in a format
-//' that is suitable for plotting with e.g. iGraph.
+//' @details This function returns a list of the edges in the network and the corresponding
+//' transport rates.
 //'
 //' @param p_net A PopsNet object.
+//' @param as_string Whether to return the list of nodes as string vector. If this is FALSE
+//' (the default) a factor or plain integer vector (depending on how the net was constructed)
+//' will be returned.
 //' @return A dataframe with from, to, rates and rates_infected.
 //'
 //' @examples
@@ -367,18 +376,24 @@ DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, i
 //' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
 //' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
 //' net <- popsnetwork(el, ext)
+//' # get nodes as factor
 //' edge_list(net)
+//' # get nodes as string
+//' edge_list(net, TRUE)
 // [[Rcpp::export]]
-DataFrame edge_list(const XPtr<Net_t> & p_net);
+DataFrame edge_list(const XPtr<Net_t> & p_net, bool as_string=false);
 
 //' @title node_list
 //'
 //' @description Get a list of nodes in a dataframe.
 //'
-//' @details This function returns a list of the nodes in the network in a format
-//' that is suitable for plotting with e.g. iGraph.
+//' @details This function returns a list of the nodes in the network as well as the amount of
+//' infected material they contain.
 //'
 //' @param p_net A PopsNet object.
+//' @param as_string Whether to return the list of nodes as string vector. If this is FALSE
+//' (the default) a factor or plain integer vector (depending on how the net was constructed)
+//' will be returned.
 //' @return A dataframe with id and rate_infected.
 //'
 //' @examples
@@ -388,7 +403,7 @@ DataFrame edge_list(const XPtr<Net_t> & p_net);
 //' net <- popsnetwork(el, ext)
 //' node_list(net)
 // [[Rcpp::export]]
-DataFrame node_list(const XPtr<Net_t> & p_net);
+DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string=false);
 
 
 //' @title distances_freqdist

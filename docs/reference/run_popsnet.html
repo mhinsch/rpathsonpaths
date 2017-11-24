@@ -72,6 +72,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -126,10 +129,9 @@ identical to those for <code>ini_input</code>.</p></td>
     </tr>
     <tr>
       <th>ini_freqs</th>
-      <td><p>Allele frequencies per source node. This has to be either a matrix with
-one row per source node or a list of initialization objects (each of them containing
-a vector of node ids and a matrix of frequencies, see <code><a href='set_allele_freqs.html'>set_allele_freqs</a></code>). In
-the latter case n simulations are run per initialization.</p></td>
+      <td><p>Allele frequencies per source node. This can be one out of:
+* a matrix with one row per root node 
+* a list of initialization objects (each of them containing a vector of node ids and a matrix of frequencies, see <code><a href='set_allele_freqs.html'>set_allele_freqs</a></code>). In this case n simulations are run per initialization.</p></td>
     </tr>
     <tr>
       <th>n</th>
@@ -141,11 +143,11 @@ the latter case n simulations are run per initialization.</p></td>
     </tr>
     <tr>
       <th>decay</th>
-      <td><p>Decay rate in nodes used to infer transfer rates. If this is negative all 
+      <td><p>Decay rate in nodes - used to infer transfer rates. If this is negative all 
 transfer rates will be assumed to be 1 (which in most cases is not a very useful value)
 unless edgelist has a third column (see above). If decay is not negative transfer rates
 will be inferred assuming preservation of mass with decay at the nodes. Note that the ibm
-simulation requires output to be smaller or equal to input for all nodes.</p></td>
+simulation requires output to be smaller or equal than input for all nodes.</p></td>
     </tr>
     <tr>
       <th>theta</th>
@@ -167,8 +169,8 @@ simulation requires output to be smaller or equal to input for all nodes.</p></t
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list containing the result of the simulation(s) as first and the raw network as
-the second element.</p>
+    <p>A list containing the network object(s) produced by the simulation(s) as first and 
+the raw network as the second element.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -181,6 +183,7 @@ either the ibm or dirichlet simulation on it.</p>
 <span class='no'>edgelist</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>from</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>), <span class='kw'>to</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"C"</span>, <span class='st'>"C"</span>, <span class='st'>"D"</span>))
 <span class='co'># allele frequencies, 3 alleles x 2 source nodes (A, B)</span>
 <span class='no'>freqs</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>c</span>(<span class='fl'>0.1</span>, <span class='fl'>0.5</span>, <span class='fl'>0.4</span>, <span class='fl'>0.9</span>, <span class='fl'>0.1</span>, <span class='fl'>0</span>), <span class='kw'>nrow</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># run </span>
 <span class='fu'>run_popsnet</span>(<span class='no'>edgelist</span>, <span class='fl'>10</span>, <span class='fl'>0.1</span>, <span class='no'>freqs</span>)</div><div class='output co'>#&gt; $result
 #&gt; $result[[1]]
 #&gt; Nodes:

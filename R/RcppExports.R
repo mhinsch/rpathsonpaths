@@ -214,7 +214,8 @@ set_allele_freqs <- function(p_net, ini_dist) {
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 #' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will effectively be treated as a source and hide nodes that are further upstream.
+#' way will effectively be treated as a source and hide nodes that are further upstream (see
+#' \code{\link{set_allele_freqs}}).
 #' @return A new popsnetwork object with allele frequencies set for each node.
 #'
 #' @examples
@@ -257,7 +258,8 @@ popgen_dirichlet <- function(p_net, theta, ini_dist = NULL) {
 #' a list
 #' containing a vector of node IDs (see \code{\link{popsnetwork}}) and
 #' a matrix of allele frequencies. Note that *any* node pre-set in this
-#' way will effectively be treated as a source and hide nodes that are further upstream.
+#' way will effectively be treated as a source and hide nodes that are further upstream (see
+#' \code{\link{set_allele_freqs}}).
 #' @return A new popsnetwork object with allele frequencies set for each node.
 #'
 #' @examples
@@ -291,8 +293,13 @@ popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
 #' @param samples Number of samples to draw from each node. This has to be a dataframe
 #' with node ids (see \code{\link{popsnetwork}}) in the first and number of isolates to 
 #' draw in the second column.
-#' @return A dataframe containing node id in $node and number of isolates with allele \code{x}
-#' in $\code{allele_x}.
+#' @param aggregate Whether to return one line per sample taken or to sum up allele counts 
+#' per node.
+#' @return A dataframe containing 
+#' \itemize{ 
+#' \item if aggregate==TRUE: node id in \code{$node} and number of isolates with allele 
+#' 	\code{x} in \code{$allele_x}.
+#' \item if aggregate==FALSE: node id in \code{$node} and }
 #'
 #' @examples
 #' # create network
@@ -309,8 +316,8 @@ popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
 #'
 #' # get some data
 #' draw_isolates(res, data.frame(c("C", "D"), c(10, 10)))
-draw_isolates <- function(p_net, samples) {
-    .Call('_rpathsonpaths_draw_isolates', PACKAGE = 'rpathsonpaths', p_net, samples)
+draw_isolates <- function(p_net, samples, aggregate = TRUE) {
+    .Call('_rpathsonpaths_draw_isolates', PACKAGE = 'rpathsonpaths', p_net, samples, aggregate)
 }
 
 #' @title draw_alleles
@@ -348,10 +355,13 @@ draw_alleles <- function(p_net, nodes, n = 1L) {
 #'
 #' @description Get a list of edges in a dataframe.
 #'
-#' @details This function returns a list of the edges in the network in a format
-#' that is suitable for plotting with e.g. iGraph.
+#' @details This function returns a list of the edges in the network and the corresponding
+#' transport rates.
 #'
 #' @param p_net A PopsNet object.
+#' @param as_string Whether to return the list of nodes as string vector. If this is FALSE
+#' (the default) a factor or plain integer vector (depending on how the net was constructed)
+#' will be returned.
 #' @return A dataframe with from, to, rates and rates_infected.
 #'
 #' @examples
@@ -359,19 +369,25 @@ draw_alleles <- function(p_net, nodes, n = 1L) {
 #' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
 #' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
 #' net <- popsnetwork(el, ext)
+#' # get nodes as factor
 #' edge_list(net)
-edge_list <- function(p_net) {
-    .Call('_rpathsonpaths_edge_list', PACKAGE = 'rpathsonpaths', p_net)
+#' # get nodes as string
+#' edge_list(net, TRUE)
+edge_list <- function(p_net, as_string = FALSE) {
+    .Call('_rpathsonpaths_edge_list', PACKAGE = 'rpathsonpaths', p_net, as_string)
 }
 
 #' @title node_list
 #'
 #' @description Get a list of nodes in a dataframe.
 #'
-#' @details This function returns a list of the nodes in the network in a format
-#' that is suitable for plotting with e.g. iGraph.
+#' @details This function returns a list of the nodes in the network as well as the amount of
+#' infected material they contain.
 #'
 #' @param p_net A PopsNet object.
+#' @param as_string Whether to return the list of nodes as string vector. If this is FALSE
+#' (the default) a factor or plain integer vector (depending on how the net was constructed)
+#' will be returned.
 #' @return A dataframe with id and rate_infected.
 #'
 #' @examples
@@ -380,8 +396,8 @@ edge_list <- function(p_net) {
 #' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
 #' net <- popsnetwork(el, ext)
 #' node_list(net)
-node_list <- function(p_net) {
-    .Call('_rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net)
+node_list <- function(p_net, as_string = FALSE) {
+    .Call('_rpathsonpaths_node_list', PACKAGE = 'rpathsonpaths', p_net, as_string)
 }
 
 #' @title distances_freqdist

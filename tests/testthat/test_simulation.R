@@ -15,8 +15,10 @@ test_that("network gets constructed", {
 	net <- popsnetwork(el, ext)
 	print(net)
 	
-	expect_equal(edge_list(net)[1:3], el)
-	expect_equal(node_list(net)[[2]], c(0.3, 0.1, 0.55, 0.66))
+	# factors s*ck, so this only works with strings
+	# (or a lot of fiddling to get the levels right)
+	expect_equal(edge_list(net, TRUE)[1:3], el)
+	expect_equal(node_list(net, TRUE)[[2]], c(0.3, 0.1, 0.55, 0.66))
 })
 
 net <- popsnetwork(el, ext)
@@ -35,6 +37,9 @@ test_that("Dirichlet simulation works", {
 	# shouldn't change
 	expect_equal(node_list(res1), node_list(res2))
 	expect_equal(node_list(net), node_list(res1))
+	# same if we use string
+	expect_equal(node_list(res1, TRUE), node_list(res2, TRUE))
+	expect_equal(node_list(net, TRUE), node_list(res1, TRUE))
 })
 
 

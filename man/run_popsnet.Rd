@@ -21,20 +21,19 @@ one element per source node.}
 \item{ini_infd}{Input rate of infected units per source nodes. Format requirements are
 identical to those for \code{ini_input}.}
 
-\item{ini_freqs}{Allele frequencies per source node. This has to be either a matrix with
-one row per source node or a list of initialization objects (each of them containing
-a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In
-the latter case n simulations are run per initialization.}
+\item{ini_freqs}{Allele frequencies per source node. This can be one out of:
+* a matrix with one row per root node 
+* a list of initialization objects (each of them containing a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case n simulations are run per initialization.}
 
 \item{n}{Number of simulation runs to perform.}
 
 \item{transmission}{Rate of infection in nodes.}
 
-\item{decay}{Decay rate in nodes used to infer transfer rates. If this is negative all 
+\item{decay}{Decay rate in nodes - used to infer transfer rates. If this is negative all 
 transfer rates will be assumed to be 1 (which in most cases is not a very useful value)
 unless edgelist has a third column (see above). If decay is not negative transfer rates
 will be inferred assuming preservation of mass with decay at the nodes. Note that the ibm
-simulation requires output to be smaller or equal to input for all nodes.}
+simulation requires output to be smaller or equal than input for all nodes.}
 
 \item{theta}{The shape parameter for the Dirichlet distribution.}
 
@@ -45,8 +44,8 @@ simulation requires output to be smaller or equal to input for all nodes.}
 \item{checks}{Whether to perform some sanity checks on the graph before simulating (slow).}
 }
 \value{
-A list containing the result of the simulation(s) as first and the raw network as
-the second element.
+A list containing the network object(s) produced by the simulation(s) as first and 
+the raw network as the second element.
 }
 \description{
 Create a popsnetwork and run the transport simulation.
@@ -60,5 +59,6 @@ either the ibm or dirichlet simulation on it.
 edgelist <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
 # allele frequencies, 3 alleles x 2 source nodes (A, B)
 freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+# run 
 run_popsnet(edgelist, 10, 0.1, freqs)
 }

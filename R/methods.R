@@ -49,10 +49,10 @@ plot.popsnetwork <- function(x, ...){
 		stop("This function requires the iGraph package.")
 	}
 
-	edges <- edge_list(x)
+	edges <- edge_list(x, TRUE)
 	colnames(edges)[3] <- "weight"
 	max_w <- max(edges[3])
-	nodes <- node_list(x)
+	nodes <- node_list(x, TRUE)
 	graph <- igraph::graph_from_data_frame(edges, TRUE, nodes)
 	igraph::E(graph)$width <- igraph::E(graph)$weight/max_w*3
 	igraph::plot.igraph(graph, layout=igraph::layout_with_lgl, vertex.size=5, 
@@ -74,29 +74,29 @@ plot.popsnetwork <- function(x, ...){
 #' one element per source node.
 #' @param ini_infd Input rate of infected units per source nodes. Format requirements are
 #' identical to those for \code{ini_input}.
-#' @param ini_freqs Allele frequencies per source node. This has to be either a matrix with
-#' one row per source node or a list of initialization objects (each of them containing
-#' a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In
-#' the latter case n simulations are run per initialization.
+#' @param ini_freqs Allele frequencies per source node. This can be one out of:
+#' * a matrix with one row per root node 
+#' * a list of initialization objects (each of them containing a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case n simulations are run per initialization.
 #' @param n Number of simulation runs to perform.
 #' @param transmission Rate of infection in nodes.
-#' @param decay Decay rate in nodes used to infer transfer rates. If this is negative all 
+#' @param decay Decay rate in nodes - used to infer transfer rates. If this is negative all 
 #' transfer rates will be assumed to be 1 (which in most cases is not a very useful value)
 #' unless edgelist has a third column (see above). If decay is not negative transfer rates
 #' will be inferred assuming preservation of mass with decay at the nodes. Note that the ibm
-#' simulation requires output to be smaller or equal to input for all nodes.
+#' simulation requires output to be smaller or equal than input for all nodes.
 #' @param theta The shape parameter for the Dirichlet distribution.
 #' @param spread_model Either "fluid" or "units".
 #' @param drift_model Either "dirichlet" or "units".
 #' @param checks Whether to perform some sanity checks on the graph before simulating (slow).
-#' @return A list containing the result of the simulation(s) as first and the raw network as
-#' the second element.
+#' @return A list containing the network object(s) produced by the simulation(s) as first and 
+#' the raw network as the second element.
 #'
 #' @examples
 #' # the network
 #' edgelist <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"))
 #' # allele frequencies, 3 alleles x 2 source nodes (A, B)
 #' freqs <- matrix(c(0.1, 0.5, 0.4, 0.9, 0.1, 0), nrow=2, ncol=3, byrow=TRUE)
+#' # run 
 #' run_popsnet(edgelist, 10, 0.1, freqs)
 run_popsnet <- function(edgelist, ini_input, ini_infd, ini_freqs, n=1L, transmission=0.0, 
 						decay=-1.0, theta=1.0, spread_model="units", drift_model="units", 
@@ -322,7 +322,7 @@ path_distances <- function(net) {
 	}
 
 	if (class(net) == "popsnetwork") {
-		igraph::distances(igraph::graph_from_data_frame(edge_list(net))) 
+		igraph::distances(igraph::graph_from_data_frame(edge_list(net, TRUE))) 
 	} else {
 		igraph::distances(igraph::graph_from_data_frame(net)) 
 	}

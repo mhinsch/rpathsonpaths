@@ -372,7 +372,7 @@ XPtr<Net_t> popgen_ibm_mixed(const XPtr<Net_t> & p_net, Nullable<List> iniDist)
 	}
 
 
-DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples)
+DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples, bool aggregate)
 	{
 	const Net_t * net = p_net.checked_get();
 	R_ASSERT(net && net->nodes.size()>0, "Invalid or empty network object");
@@ -476,14 +476,18 @@ DataFrame draw_alleles(const XPtr<Net_t> & p_net, const IntegerVector & nodes, i
 	}
 
 
-DataFrame edge_list(const XPtr<Net_t> & p_net)
+DataFrame edge_list(const XPtr<Net_t> & p_net, bool as_string)
 	{
 	const Net_t * net = p_net.checked_get();
 
 	const size_t n_links = net->links.size();
 
-	StringVector from(n_links);
-	StringVector to(n_links);
+	StringVector from_s(as_string ? n_links : 0);
+	StringVector to_s(as_string ? n_links : 0);
+
+	IntegerVector from_i(as_string ? 0 : n_links);
+	IntegerVector to_i(as_string ? 0 : n_links);
+
 	NumericVector rates(n_links);
 	NumericVector rates_i(n_links);
 
@@ -504,25 +508,50 @@ DataFrame edge_list(const XPtr<Net_t> & p_net)
 
 		R_ASSERT(f!=n_nodes && t!=n_nodes, "Invalid link");
 
-		from[i] = is_factor ? net->name_by_id[f] : to_string(f);
-		to[i] = is_factor ? net->name_by_id[t] : to_string(t);
+		if (as_string)
+			{
+			from_s[i] = is_factor ? net->name_by_id[f] : to_string(f);
+			to_s[i] = is_factor ? net->name_by_id[t] : to_string(t);
+			}
+		else
+			{
+			from_i[i] = is_factor ? f+1 : f;
+			to_i[i] = is_factor ? t+1 : t;
+			}
+
 		rates[i] = l->rate;
 		rates_i[i] = l->rate_infd;
 		}
 
+	if (as_string)
+		return DataFrame::create(
+			Named("from") = from_s,
+			Named("to") = to_s,
+			Named("rates") = rates,
+			Named("rates_infected") = rates_i);
+
+	if (is_factor)
+		{
+		from_i.attr("class") = "factor";
+		from_i.attr("levels") = net->name_by_id;
+		to_i.attr("class") = "factor";
+		to_i.attr("levels") = net->name_by_id;
+		}
+
 	return DataFrame::create(
-		Named("from") = from,
-		Named("to") = to,
+		Named("from") = from_i,
+		Named("to") = to_i,
 		Named("rates") = rates,
 		Named("rates_infected") = rates_i);
 	}
 
-// TODO: optionally return IntegerVector for non-factors (might be useful in some situations)
-DataFrame node_list(const XPtr<Net_t> & p_net)
+
+DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string)
 	{
 	const Net_t * net = p_net.checked_get();
 
-	StringVector id(net->nodes.size());
+	StringVector id_s(as_string ? net->nodes.size() : 0);
+	IntegerVector id_i(as_string ? 0 : net->nodes.size());
 	NumericVector inf(net->nodes.size());
 
 	const bool is_factor = net->name_by_id.size();
@@ -531,12 +560,24 @@ DataFrame node_list(const XPtr<Net_t> & p_net)
 		{
 		const Node_t * n = net->nodes[i];
 
-		// we use only names for now
-		id[i] = is_factor ? net->name_by_id[i] : to_string(i);
+		if (as_string)
+			id_s[i] = is_factor ? net->name_by_id[i] : to_string(i);
+		else
+			id_i[i] = is_factor ? i+1 : i;
+
 		inf[i] = n->rate_in_infd;
 		}
 
-	return DataFrame::create(Named("id") = id, Named("infected") = inf);
+	if (as_string)
+		return DataFrame::create(Named("id") = id_s, Named("infected") = inf);
+
+	if (is_factor)
+		{
+		id_i.attr("class") = "factor";
+		id_i.attr("levels") = net->name_by_id;
+		}
+
+	return DataFrame::create(Named("id") = id_i, Named("infected") = inf);
 	}
 
 
