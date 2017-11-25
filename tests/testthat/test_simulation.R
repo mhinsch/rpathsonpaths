@@ -32,7 +32,7 @@ net2 <- set_allele_freqs(net, list(as.factor(c("A", "C")), freqs))
 
 test_that("Dirichlet simulation works", {
 	res1 <- popgen_dirichlet(net2, 0.3)
-	res2 <- popgen_dirichlet(net2, 0.3, list(as.factor(c("A", "C")), freqs))
+	res2 <- popgen_dirichlet(net, 0.3, list(as.factor(c("A", "C")), freqs))
 
 	# shouldn't change
 	expect_equal(node_list(res1), node_list(res2))
@@ -62,4 +62,25 @@ test_that("IBM simulation works", {
 	expect_error(popgen_ibm_mixed(net2))
 	# no allele frequencies
 	expect_error(popgen_ibm_mixed(net_i))
+})
+
+res1 <- popgen_dirichlet(net2, 0.3)
+
+test_that("we can draw isolates", {
+	# draw aggregated results, i.e. one line per node
+	all1 <- draw_isolates(res1, data.frame(nodes="D", num=10))
+
+	expect_equal(names(all1), c("node", "allele_0", "allele_1", "allele_2"))
+	# 1 node => 1 line
+	expect_equal(nrow(all1), 1)
+	# 10 samples, so counts have to sum up to 10
+	expect_equal(sum(all1[1, 2:4]), 10)
+
+	all2 <- draw_isolates(res1, data.frame(nodes="D", num=10), FALSE)
+
+	# just two columns
+	expect_equal(names(all2), c("node", "allele"))
+	# but one row per case
+	expect_equal(nrow(all2), 10)
+	expect_true(all(all2[1] == "D"))
 })

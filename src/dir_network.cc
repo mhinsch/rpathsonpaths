@@ -387,13 +387,43 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples, bo
 
 // *** prepare return data
 
-	vector<IntegerVector> data(n_freq);
-	for (size_t i=0; i<n_freq; i++)
-		data[i] = IntegerVector(nodes.size());
+	// if we don't aggregate we have one line per sample
+	// otherwise it's one line per node
+	const size_t n_data = aggregate ? 
+		num.size() : std::accumulate(num.begin(), num.end(), 0);
+
+	vector<IntegerVector> data(aggregate ? n_freq : 1);
+	for (auto & i : data) 
+		i = IntegerVector(n_data);
+
+	// if we don't aggregate we have to expand the node list by #samples per node
+	IntegerVector nodes_r(aggregate ? 0 : n_data);
+	if (!aggregate)
+		{
+		size_t i = 0;
+		for (size_t n=0; n<nodes.size(); n++)
+			{
+			const int node = nodes[n];
+			const int n_samples = num[n];
+			R_ASSERT(i+n_samples <= n_data, "something seriously wrong");
+			for (size_t j=0; j<n_samples; j++)
+				nodes_r[i++] = node;
+			}
+		// convert to factor if necessary
+		if (f)
+			{
+			nodes_r.attr("class") = "factor";
+			nodes_r.attr("levels") = levels;
+			}
+		}
 
 // *** generate data
 
 	vector<size_t> count(n_freq, 0);
+
+	// counter for non-aggregate case
+	size_t na_idx= 0;
+	vector<int> na_count;
 
 	for (size_t i=0; i<nodes.size(); i++)
 		{
@@ -401,27 +431,57 @@ DataFrame draw_isolates(const XPtr<Net_t> & p_net, const DataFrame & samples, bo
 			nodes[i];
 		R_ASSERT (n < net->nodes.size(), "Invalid node id");
 
-		sample_node(*net->nodes[n], num[i], count);
 
-		for (size_t j=0; j<n_freq; j++)
-			data[j][i] = count[j];
-
-		// reset for next round
-		fill(count.begin(), count.end(), 0);
+		if (aggregate)
+			{
+			// draw samples
+			sample_node(*net->nodes[n], num[i], count);
+			// copy to data frame
+			for (size_t j=0; j<n_freq; j++)
+				data[j][i] = count[j];
+			// reset for next round
+			fill(count.begin(), count.end(), 0);
+			}
+		else
+			{
+			// size of vector determines #samples
+			na_count.resize(num[i], 0);
+			// draw samples
+			sample_alleles_node(*net->nodes[n], na_count);
+			// copy to return vector
+			for (int allele : na_count)
+				data[0][na_idx++] = allele;
+			}
 		}
 
 // *** construct dataframe and return
 
-	CharacterVector namevec(n_freq+1, "");
-	namevec[0] = "node";
-	string namestem = "allele_";
-	for (size_t i=0; i<n_freq; i++)
-		namevec[i+1] = namestem + to_string(i);
+	const size_t n_cols = aggregate ? n_freq+1 : 2;
 
-	List dataf(n_freq+1);
-	dataf(0) = nodes;
-	for (size_t i=0; i<n_freq; i++)
-		dataf(i+1) = data[i];
+	CharacterVector namevec(n_cols, "");
+	namevec[0] = "node";
+	if (aggregate)
+		{
+		const string namestem = "allele_";
+		for (size_t i=0; i<n_freq; i++)
+			namevec[i+1] = namestem + to_string(i);
+		}
+	else
+		namevec[1] = "allele";
+
+	List dataf(n_cols);
+	if (aggregate)
+		{
+		dataf(0) = nodes;
+		for (size_t i=0; i<n_freq; i++)
+			dataf(i+1) = data[i];
+		}
+	else
+		{
+		dataf(0) = nodes_r;
+		dataf(1) = data[0];
+		}
+
 	dataf.attr("names") = namevec;
 
 	return DataFrame(dataf);

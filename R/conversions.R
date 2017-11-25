@@ -45,9 +45,9 @@ epic_to_edge_list <- function(x) {
 #' network will be extended by one terminal node per case.
 #' @return A dibbler object.
 rpop_to_dibbler <- function(network, cases) {
-
-	edge_data <- edge_list(network)
-	node_data <- node_list(network)
+	# get data as strings
+	edge_data <- edge_list(network, TRUE)
+	node_data <- node_list(network, TRUE)
 	
 }
 
