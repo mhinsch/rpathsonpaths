@@ -17,7 +17,7 @@ test_that("network gets constructed", {
 	
 	# factors s*ck, so this only works with strings
 	# (or a lot of fiddling to get the levels right)
-	expect_equal(edge_list(net, TRUE)[1:3], el)
+	expect_true(all(edge_list(net, TRUE)[1:3] == el))
 	expect_equal(node_list(net, TRUE)[[2]], c(0.3, 0.1, 0.55, 0.66))
 })
 

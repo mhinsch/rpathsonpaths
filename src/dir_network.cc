@@ -588,7 +588,9 @@ DataFrame edge_list(const XPtr<Net_t> & p_net, bool as_string)
 			Named("from") = from_s,
 			Named("to") = to_s,
 			Named("rates") = rates,
-			Named("rates_infected") = rates_i);
+			Named("rates_infected") = rates_i,
+			// this is a ridiculous R-ism
+			Named("stringsAsFactors") = false);
 
 	if (is_factor)
 		{
