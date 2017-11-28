@@ -201,10 +201,10 @@ netdir1
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.0056543   0.399215    0.551517    0.0436139</span>
-<span class="co">#&gt; 2    0.595   2   0.0761376   0.175549    0.0158503   0.732463</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.000119153 0.2019  0.45632 0.341661</span>
-<span class="co">#&gt; 4    0.668636    1.1 7.09645e-95 0.332362    0.100276    0.567362</span>
+<span class="co">#&gt; 1    0.595   1   0.00627815  0.5754  0.0344508   0.383871</span>
+<span class="co">#&gt; 2    0.595   2   0.2328  0.214528    0.194275    0.358398</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.0317276   0.801359    0.0133924   0.153521</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.155113    0.816137    5.80918e-05 0.0286918</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -223,10 +223,10 @@ netdir2
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.0101712   0.208638    0.388855    0.392336</span>
-<span class="co">#&gt; 2    0.595   2   0.159951    0.327153    0.374574    0.138322</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.00152413  0.554562    0.187461    0.256453</span>
-<span class="co">#&gt; 4    0.668636    1.1 3.01994e-13 0.235451    0.675412    0.0891368</span>
+<span class="co">#&gt; 1    0.595   1   0.0884167   0.0259974   0.203982    0.681604</span>
+<span class="co">#&gt; 2    0.595   2   0.319669    0.0120337   0.0236344   0.644663</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.0362109   0.00168325  0.0419214   0.920184</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.0262554   3.27209e-19 0.0630143   0.91073</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -248,12 +248,12 @@ netdir2
 samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">c</span>(2L, 4L), <span class="kw">c</span>(10L, 10L))
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(netdir1, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        1        3        0        6</span>
-<span class="co">#&gt; 2    4        0        4        0        6</span>
+<span class="co">#&gt; 1    2        2        3        1        4</span>
+<span class="co">#&gt; 2    4        2        8        0        0</span>
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(netdir2, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        1        2        4        3</span>
-<span class="co">#&gt; 2    4        0        2        7        1</span></code></pre></div>
+<span class="co">#&gt; 1    2        5        0        0        5</span>
+<span class="co">#&gt; 2    4        0        0        2        8</span></code></pre></div>
 </div>
 </div>
 <div id="an-example-using-real-data" class="section level1">
@@ -329,103 +329,103 @@ sg_net_dir
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 2e7967   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; cd48bf   0.595   1   0.570711    0.0511366   0.378152</span>
-<span class="co">#&gt; dd73b6   0.595   2   0.13482 0.498759    0.366421</span>
-<span class="co">#&gt; 7ba446   0.595   1   0.0781395   0.000452195 0.921408</span>
-<span class="co">#&gt; 642cb4   0.6355  1   0.938255    2.97523e-08 0.0617448</span>
-<span class="co">#&gt; c7cd02   0.595   2   0.0887498   0.766042    0.145208</span>
-<span class="co">#&gt; 5b44d7   0.64765 1   0.20879 0.0056601   0.78555</span>
-<span class="co">#&gt; 2afba4   0.6085  3   0.509917    0.136749    0.353334</span>
+<span class="co">#&gt; cd48bf   0.595   1   0.0205084   0.149852    0.829639</span>
+<span class="co">#&gt; dd73b6   0.595   2   0.458189    0.0935115   0.4483</span>
+<span class="co">#&gt; 7ba446   0.595   1   0.0429592   0.0274063   0.929634</span>
+<span class="co">#&gt; 642cb4   0.6355  1   0.954178    0.0250205   0.0208014</span>
+<span class="co">#&gt; c7cd02   0.595   2   0.0486718   0.154303    0.797026</span>
+<span class="co">#&gt; 5b44d7   0.64765 1   0.0115516   0.983178    0.00527074</span>
+<span class="co">#&gt; 2afba4   0.6085  3   0.529975    0.174241    0.295785</span>
 <span class="co">#&gt; fc7f8f   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 963c41   0.714597    1   0.999983    0   1.72722e-05</span>
-<span class="co">#&gt; f60e85   0.659193    1   0.358549    1.40463e-13 0.641451</span>
-<span class="co">#&gt; 4941c6   0.693273    1   0.14789 0   0.85211</span>
+<span class="co">#&gt; 963c41   0.714597    1   0   1   0</span>
+<span class="co">#&gt; f60e85   0.659193    1   1.84454e-19 0.180476    0.819524</span>
+<span class="co">#&gt; 4941c6   0.693273    1   0   7.24763e-07 0.999999</span>
 <span class="co">#&gt; 53d0b4   0.55    1   0.25    0.25    0.5</span>
 <span class="co">#&gt; 13dc78   0.67195 1   0   0   1</span>
-<span class="co">#&gt; 9c0e59   0.6355  1   0.145305    0   0.854695</span>
-<span class="co">#&gt; 6ddfa3   0.704755    1   1   0   0</span>
+<span class="co">#&gt; 9c0e59   0.6355  1   0.706498    0.001379    0.292123</span>
+<span class="co">#&gt; 6ddfa3   0.704755    1   0   0   1</span>
 <span class="co">#&gt; 3301f4   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 874918   0.6355  1   0.138549    0.74452 0.116931</span>
-<span class="co">#&gt; f46d1e   0.6355  1   0.959149    0.00223895  0.0386123</span>
-<span class="co">#&gt; 0b6e5a   0.6355  1   5.2144e-06  5.27681e-291    0.999995</span>
+<span class="co">#&gt; 874918   0.6355  1   0.819241    2.89739e-14 0.180759</span>
+<span class="co">#&gt; f46d1e   0.6355  1   0.297821    0.153972    0.548207</span>
+<span class="co">#&gt; 0b6e5a   0.6355  1   0   0   1</span>
 <span class="co">#&gt; c190fa   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 337cac   0.6355  2   0.451702    0.497906    0.0503919</span>
-<span class="co">#&gt; 03eee3   0.595   1   0.040778    0.000323154 0.958899</span>
-<span class="co">#&gt; c1dc98   0.64765 1   0.997921    0.000683507 0.00139536</span>
-<span class="co">#&gt; a7a903   0.734279    1   1   0   0</span>
+<span class="co">#&gt; 337cac   0.6355  2   0.0163535   0.020347    0.963299</span>
+<span class="co">#&gt; 03eee3   0.595   1   2.55446e-09 0.000955636 0.999044</span>
+<span class="co">#&gt; c1dc98   0.64765 1   0.0108367   0.395962    0.593201</span>
+<span class="co">#&gt; a7a903   0.734279    1   0   0   1</span>
 <span class="co">#&gt; d2d08f   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 030327   0.64765 1   0.310778    0.583403    0.105819</span>
-<span class="co">#&gt; 6d4b91   0.595   1   0.340715    1.08055e-06 0.659284</span>
-<span class="co">#&gt; 76a432   0.682885    1   1   0   4.50761e-87</span>
-<span class="co">#&gt; 7fa3b1   0.6355  1   0.964398    3.33195e-34 0.035602</span>
-<span class="co">#&gt; f83f2e   0.6355  1   0.0013367   0   0.998663</span>
-<span class="co">#&gt; 881955   0.595   1   0.879802    0.0204177   0.0997802</span>
-<span class="co">#&gt; e42c72   0.6355  1   0.914744    1.09769e-08 0.0852561</span>
-<span class="co">#&gt; 4df851   0.595   1   0.221976    0.272257    0.505767</span>
-<span class="co">#&gt; d4d75e   0.6355  1   0.000828705 2.20111e-06 0.999169</span>
-<span class="co">#&gt; 7be343   0.67195 1   8.86071e-189    0   1</span>
-<span class="co">#&gt; 735807   0.64765 1   0.66234 0.203174    0.134486</span>
+<span class="co">#&gt; 030327   0.64765 1   0.671488    0.0342964   0.294215</span>
+<span class="co">#&gt; 6d4b91   0.595   1   0.560257    0.216873    0.22287</span>
+<span class="co">#&gt; 76a432   0.682885    1   8.51939e-10 0.731014    0.268986</span>
+<span class="co">#&gt; 7fa3b1   0.6355  1   0.854781    0.0425119   0.102707</span>
+<span class="co">#&gt; f83f2e   0.6355  1   4.75672e-10 1.09823e-18 1</span>
+<span class="co">#&gt; 881955   0.595   1   0.610348    0.221175    0.168477</span>
+<span class="co">#&gt; e42c72   0.6355  1   6.46443e-07 0.000315979 0.999683</span>
+<span class="co">#&gt; 4df851   0.595   1   0.192904    0.640565    0.166531</span>
+<span class="co">#&gt; d4d75e   0.6355  1   0.756769    0.152415    0.0908159</span>
+<span class="co">#&gt; 7be343   0.67195 1   0.998972    5.90372e-09 0.00102751</span>
+<span class="co">#&gt; 735807   0.64765 1   0.125003    0.798613    0.0763831</span>
 <span class="co">#&gt; 238842   0.55    1   0.25    0.25    0.5</span>
-<span class="co">#&gt; 3e93ce   0.595   1   0.0283509   0.299162    0.672487</span>
-<span class="co">#&gt; f7fc94   0.682885    1   0.846932    1.7223e-50  0.153068</span>
-<span class="co">#&gt; 8e02f0   0.6355  1   0.166391    0.0291472   0.804462</span>
-<span class="co">#&gt; b16cf0   0.64765 1   0.123099    2.40785e-06 0.876898</span>
-<span class="co">#&gt; 51ca98   0.682885    1   0.869637    0   0.130363</span>
-<span class="co">#&gt; 81e071   0.665268    2   0.516772    1.37097e-07 0.483228</span>
-<span class="co">#&gt; dc72e8   0.714597    1   2.29477e-31 0   1</span>
-<span class="co">#&gt; 4e2918   0.6355  1   0.269127    0.669068    0.0618055</span>
-<span class="co">#&gt; 2fabc7   0.682885    1   0.00566363  4.42296e-18 0.994336</span>
-<span class="co">#&gt; ad208a   0.595   1   0.240521    0.222999    0.53648</span>
-<span class="co">#&gt; 48f980   0.595   2   0.0775662   0.101122    0.821312</span>
-<span class="co">#&gt; 24dba7   0.682885    1   0.118506    0.881494    0</span>
-<span class="co">#&gt; 327734   0.67195 1   1   0   3.13889e-07</span>
-<span class="co">#&gt; 4e8dc8   0.67195 1   1   0   4.15188e-10</span>
-<span class="co">#&gt; 206e37   0.64765 1   0.116145    0.882558    0.00129668</span>
-<span class="co">#&gt; 958de8   0.621325    2   0.373181    0.0328651   0.593954</span>
-<span class="co">#&gt; 2d3187   0.595   1   0.920864    0.0158704   0.0632656</span>
-<span class="co">#&gt; 7d21f1   0.6085  3   0.489853    0.130634    0.379513</span>
-<span class="co">#&gt; acf7bb   0.743137    1   1   0   0</span>
-<span class="co">#&gt; 9f5aad   0.743137    1   1   0   0</span>
-<span class="co">#&gt; 0b57e4   0.723946    1   0.0131202   0   0.98688</span>
+<span class="co">#&gt; 3e93ce   0.595   1   0.224177    0.0157472   0.760076</span>
+<span class="co">#&gt; f7fc94   0.682885    1   9.73087e-47 1   2.6182e-192</span>
+<span class="co">#&gt; 8e02f0   0.6355  1   4.16832e-60 0.981194    0.0188062</span>
+<span class="co">#&gt; b16cf0   0.64765 1   0.987963    0.00456312  0.00747339</span>
+<span class="co">#&gt; 51ca98   0.682885    1   0.924329    5.80747e-35 0.0756705</span>
+<span class="co">#&gt; 81e071   0.665268    2   0.00276422  0.110532    0.886703</span>
+<span class="co">#&gt; dc72e8   0.714597    1   1.81457e-25 1   0</span>
+<span class="co">#&gt; 4e2918   0.6355  1   0.261497    0.728664    0.00983936</span>
+<span class="co">#&gt; 2fabc7   0.682885    1   0.0144427   0.985557    3.24678e-72</span>
+<span class="co">#&gt; ad208a   0.595   1   0.00892367  0.711193    0.279883</span>
+<span class="co">#&gt; 48f980   0.595   2   0.444699    0.130807    0.424494</span>
+<span class="co">#&gt; 24dba7   0.682885    1   0.875131    1.18729e-05 0.124858</span>
+<span class="co">#&gt; 327734   0.67195 1   0.748363    0.251637    2.25778e-18</span>
+<span class="co">#&gt; 4e8dc8   0.67195 1   0   0   1</span>
+<span class="co">#&gt; 206e37   0.64765 1   0.723002    0.0814966   0.195502</span>
+<span class="co">#&gt; 958de8   0.621325    2   0.0482171   0.577965    0.373818</span>
+<span class="co">#&gt; 2d3187   0.595   1   0.00231157  0.273127    0.724561</span>
+<span class="co">#&gt; 7d21f1   0.6085  3   0.335287    0.260315    0.404397</span>
+<span class="co">#&gt; acf7bb   0.743137    1   0   1   0</span>
+<span class="co">#&gt; 9f5aad   0.743137    1   0   1   0</span>
+<span class="co">#&gt; 0b57e4   0.723946    1   0   0   1</span>
 <span class="co">#&gt; 78e5ba   0.704755    1   0   0   1</span>
 <span class="co">#&gt; ca432a   0.704755    1   0   0   1</span>
 <span class="co">#&gt; e45c54   0.704755    1   0   0   1</span>
-<span class="co">#&gt; 80afad   0.685345    2   0.0313896   0   0.96861</span>
-<span class="co">#&gt; cede47   0.67195 1   9.55552e-05 0.996364    0.0035405</span>
-<span class="co">#&gt; 82b4fc   0.67195 1   0.00143642  0.1138  0.884764</span>
-<span class="co">#&gt; 732379   0.67195 1   1.81854e-05 0.999288    0.000693832</span>
-<span class="co">#&gt; 9199be   0.67195 1   2.01648e-09 1   1.65388e-07</span>
-<span class="co">#&gt; 7d3df0   0.67195 1   1   1.41595e-156    2.06495e-17</span>
-<span class="co">#&gt; c77a84   0.67195 1   0.440328    0.559672    1.02518e-08</span>
-<span class="co">#&gt; 6f5824   0.67195 1   0.302095    0.322996    0.374908</span>
-<span class="co">#&gt; 3b712b   0.760852    1   1   0   0</span>
-<span class="co">#&gt; 1e7431   0.682885    1   0.0154967   0.984503    1.78596e-07</span>
-<span class="co">#&gt; 37aad9   0.682885    1   0.138264    0.861734    1.17149e-06</span>
-<span class="co">#&gt; 44060b   0.714597    1   1   0   0</span>
-<span class="co">#&gt; 905296   0.714597    1   1   0   0</span>
-<span class="co">#&gt; f951d8   0.714597    1   1   0   0</span>
-<span class="co">#&gt; b4e5d5   0.714597    1   1   0   0</span>
-<span class="co">#&gt; 1b55d2   0.67195 1   1   0   2.74026e-12</span>
+<span class="co">#&gt; 80afad   0.685345    2   0.421194    0.215961    0.362845</span>
+<span class="co">#&gt; cede47   0.67195 1   0.999952    0   4.77149e-05</span>
+<span class="co">#&gt; 82b4fc   0.67195 1   0.957823    0   0.0421774</span>
+<span class="co">#&gt; 732379   0.67195 1   0.983068    0   0.0169325</span>
+<span class="co">#&gt; 9199be   0.67195 1   0.999983    0   1.69174e-05</span>
+<span class="co">#&gt; 7d3df0   0.67195 1   0.000224919 0.0892942   0.910481</span>
+<span class="co">#&gt; c77a84   0.67195 1   5.2019e-16  1.85299e-27 1</span>
+<span class="co">#&gt; 6f5824   0.67195 1   4.66626e-35 2.56358e-06 0.999997</span>
+<span class="co">#&gt; 3b712b   0.760852    1   0   0   1</span>
+<span class="co">#&gt; 1e7431   0.682885    1   0.54935 3.87014e-17 0.45065</span>
+<span class="co">#&gt; 37aad9   0.682885    1   0.947127    7.39387e-10 0.0528734</span>
+<span class="co">#&gt; 44060b   0.714597    1   0   0.161173    0.838827</span>
+<span class="co">#&gt; 905296   0.714597    1   0   0.589038    0.410962</span>
+<span class="co">#&gt; f951d8   0.714597    1   0   0.265476    0.734524</span>
+<span class="co">#&gt; b4e5d5   0.714597    1   0   0.82668 0.17332</span>
+<span class="co">#&gt; 1b55d2   0.67195 1   0.560051    1.99354e-06 0.439947</span>
 <span class="co">#&gt; a6fcaf   0.67195 1   0   0   1</span>
-<span class="co">#&gt; 24876f   0.704755    1   0   0   1</span>
-<span class="co">#&gt; 0fffca   0.682885    1   0.804911    0.195089    5.02118e-07</span>
-<span class="co">#&gt; 09f4a0   0.6355  1   0.0313843   0.236731    0.731885</span>
-<span class="co">#&gt; 38881f   0.67195 1   0.306684    4.19515e-13 0.693316</span>
-<span class="co">#&gt; d81c17   0.67195 1   0.137788    1.28973e-07 0.862212</span>
-<span class="co">#&gt; 1569a5   0.67195 1   0.00622702  0.000359137 0.993414</span>
-<span class="co">#&gt; 064974   0.67195 1   0.951299    2.63014e-07 0.0487005</span>
-<span class="co">#&gt; 161814   0.67195 1   0.244655    1.34827e-07 0.755345</span>
-<span class="co">#&gt; c09e12   0.67195 1   0.30869 5.33214e-17 0.69131</span>
-<span class="co">#&gt; b08945   0.714597    1   0.931821    0   0.0681786</span>
-<span class="co">#&gt; f80b2e   0.714597    1   0.637812    0   0.362188</span>
-<span class="co">#&gt; 35a9b6   0.698741    1   0.247859    0   0.752141</span>
-<span class="co">#&gt; 6e0643   0.698741    1   0.941454    0   0.058546</span>
-<span class="co">#&gt; efee6b   0.698741    1   6.98205e-05 0   0.99993</span>
-<span class="co">#&gt; 252679   0.698741    1   0.245276    0   0.754724</span>
-<span class="co">#&gt; f59e4b   0.743137    1   0   0   1</span>
-<span class="co">#&gt; ef7028   0.67195 1   0.00639119  0.83184 0.161768</span>
-<span class="co">#&gt; 1f4d22   0.714597    1   1.63244e-07 1   0</span>
-<span class="co">#&gt; 486c07   0.704755    1   1   0   0</span>
+<span class="co">#&gt; 24876f   0.704755    1   1   0   1.32106e-106</span>
+<span class="co">#&gt; 0fffca   0.682885    1   0.447206    0.528312    0.0244818</span>
+<span class="co">#&gt; 09f4a0   0.6355  1   9.34988e-05 4.43436e-14 0.999907</span>
+<span class="co">#&gt; 38881f   0.67195 1   0   1   4.08781e-30</span>
+<span class="co">#&gt; d81c17   0.67195 1   0   1   4.30131e-60</span>
+<span class="co">#&gt; 1569a5   0.67195 1   0   1   7.36258e-16</span>
+<span class="co">#&gt; 064974   0.67195 1   0   0.999999    5.62812e-07</span>
+<span class="co">#&gt; 161814   0.67195 1   0   1   3.16418e-14</span>
+<span class="co">#&gt; c09e12   0.67195 1   0   1   1.12792e-77</span>
+<span class="co">#&gt; b08945   0.714597    1   0.990125    0   0.00987501</span>
+<span class="co">#&gt; f80b2e   0.714597    1   1   0   3.17661e-08</span>
+<span class="co">#&gt; 35a9b6   0.698741    1   0   0.0197235   0.980277</span>
+<span class="co">#&gt; 6e0643   0.698741    1   0   0.279491    0.720509</span>
+<span class="co">#&gt; efee6b   0.698741    1   3.12164e-36 3.12973e-07 1</span>
+<span class="co">#&gt; 252679   0.698741    1   2.91706e-66 0.000876324 0.999124</span>
+<span class="co">#&gt; f59e4b   0.743137    1   0   1   0</span>
+<span class="co">#&gt; ef7028   0.67195 1   0.883179    0.116821    2.7438e-35</span>
+<span class="co">#&gt; 1f4d22   0.714597    1   0.999986    0   1.36484e-05</span>
+<span class="co">#&gt; 486c07   0.704755    1   0.432569    0.567431    0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
 <span class="co">#&gt; </span>
@@ -538,54 +538,89 @@ sg_sinks &lt;-<span class="st"> </span><span class="kw"><a href="../reference/si
 <span class="co"># 20 samples from each sink node</span>
 <span class="kw"><a href="../reference/draw_isolates.html">draw_isolates</a></span>(sg_net_dir, <span class="kw">data.frame</span>(sg_sinks, <span class="kw">rep</span>(<span class="dv">20</span>, <span class="kw">length</span>(sg_sinks))))
 <span class="co">#&gt;      node allele_0 allele_1 allele_2</span>
-<span class="co">#&gt; 1  acf7bb       20        0        0</span>
-<span class="co">#&gt; 2  9f5aad       20        0        0</span>
+<span class="co">#&gt; 1  acf7bb        0       20        0</span>
+<span class="co">#&gt; 2  9f5aad        0       20        0</span>
 <span class="co">#&gt; 3  0b57e4        0        0       20</span>
 <span class="co">#&gt; 4  78e5ba        0        0       20</span>
 <span class="co">#&gt; 5  ca432a        0        0       20</span>
 <span class="co">#&gt; 6  e45c54        0        0       20</span>
-<span class="co">#&gt; 7  80afad        0        0       20</span>
-<span class="co">#&gt; 8  cede47        0       20        0</span>
-<span class="co">#&gt; 9  82b4fc        0        3       17</span>
-<span class="co">#&gt; 10 732379        0       20        0</span>
-<span class="co">#&gt; 11 9199be        0       20        0</span>
-<span class="co">#&gt; 12 7d3df0       20        0        0</span>
-<span class="co">#&gt; 13 c77a84        7       13        0</span>
-<span class="co">#&gt; 14 6f5824        7        5        8</span>
-<span class="co">#&gt; 15 3b712b       20        0        0</span>
-<span class="co">#&gt; 16 1e7431        0       20        0</span>
-<span class="co">#&gt; 17 37aad9        3       17        0</span>
-<span class="co">#&gt; 18 44060b       20        0        0</span>
-<span class="co">#&gt; 19 905296       20        0        0</span>
-<span class="co">#&gt; 20 f951d8       20        0        0</span>
-<span class="co">#&gt; 21 b4e5d5       20        0        0</span>
-<span class="co">#&gt; 22 1b55d2       20        0        0</span>
+<span class="co">#&gt; 7  80afad        6        8        6</span>
+<span class="co">#&gt; 8  cede47       20        0        0</span>
+<span class="co">#&gt; 9  82b4fc       20        0        0</span>
+<span class="co">#&gt; 10 732379       20        0        0</span>
+<span class="co">#&gt; 11 9199be       20        0        0</span>
+<span class="co">#&gt; 12 7d3df0        0        3       17</span>
+<span class="co">#&gt; 13 c77a84        0        0       20</span>
+<span class="co">#&gt; 14 6f5824        0        0       20</span>
+<span class="co">#&gt; 15 3b712b        0        0       20</span>
+<span class="co">#&gt; 16 1e7431       11        0        9</span>
+<span class="co">#&gt; 17 37aad9       18        0        2</span>
+<span class="co">#&gt; 18 44060b        0        4       16</span>
+<span class="co">#&gt; 19 905296        0       11        9</span>
+<span class="co">#&gt; 20 f951d8        0       14        6</span>
+<span class="co">#&gt; 21 b4e5d5        0       17        3</span>
+<span class="co">#&gt; 22 1b55d2       16        0        4</span>
 <span class="co">#&gt; 23 a6fcaf        0        0       20</span>
-<span class="co">#&gt; 24 24876f        0        0       20</span>
-<span class="co">#&gt; 25 0fffca       16        4        0</span>
-<span class="co">#&gt; 26 09f4a0        0        4       16</span>
-<span class="co">#&gt; 27 38881f        8        0       12</span>
-<span class="co">#&gt; 28 d81c17        4        0       16</span>
-<span class="co">#&gt; 29 1569a5        0        0       20</span>
-<span class="co">#&gt; 30 064974       20        0        0</span>
-<span class="co">#&gt; 31 161814        3        0       17</span>
-<span class="co">#&gt; 32 c09e12        8        0       12</span>
-<span class="co">#&gt; 33 b08945       16        0        4</span>
-<span class="co">#&gt; 34 f80b2e       14        0        6</span>
-<span class="co">#&gt; 35 35a9b6        2        0       18</span>
-<span class="co">#&gt; 36 6e0643       20        0        0</span>
+<span class="co">#&gt; 24 24876f       20        0        0</span>
+<span class="co">#&gt; 25 0fffca       11        9        0</span>
+<span class="co">#&gt; 26 09f4a0        0        0       20</span>
+<span class="co">#&gt; 27 38881f        0       20        0</span>
+<span class="co">#&gt; 28 d81c17        0       20        0</span>
+<span class="co">#&gt; 29 1569a5        0       20        0</span>
+<span class="co">#&gt; 30 064974        0       20        0</span>
+<span class="co">#&gt; 31 161814        0       20        0</span>
+<span class="co">#&gt; 32 c09e12        0       20        0</span>
+<span class="co">#&gt; 33 b08945       20        0        0</span>
+<span class="co">#&gt; 34 f80b2e       20        0        0</span>
+<span class="co">#&gt; 35 35a9b6        0        0       20</span>
+<span class="co">#&gt; 36 6e0643        0        6       14</span>
 <span class="co">#&gt; 37 efee6b        0        0       20</span>
-<span class="co">#&gt; 38 252679        8        0       12</span>
-<span class="co">#&gt; 39 f59e4b        0        0       20</span>
-<span class="co">#&gt; 40 ef7028        0       15        5</span>
-<span class="co">#&gt; 41 1f4d22        0       20        0</span>
-<span class="co">#&gt; 42 486c07       20        0        0</span></code></pre></div>
+<span class="co">#&gt; 38 252679        0        0       20</span>
+<span class="co">#&gt; 39 f59e4b        0       20        0</span>
+<span class="co">#&gt; 40 ef7028       16        4        0</span>
+<span class="co">#&gt; 41 1f4d22       20        0        0</span>
+<span class="co">#&gt; 42 486c07        7       13        0</span></code></pre></div>
 </div>
-<div id="produce-results" class="section level2">
-<h2 class="hasAnchor">
-<a href="#produce-results" class="anchor"></a>Produce results</h2>
-<p>A single simulation is not particularly interesting. In this section we will run a whole set of simulations and see whether we can find some patterns in the results.</p>
 </div>
+<div id="multiple-runs-and-analysis" class="section level1">
+<h1 class="hasAnchor">
+<a href="#multiple-runs-and-analysis" class="anchor"></a>Multiple runs and analysis</h1>
+<p>A single simulation is not particularly interesting. In this section we will therefore run a whole set of simulations and do some basic analysis on the results.</p>
+<p>As a simple example we will try to find out whether topological distance between nodes on the network results in a corresponding genetic distance when looking at the genetic composition of the nodes’ pathogen population.</p>
+<p>For the sake of simplicity we will use a simple binary tree for this example. Note that for maximum flexibility <code>perfect_binary</code> creates an edge list, <em>not</em> a <code>popsnetwork</code> object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># generate network</span>
+tree &lt;-<span class="st"> </span><span class="kw"><a href="../reference/perfect_binary.html">perfect_binary</a></span>(4L)</code></pre></div>
+<p>We measure genetic distance between two samples as the Hamming distance of their genomes and the genetic distance between two nodes as the genetic distance of two random isolates drawn from these nodes.</p>
+<p>By default rpathsonpaths only simulates single loci. This would result in all genetic distance measurements to be either <code>0</code> or <code>1</code>, which is not very useful for statistical analysis. It is quite simple, however, to emulate multiple loci - simply run the same scenario multiple times and collate the results (note that this assumes that there is no linkage disequilibrium).</p>
+<p>We first have to generate initial allele frequencies for each locus.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># generate a list of random allele frequencies</span>
+<span class="co"># these are the initial allele frequency distributions at 10 "loci"</span>
+all_freqs &lt;-<span class="st"> </span><span class="kw">replicate</span>(<span class="dv">10</span>, <span class="kw">list</span>(<span class="dv">0</span>, gtools::<span class="kw">rdirichlet</span>(<span class="dv">1</span>, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))), <span class="dt">simplify=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p><code>run_popsnet</code> is a convenience frontend for <code>popsnetwork</code>, <code>set_allele_freqs</code> and the <code>popgen_*</code> simulator functions. It makes it straightforward to run a large set of simulations on the same network topology. Note that, since the function calls <code>popsnetwork</code>’s contructor itself, the network has to be provided in edgelist format. The result of a call to <code>run_popsnet</code> is a simple list containing the raw network object (as produced by the contructor) and a vector of network objects containing the simulation data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># now we can run the simulation</span>
+<span class="co"># since all_freqs is a list the simulation will be run n (in this case 1) times</span>
+<span class="co"># per element</span>
+results &lt;-<span class="st"> </span><span class="kw"><a href="../reference/run_popsnet.html">run_popsnet</a></span>(tree, <span class="dt">ini_input=</span><span class="dv">1</span>, <span class="dt">ini_infd=</span><span class="fl">0.5</span>, 
+                       <span class="dt">ini_freqs=</span>all_freqs, <span class="dt">n=</span>1L, <span class="dt">theta=</span><span class="fl">0.1</span>,
+                       <span class="co"># we use the Dirichlet model</span>
+                       <span class="dt">spread_model=</span><span class="st">"fluid"</span>, <span class="dt">drift_model=</span><span class="st">"dirichlet"</span>)</code></pre></div>
+<p>Now we have to do something with the results. We will first obtain topological distances using rpathsonpaths’ <code>path_distances</code> function. Since in our simple scenario infection cases equal leaf nodes of the network we keep only the distances between all leaf nodes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># $raw contains the pre-simulation net</span>
+raw &lt;-<span class="st"> </span>results$raw
+<span class="co"># we need those since we are only interested in leaf nodes</span>
+snks &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw"><a href="../reference/sinks.html">sinks</a></span>(<span class="kw"><a href="../reference/edge_list.html">edge_list</a></span>(raw)))
+<span class="co"># get topological distances of all pairs of leaf nodes</span>
+path_dists &lt;-<span class="st"> </span><span class="kw"><a href="../reference/path_distances.html">path_distances</a></span>(raw)[snks, snks]</code></pre></div>
+<p>Next we determine genetic distances. The builtin function <code>distances_sample</code> does most of the heavy lifting for us. It draws a random isolate from each node and calculates Hamming distance for each pair of nodes. As before we throw away everything but the leaf nodes. This will give us a matrix of 1s and 0s for each of the simulations, which - as we said before - correspond to one locus each. We simply sum all results to obtain genetic distance over the whole genome.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># the actual results</span>
+res &lt;-<span class="st"> </span>results$result
+<span class="co"># this runs distances_sample on each of the networks in the results and sums</span>
+<span class="co"># up the results</span>
+gene_dists &lt;-<span class="st"> </span><span class="kw">Reduce</span>(<span class="st">'+'</span>, <span class="kw">lapply</span>(res, function(x) <span class="kw"><a href="../reference/distances_sample.html">distances_sample</a></span>(x)[snks, snks]))</code></pre></div>
+<p>Now we can plot genetic versus topological distance and the resulting correlation. As we can see there is a clear correlation between topological and genetic distance.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="dt">x=</span><span class="kw">jitter</span>(<span class="kw">as.vector</span>(path_dists), <span class="fl">0.1</span>), <span class="dt">y=</span><span class="kw">jitter</span>(<span class="kw">as.vector</span>(gene_dists), <span class="fl">0.02</span>), <span class="dt">xlab=</span><span class="st">"topological"</span>, <span class="dt">ylab=</span><span class="st">"genetic"</span>)
+<span class="kw">abline</span>(<span class="kw">lm</span>(<span class="kw">as.vector</span>(gene_dists)~<span class="kw">as.vector</span>(path_dists)), <span class="dt">col=</span><span class="st">"red"</span>)</code></pre></div>
+<p><img src="figs-overview/unnamed-chunk-15-1.png" width="672"></p>
 </div>
 </div>
   </div>
@@ -609,9 +644,9 @@ sg_sinks &lt;-<span class="st"> </span><span class="kw"><a href="../reference/si
 <li><a href="#obtain-and-clean-up-data">Obtain and clean up data</a></li>
       <li><a href="#create-network">Create network</a></li>
       <li><a href="#run-simulation">Run simulation</a></li>
-      <li><a href="#produce-results">Produce results</a></li>
       </ul>
 </li>
+      <li><a href="#multiple-runs-and-analysis">Multiple runs and analysis</a></li>
       </ul>
 </div>
       </div>

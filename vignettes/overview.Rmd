@@ -249,8 +249,94 @@ sg_sinks <- sinks(sent_graph2)
 draw_isolates(sg_net_dir, data.frame(sg_sinks, rep(20, length(sg_sinks))))
 ```
 
-## Produce results
+# Multiple runs and analysis
 
 A single simulation is not particularly interesting. In this section we will
-run a whole set of simulations and see whether we can find some patterns in the
-results.
+therefore run a whole set of simulations and do some basic analysis on the
+results. 
+
+As a simple example we will try to find out whether topological distance between
+nodes on the network results in a corresponding genetic distance when looking at
+the genetic composition of the nodes' pathogen population.
+
+For the sake of simplicity we will use a simple binary tree for this example.
+Note that for maximum flexibility `perfect_binary` creates an edge list, *not*
+a `popsnetwork` object.
+
+```{r}
+# generate network
+tree <- perfect_binary(4L)
+```
+
+We measure genetic distance between two samples as the Hamming distance of
+their genomes and the genetic distance between two nodes as the genetic
+distance of two random isolates drawn from these nodes. 
+
+By default rpathsonpaths only simulates single loci. This would result in all genetic
+distance measurements to be either `0` or `1`, which is not very useful for statistical
+analysis. It is quite simple, however, to emulate multiple loci - simply run the same 
+scenario multiple times and collate the results (note that this assumes that there is
+no linkage disequilibrium).
+
+We first have to generate initial allele frequencies for each locus.
+
+```{r}
+# generate a list of random allele frequencies
+# these are the initial allele frequency distributions at 10 "loci"
+all_freqs <- replicate(10, list(0, gtools::rdirichlet(1, c(1, 1))), simplify=FALSE)
+```
+
+`run_popsnet` is a convenience frontend for `popsnetwork`, `set_allele_freqs`
+and the `popgen_*` simulator functions. It makes it straightforward to run a
+large set of simulations on the same network topology. Note that, since the
+function calls `popsnetwork`'s contructor itself, the network has to be
+provided in edgelist format. The result of a call to `run_popsnet` is a simple
+list containing the raw network object (as produced by the contructor) and a
+vector of network objects containing the simulation data.
+
+```{r}
+# now we can run the simulation
+# since all_freqs is a list the simulation will be run n (in this case 1) times
+# per element
+results <- run_popsnet(tree, ini_input=1, ini_infd=0.5, 
+					   ini_freqs=all_freqs, n=1L, theta=0.1,
+					   # we use the Dirichlet model
+					   spread_model="fluid", drift_model="dirichlet")
+```
+
+Now we have to do something with the results. We will first obtain topological
+distances using rpathsonpaths' `path_distances` function. Since in our simple
+scenario infection cases equal leaf nodes of the network we keep only the distances
+between all leaf nodes.
+
+```{r}
+# $raw contains the pre-simulation net
+raw <- results$raw
+# we need those since we are only interested in leaf nodes
+snks <- as.character(sinks(edge_list(raw)))
+# get topological distances of all pairs of leaf nodes
+path_dists <- path_distances(raw)[snks, snks]
+```
+
+Next we determine genetic distances. The builtin function `distances_sample`
+does most of the heavy lifting for us. It draws a random isolate from each node
+and calculates Hamming distance for each pair of nodes. As before we throw away
+everything but the leaf nodes. This will give us a matrix of 1s and 0s for each
+of the simulations, which - as we said before - correspond to one locus each.
+We simply sum all results to obtain genetic distance over the whole genome.
+
+```{r}
+# the actual results
+res <- results$result
+# this runs distances_sample on each of the networks in the results and sums
+# up the results
+gene_dists <- Reduce('+', lapply(res, function(x) distances_sample(x)[snks, snks]))
+```
+
+Now we can plot genetic versus topological distance and the resulting correlation. As we
+can see there is a clear correlation between topological and genetic distance. 
+
+```{r}
+plot(x=jitter(as.vector(path_dists), 0.1), y=jitter(as.vector(gene_dists), 0.02), xlab="topological", ylab="genetic")
+abline(lm(as.vector(gene_dists)~as.vector(path_dists)), col="red")
+```

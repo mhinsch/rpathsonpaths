@@ -282,7 +282,7 @@ biggest_subnetwork <- function(edgelist){
 #' equal to depth-1).
 #' @return An edge list in dataframe format.
 perfect_binary <- function(size){
-	num <- 2 ^ (depth+1) - 2
+	num <- 2 ^ (size+1) - 2
 
 	from <- vector("integer", num)
 	to <- vector("integer", num)
