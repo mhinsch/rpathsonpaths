@@ -11,6 +11,7 @@ warnings_are_errors: false
 
 r_github_packages:
       - r-lib/covr
+      - reconhub/dibbler
 
 after_success:
       - Rscript -e 'covr::codecov()'
