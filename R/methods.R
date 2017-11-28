@@ -75,8 +75,11 @@ plot.popsnetwork <- function(x, ...){
 #' @param ini_infd Input rate of infected units per source nodes. Format requirements are
 #' identical to those for \code{ini_input}.
 #' @param ini_freqs Allele frequencies per source node. This can be one out of:
-#' * a matrix with one row per root node 
-#' * a list of initialization objects (each of them containing a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case n simulations are run per initialization.
+#' \itemize{
+#' \item a matrix with one row per root node 
+#' \item a list of initialization objects (each of them containing a vector of node ids 
+#' and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case 
+#' n simulations are run per initialization.}
 #' @param n Number of simulation runs to perform.
 #' @param transmission Rate of infection in nodes.
 #' @param decay Decay rate in nodes - used to infer transfer rates. If this is negative all 

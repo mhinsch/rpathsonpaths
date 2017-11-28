@@ -22,8 +22,11 @@ one element per source node.}
 identical to those for \code{ini_input}.}
 
 \item{ini_freqs}{Allele frequencies per source node. This can be one out of:
-* a matrix with one row per root node 
-* a list of initialization objects (each of them containing a vector of node ids and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case n simulations are run per initialization.}
+\itemize{
+\item a matrix with one row per root node 
+\item a list of initialization objects (each of them containing a vector of node ids 
+and a matrix of frequencies, see \code{\link{set_allele_freqs}}). In this case 
+n simulations are run per initialization.}}
 
 \item{n}{Number of simulation runs to perform.}
 

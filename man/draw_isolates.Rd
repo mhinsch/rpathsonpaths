@@ -21,7 +21,7 @@ A dataframe containing
 \itemize{ 
 \item if aggregate==TRUE: node id in \code{$node} and number of isolates with allele 
 	\code{x} in \code{$allele_x}.
-\item if aggregate==FALSE: node id in \code{$node} and }
+\item if aggregate==FALSE: node id in \code{$node} and allele index in \code{$allele}}
 }
 \description{
 Draw a set of isolates from the network.

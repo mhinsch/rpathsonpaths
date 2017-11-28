@@ -299,7 +299,7 @@ popgen_ibm_mixed <- function(p_net, ini_dist = NULL) {
 #' \itemize{ 
 #' \item if aggregate==TRUE: node id in \code{$node} and number of isolates with allele 
 #' 	\code{x} in \code{$allele_x}.
-#' \item if aggregate==FALSE: node id in \code{$node} and }
+#' \item if aggregate==FALSE: node id in \code{$node} and allele index in \code{$allele}}
 #'
 #' @examples
 #' # create network

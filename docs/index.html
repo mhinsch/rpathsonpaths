@@ -207,10 +207,10 @@ netdir1
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   1.33468e-10 0.00443539  0.505015    0.490549</span>
-<span class="co">#&gt; 2    0.595   2   0.0199342   0.006493    0.00581126  0.967761</span>
-<span class="co">#&gt; 3    0.6355  0.6 5.81117e-37 4.63316e-07 0.491429    0.508571</span>
-<span class="co">#&gt; 4    0.668636    1.1 0   0   0.499675    0.500325</span>
+<span class="co">#&gt; 1    0.595   1   0.70709 0.0556588   0.0349648   0.202286</span>
+<span class="co">#&gt; 2    0.595   2   0.0696886   0.208754    0.0293264   0.692231</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.736602    0.125785    9.39706e-12 0.137613</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.694779    0.0236863   8.20991e-07 0.281534</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -229,10 +229,10 @@ netdir2
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.00964077  0.249998    8.69579e-08 0.740361</span>
-<span class="co">#&gt; 2    0.595   2   0.161782    0.490091    0.106553    0.241574</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.000318087 0.819052    5.62927e-05 0.180574</span>
-<span class="co">#&gt; 4    0.668636    1.1 8.65442e-11 0.833576    8.6616e-60  0.166424</span>
+<span class="co">#&gt; 1    0.595   1   0.000216893 0.00612879  0.131374    0.86228</span>
+<span class="co">#&gt; 2    0.595   2   0.00226375  0.391697    0.293621    0.312418</span>
+<span class="co">#&gt; 3    0.6355  0.6 1.0322e-153 0.0178447   0.261321    0.720834</span>
+<span class="co">#&gt; 4    0.668636    1.1 4.26598e-275    5.34261e-05 0.0578919   0.942055</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -253,12 +253,12 @@ netdir2
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">nodes=</span><span class="kw">c</span>(2L, 4L), <span class="dt">N=</span><span class="kw">c</span>(10L, 10L))
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir1, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        0        0        0       10</span>
-<span class="co">#&gt; 2    4        0        0        8        2</span>
+<span class="co">#&gt; 1    2        2        3        0        5</span>
+<span class="co">#&gt; 2    4        7        0        0        3</span>
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir2, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        2        3        2        3</span>
-<span class="co">#&gt; 2    4        0       10        0        0</span></code></pre></div>
+<span class="co">#&gt; 1    2        0        3        3        4</span>
+<span class="co">#&gt; 2    4        0        0        2        8</span></code></pre></div>
 </div>
 </div>
 <div id="contributors-in-alphabetic-order" class="section level1">
