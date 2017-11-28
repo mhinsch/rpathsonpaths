@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>depth — depth • rpathsonpaths</title>
+<title>rpop_to_dibbler — rpop_to_dibbler • rpathsonpaths</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -98,46 +98,33 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>depth</h1>
+    <h1>rpop_to_dibbler</h1>
     </div>
 
     
-    <p>Calculate depth of a node.</p>
+    <p>convert an rpopsnetwork object to a dibbler object</p>
     
 
-    <pre class="usage"><span class='fu'>depth</span>(<span class='no'>edgelist</span>, <span class='no'>node</span>)</pre>
+    <pre class="usage"><span class='fu'>rpop_to_dibbler</span>(<span class='no'>network</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>edgelist</th>
-      <td><p>The network in edgelist format.</p></td>
-    </tr>
-    <tr>
-      <th>node</th>
-      <td><p>A node id or a list of node ids.</p></td>
+      <th>network</th>
+      <td><p>A popsnetwork object.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The depth as an integer or an array of integers (if no node was provided).</p>
+    <p>A dibbler object.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Calculate the depth of a node (or list of nodes) in a given network. The depth is
-here defined as the length of the shortest path that connects any of the given nodes to
-any root node. If no node is provided the function is applied to all nodes in the network.</p>
+    <p>This function converts a popsnetwork object into a dibbler object.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>from</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>), <span class='kw'>to</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"C"</span>, <span class='st'>"C"</span>, <span class='st'>"D"</span>))
-<span class='co'># get min depth of specific nodes</span>
-<span class='fu'>depth</span>(<span class='no'>el</span>, <span class='st'>"A"</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>depth</span>(<span class='no'>el</span>, <span class='fu'>c</span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='co'># apply to all nodes in the network</span>
-<span class='co'># returns a vector, not a number</span>
-<span class='fu'>depth</span>(<span class='no'>el</span>)</div><div class='output co'>#&gt; [1] 0 0 1 2</div><div class='input'><span class='co'># to get the network's depth apply to the list of nodes</span>
-<span class='fu'>depth</span>(<span class='no'>el</span>, <span class='fu'><a href='nodes.html'>nodes</a></span>(<span class='no'>el</span>))</div><div class='output co'>#&gt; [1] 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -147,9 +134,7 @@ any root node. If no node is provided the function is applied to all nodes in th
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

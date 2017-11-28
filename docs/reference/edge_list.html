@@ -68,6 +68,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/hacking.html">Extending rpathsonpaths</a>
+    </li>
+    <li>
       <a href="../articles/overview.html">Overview of the rpathsonpaths package</a>
     </li>
   </ul>
@@ -136,9 +139,9 @@ transport rates.</p>
 <span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='popsnetwork.html'>popsnetwork</a></span>(<span class='no'>el</span>, <span class='no'>ext</span>)
 <span class='co'># get nodes as factor</span>
 <span class='fu'>edge_list</span>(<span class='no'>net</span>)</div><div class='output co'>#&gt;   from to rates rates_infected
-#&gt; 1    A  A   1.5           0.45
-#&gt; 2    B  B   1.0           0.10
-#&gt; 3    C  C   3.0           0.66</div><div class='input'><span class='co'># get nodes as string</span>
+#&gt; 1    A  C   1.5           0.45
+#&gt; 2    B  C   1.0           0.10
+#&gt; 3    C  D   3.0           0.66</div><div class='input'><span class='co'># get nodes as string</span>
 <span class='fu'>edge_list</span>(<span class='no'>net</span>, <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;   from to rates rates_infected
 #&gt; 1    A  C   1.5           0.45
 #&gt; 2    B  C   1.0           0.10

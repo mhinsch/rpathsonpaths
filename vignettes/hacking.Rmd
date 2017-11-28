@@ -1,0 +1,66 @@
+---
+title: "Extending rpathsonpaths"
+author: "Martin Hinsch"
+date: "`r Sys.Date()`"
+output:
+   rmarkdown::html_vignette:
+     toc: true
+     toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Extending}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  fig.width=7, 
+  fig.height=5, 
+  fig.path="figs-overview/"
+)
+```
+
+This vignette gives a quick introduction into the internal structure of the source code as well
+as some pointers to documentation that might be helpful for anyone intending to work on the
+package.
+
+<br>
+
+# Internal structure
+
+*rpathsonpaths* follows the usual structure for R packages that includes
+compilable code: R code sits in `./R`, C/C++ sources can be found below `./src`.
+
+The R code mostly consists of shallow convenience functions. The majority of
+rpathsonpath's functionality is implemented in C++ using Rcpp to interface with
+R.
+
+The C++ source code can broadly classified into three different chunks:
+
+- **network library** Most of the network and simulation functionality is implemented as 
+  a separate, heavily templated library that is entirely independent of R. The code is 
+  situated under `./src/libpathsonpaths`. The library is also available as a standalone 
+  C++ project on [github](https://github.com/mhinsch/pathsonpaths).
+
+- **R functions** All C++ functions that make up rpathsonpath's R API are declared in 
+  `./src/dir_network.h` and implemented in `./src/dir_network.cc`.
+
+- **utilities** Supporting functionality that is either too specific to warrant inclusion in 
+  libpathsonpaths or dependent in some way on R or Rcpp is implemented in various files under
+  `./src`. 
+
+# Documentation
+
+Most of the code should be sufficiently commented to (hopefully) be
+understandable without too much effort. If you find this not to be the case
+please feel free to submit a corresponding issue on rpathsonpaths github page. 
+
+libpathonpath's API as well as all other internal classes and functions should
+be (briefly) documented in [Doxygen](http://www.Doxygen.org) format. To create
+the documentation in html format run `make cdocs` in rpathsonpaths root
+directory. Again, missing documentation is considered a bug and should be
+submitted as such on github.
