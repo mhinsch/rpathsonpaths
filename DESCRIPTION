@@ -9,7 +9,7 @@ Description: A population genetics simulator for foodborne diseases. It
 	resulting genetic structure of an outbreak.
 License: GPL (>= 2)
 Imports: methods, utils, Rcpp (>= 0.12.9)
-Suggests: igraph, knitr, rmarkdown, testthat, outbreaks, epicontacts, dibbler
+Suggests: igraph, knitr, rmarkdown, testthat, outbreaks, epicontacts, dibbler, gtools
 LinkingTo: Rcpp
 SystemRequirements: C++11
 RoxygenNote: 6.0.1
