@@ -24,6 +24,9 @@ html:
 
 docs: mans vignette html
 
+cdocs:
+	doxygen
+
 install: man/popsnetwork.Rd 
 	R CMD INSTALL .
 

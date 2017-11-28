@@ -48,6 +48,6 @@ rpop_to_dibbler <- function(network) {
 	edge_data <- edge_list(network)
 	node_data <- node_list(network)
 
-	make_dibbler(edge_data, node_data)
+	dibbler::make_dibbler(edge_data, node_data)
 }
 
