@@ -2,6 +2,11 @@ src/current.vim
 .gdb_history
 src/libpathsonpaths/Makefile
 NEWS.md
+CONDUCT.md
+Doxyfile
+Makefile
+README.Rmd
+README.html
 
 ^\.travis\.yml$
 ^docs$

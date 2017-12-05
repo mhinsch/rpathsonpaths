@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.width = 8,
   fig.height = 6,
-  fig.path = "figs/",
+  fig.path = "man/figs/",
   echo = TRUE
 )
 
@@ -18,8 +18,6 @@ knitr::opts_chunk$set(
 # Installing the package
 
 Prerequisites:
-
-- C++ boost libraries
 
 - *Rcpp* (>= 0.12.9)
 

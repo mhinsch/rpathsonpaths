@@ -30,7 +30,7 @@ cdocs:
 install: man/popsnetwork.Rd 
 	R CMD INSTALL .
 
-build: man/popsnetwork.Rd README.md
+build: man/popsnetwork.Rd README.md all_clean
 	R CMD build .
 
 check: build
@@ -38,4 +38,7 @@ check: build
 	@rm -f `ls -1tr ${PACKAGE}*gz | tail -n1`
 
 clean:
-	rm -f src/*.o src/libpathsonpaths/*.o
+	rm -f src/*.o src/*.so src/libpathsonpaths/*.o 
+
+all_clean: clean
+	rm -rf rpathsonpaths_*.tar.gz rpathsonpaths.Rcheck

@@ -10,7 +10,8 @@ Description: A population genetics simulator for foodborne diseases. It
 License: GPL (>= 2)
 Imports: methods, utils, Rcpp (>= 0.12.9)
 Suggests: igraph, knitr, rmarkdown, testthat, outbreaks, epicontacts, dibbler, gtools
-LinkingTo: Rcpp
+Additional_repositories: https://github.com/reconhub
+LinkingTo: Rcpp, BH
 SystemRequirements: C++11
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr
