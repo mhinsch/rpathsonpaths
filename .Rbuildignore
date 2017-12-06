@@ -5,8 +5,10 @@ NEWS.md
 CONDUCT.md
 Doxyfile
 Makefile
+README.md
 README.Rmd
 README.html
+figs
 
 ^\.travis\.yml$
 ^docs$

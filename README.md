@@ -6,8 +6,6 @@ Installing the package
 
 Prerequisites:
 
--   C++ boost libraries
-
 -   *Rcpp* (&gt;= 0.12.9)
 
 Some of the functionality will also require the *igraph* package.
@@ -113,7 +111,7 @@ plot(netraw)
 #> Loading required namespace: igraph
 ```
 
-![](man/figs/popsnetwork-1.png)
+![](figs/popsnetwork-1.png)
 
 Injecting initial populations and simulating spread
 ---------------------------------------------------
@@ -155,10 +153,10 @@ netdir1
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   2.40571e-09 0.755545    0.0957513   0.148704
-#> 2    0.595   2   0.0903262   0.317478    0.01481 0.577386
-#> 3    0.6355  0.6 0.000404205 0.377586    0.470244    0.151766
-#> 4    0.668636    1.1 1.49544e-32 0.464432    0.385101    0.150466
+#> 1    0.595   1   0.0151666   0.017108    4.72558e-05 0.967678
+#> 2    0.595   2   0.0427547   0.617012    0.174108    0.166126
+#> 3    0.6355  0.6 0.00033464  0.447667    0.0698219   0.482176
+#> 4    0.668636    1.1 5.56135e-72 0.506705    5.72523e-13 0.493295
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -177,10 +175,10 @@ netdir2
 #> 
 #> id   infected    input   alleles...
 #> 0    0.55    1   0.1 0.3 0.2 0.4
-#> 1    0.595   1   0.334447    0.427731    0.015579    0.222243
-#> 2    0.595   2   0.0383007   0.445782    0.209106    0.306811
-#> 3    0.6355  0.6 0.115133    0.56419 0.0129465   0.30773
-#> 4    0.668636    1.1 0.0097495   0.989305    5.33278e-08 0.000945429
+#> 1    0.595   1   0.00856128  0.260469    0.317357    0.413612
+#> 2    0.595   2   0.127313    0.154824    0.604135    0.113728
+#> 3    0.6355  0.6 0.000251291 0.000335459 0.172082    0.827331
+#> 4    0.668636    1.1 1.67885e-53 0.0182574   0.042278    0.939465
 #> 5    0.55    1   0.4 0.1 0.2 0.3
 #> 
 #> Links:
@@ -204,12 +202,12 @@ Finally we can draw samples from our simulated population.
 samplconf <- data.frame(nodes=c(2L, 4L), N=c(10L, 10L))
 draw_isolates(netdir1, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        0        3        0        7
-#> 2    4        0        5        5        0
+#> 1    2        0        9        0        1
+#> 2    4        0        5        0        5
 draw_isolates(netdir2, samplconf)
 #>   node allele_0 allele_1 allele_2 allele_3
-#> 1    2        0        4        2        4
-#> 2    4        0       10        0        0
+#> 1    2        0        3        7        0
+#> 2    4        0        0        0       10
 ```
 
 Contributors (in alphabetic order):
