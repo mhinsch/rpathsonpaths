@@ -777,83 +777,15 @@ DataFrame generate_PA(int n_nodes, int n_sources, NumericVector m_dist, float ze
 	R_ASSERT(n_nodes >= 1, "Number of nodes has to be >= 1");
 	R_ASSERT(zero_appeal > 0, "zero_appeal has to be > 0");
 
-	vector<float> weight(n_nodes + n_sources, 0);
-
 	vector<int> from, to;
-
-	from.reserve(n_nodes);
-	to.reserve(n_nodes);
 	
-	for (size_t i=0; i<n_sources; i++)
-		weight[i] = zero_appeal;
-
-	// we need to keep track of the sum of all weights
-	double sum = n_sources * zero_appeal;
-
 	// distribution for #input links
 	ProportionalPick<> pick(0.000001, m_dist);
 	RRng r;
 
-	for (size_t i=0; i<n_nodes; i++)
-		{
-		// index of current node
-		const size_t node = i + n_sources;
-		// how many inputs
-		const size_t n_inp = pick.pick(r) + 1;
-
-		for (size_t j=0; j<n_inp; j++)
-			{
-			// random node
-			size_t r_inp = r.outOf(0, sum);
-			size_t inp = 0;
-			// find previous node in weight list
-			while (r_inp > weight[inp])
-				r_inp -= weight[inp++];
-
-			R_ASSERT(inp < node, "Invalid node");
-
-			from.push_back(inp);
-			to.push_back(node);
-
-			// input node gains a connection
-			weight[inp]++;
-			// and sum increases accordingly
-			sum++;
-			}
-
-		// new node has 0 outputs
-		weight[node] = zero_appeal;
-		sum++;
-		}
-
-
-	if (compact)
-		{
-		// *** remove isolated nodes === make node indices contiguous
-		//     we re-use weight to store how much we have to count the index for a given
-		//     node down by
-
-		int reduce = 0;
-
-		// find isolated sources
-		for (size_t i=0; i<n_sources; i++)
-			{
-			// sources that are still at zero_appeal have no outputs => isolated
-			if (weight[i] == zero_appeal)
-				reduce++;
-			else
-				weight[i] = reduce;
-			}
-
-		// regular nodes can't be isolated, but we still have to change their index 
-		fill(weight.begin()+n_sources, weight.end(), reduce);
-
-		for (size_t i=0; i<from.size(); i++)
-			{
-			from[i] -= weight[from[i]];
-			to[i] -= weight[to[i]];
-			}
-		}
+	net_gen_prefattach(from, to, n_nodes, n_sources, 
+		[&pick,&r] (int) -> int {return pick.pick(r);}, 
+		zero_appeal, r, compact);
 
 	return DataFrame::create(Named("from") = from, Named("to") = to);
 	}

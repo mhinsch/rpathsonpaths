@@ -70,4 +70,95 @@ struct Cycles
 	};
 
 
+/** Generate a random scale-free network. The function uses the Barabasi-Albert 
+ preferential attachment algorithm, slightly modified to allow for directedness and 
+ isolated initial nodes.
+
+ @param from, to Containers that the generated edge list will be written to.
+ @param n_nodes Number of (non-source) nodes to generate.
+ @param n_sources Number of source nodes to initialize the network with (has to
+ be at least 1). Note that there is no guarantee all source nodes will become
+ part of the network.  
+ @param m_dist The probability distribution to draw the number of inputs for
+ new nodes from. m_dist has to be a function object that receives the node
+ index and returns the number of nodes.
+ @param zero_appeal Constant to be added to the nodes' attractiveness.
+ @param rng A random number generator.
+ @param compact Whether to remove isolated source nodes. */
+template<class INT_CONT, class DIST, class RNG>
+void net_gen_prefattach(INT_CONT & from, INT_CONT & to, int n_nodes, int n_sources,
+	const DIST & m_dist, float zero_appeal, RNG & rng, bool compact=false)
+	{
+	vector<float> weight(n_nodes + n_sources, 0);
+
+	from.reserve(n_nodes);
+	to.reserve(n_nodes);
+	
+	for (size_t i=0; i<n_sources; i++)
+		weight[i] = zero_appeal;
+
+	// we need to keep track of the sum of all weights
+	double sum = n_sources * zero_appeal;
+
+
+	for (size_t i=0; i<n_nodes; i++)
+		{
+		// index of current node
+		const size_t node = i + n_sources;
+		// how many inputs
+		const size_t n_inp = m_dist(i) + 1;
+
+		for (size_t j=0; j<n_inp; j++)
+			{
+			// random node
+			size_t r_inp = rng.outOf(0, sum);
+			size_t inp = 0;
+			// find previous node in weight list
+			while (r_inp > weight[inp])
+				r_inp -= weight[inp++];
+
+			from.push_back(inp);
+			to.push_back(node);
+
+			// input node gains a connection
+			weight[inp]++;
+			// and sum increases accordingly
+			sum++;
+			}
+
+		// new node has 0 outputs
+		weight[node] = zero_appeal;
+		sum++;
+		}
+
+
+	if (compact)
+		{
+		// *** remove isolated nodes === make node indices contiguous
+		//     we re-use weight to store how much we have to count the index for a given
+		//     node down by
+
+		int reduce = 0;
+
+		// find isolated sources
+		for (size_t i=0; i<n_sources; i++)
+			{
+			// sources that are still at zero_appeal have no outputs => isolated
+			if (weight[i] == zero_appeal)
+				reduce++;
+			else
+				weight[i] = reduce;
+			}
+
+		// regular nodes can't be isolated, but we still have to change their index 
+		fill(weight.begin()+n_sources, weight.end(), reduce);
+
+		for (size_t i=0; i<from.size(); i++)
+			{
+			from[i] -= weight[from[i]];
+			to[i] -= weight[to[i]];
+			}
+		}
+	}
+
 #endif	// NET_UTIL_H
