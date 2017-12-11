@@ -161,4 +161,62 @@ void net_gen_prefattach(INT_CONT & from, INT_CONT & to, int n_nodes, int n_sourc
 		}
 	}
 
+
+/** Identify separate sub-networks in a network described as an edge list.
+
+   @param beg, end Iterators point to the beginning and end of an edge list.
+
+   @return An integer vector with the sub-network id of each edge. Note that id's start at
+   1 and are not guaranteed to be contiguous. */
+template<class EI>
+vector<int> colour_network(EI beg, EI end)
+	{
+	// colour of nodes
+	vector<int> colour;
+
+	int next_col = 1;
+
+	for (; beg != end; ++beg)
+		{
+		const size_t f = (*beg).from, t = (*beg).to;
+
+		if (max(f, t) >= colour.size())
+			colour.resize(max(f, t)+1, 0);
+
+		if (colour[f] == colour[t])
+			{
+			// not coloured yet, colour them
+			if (colour[f] == 0)
+				{
+				colour[f] = next_col++;
+				colour[t] = colour[f];
+				}
+			// otherwise they are the same colour which is also fine
+			}
+		else
+			{
+			// one of them is not coloured => take the other one's colour
+			if (colour[f] == 0)
+				{
+				colour[f] = colour[t];
+				continue;
+				}
+			if (colour[t] == 0)
+				{
+				colour[t] = colour[f];
+				continue;
+				}
+			// two different colours, have to change all instances of one of them
+			const int oldc = colour[t];
+			const int newc = colour[f];
+
+			for (int & c : colour)
+				if (c == oldc)
+					c = newc;
+			}
+		}
+
+	return colour;
+	}
+
 #endif	// NET_UTIL_H

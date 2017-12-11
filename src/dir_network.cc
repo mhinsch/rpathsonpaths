@@ -61,52 +61,8 @@ IntegerVector colour_network(const DataFrame & edge_list)
 
 	EdgeList el(from, to);
 
-	// TODO factour out generic part
-
 	// colour of nodes
-	vector<int> colour;
-
-	int next_col = 1;
-
-	for (const auto & edge : el)
-		{
-		const size_t f = edge.from, t = edge.to;
-
-		if (max(f, t) >= colour.size())
-			colour.resize(max(f, t)+1, 0);
-
-		if (colour[f] == colour[t])
-			{
-			// not coloured yet, colour them
-			if (colour[f] == 0)
-				{
-				colour[f] = next_col++;
-				colour[t] = colour[f];
-				}
-			// otherwise they are the same colour which is also fine
-			}
-		else
-			{
-			// one of them is not coloured => take the other one's colour
-			if (colour[f] == 0)
-				{
-				colour[f] = colour[t];
-				continue;
-				}
-			if (colour[t] == 0)
-				{
-				colour[t] = colour[f];
-				continue;
-				}
-			// two different colours, have to change all instances of one of them
-			const int oldc = colour[t];
-			const int newc = colour[f];
-
-			for (int & c : colour)
-				if (c == oldc)
-					c = newc;
-			}
-		}
+	vector<int> colour = colour_network(el.begin(), el.end());
 
 	IntegerVector res(from.size());
 
