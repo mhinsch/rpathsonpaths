@@ -68,9 +68,9 @@ IntegerVector colour_network(const DataFrame & edge_list)
 
 	int next_col = 1;
 
-	for (size_t i=0; i<from.size(); i++)
+	for (const auto & edge : el)
 		{
-		const size_t f = el.from(i), t = el.to(i);
+		const size_t f = edge.from, t = edge.to;
 
 		if (max(f, t) >= colour.size())
 			colour.resize(max(f, t)+1, 0);

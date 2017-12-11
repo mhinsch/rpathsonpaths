@@ -85,6 +85,14 @@ class EdgeList
 	size_t _f;									//!< Whether we are wrapping a factor.
 
 public:
+	struct Edge
+		{
+		size_t from, to;
+		Edge(size_t f, size_t t)
+			: from(f), to(t)
+			{}
+		};
+
 	/** Construct an EdgeList from two IntegerVector objects (which might be factors). */
 	EdgeList(const IntegerVector & from, const IntegerVector & to)
 		// we keep the raw data
@@ -172,6 +180,13 @@ public:
 		return _f ? _to[i] : _to_raw(i);
 		}
 
+	Edge edge(size_t i) const
+		{
+		return _f ? 
+			Edge(_from[i], _to[i]) :
+			Edge(_from_raw[i], _to_raw[i]);
+		}
+
 	/** Index of node by name. */
 	size_t index(const string & name) const
 		{
@@ -191,6 +206,32 @@ public:
 			v.attr("class") = "factor";
 			v.attr("levels") = names();
 			}
+		}
+	
+	struct EdgeIter 
+		{
+		typedef std::input_iterator_tag iterator_category;
+		typedef Edge value_type;
+
+		size_t i;
+		const EdgeList & el;
+
+		EdgeIter(size_t start, const EdgeList & edgelist)
+			: i(start), el(edgelist)
+			{}
+
+		EdgeIter & operator++() {i++;}
+		Edge operator*() const  {return el.edge(i);}
+		bool operator!=(const EdgeIter & o) const {return o.i != i || &o.el != &el;}
+		};	
+
+	EdgeIter begin() const
+		{
+		return EdgeIter(0, *this);
+		}
+	EdgeIter end() const
+		{
+		return EdgeIter(_f ? _from.size() : _from_raw.size(), *this);
 		}
 	};
 
