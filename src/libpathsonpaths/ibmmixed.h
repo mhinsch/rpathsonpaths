@@ -2,6 +2,7 @@
 #define IBMMIXED_H
 
 #include <vector>
+#include <numeric>
 
 #include "util.h"
 
