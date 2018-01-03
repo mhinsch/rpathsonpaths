@@ -2,6 +2,9 @@
 #define NET_UTIL_H
 
 #include <vector>
+#include <algorithm>
+
+using std::vector;
 
 /** @file
  * Generic network utility code (doesn't require Rcpp or R). */
@@ -53,7 +56,7 @@ struct Cycles
 		for (size_t i : net[cur])
 			{
 			// are we crossing our own path?
-			const auto f = find(stack.begin(), stack.end(), i);
+			const auto f = std::find(stack.begin(), stack.end(), i);
 			// if so, add the entire loop to the list of cycles
 			if (f != stack.end())
 				{
@@ -164,7 +167,7 @@ void net_gen_prefattach(INT_CONT & from, INT_CONT & to, int n_nodes, int n_sourc
 
 /** Identify separate sub-networks in a network described as an edge list.
 
-   @param beg, end Iterators point to the beginning and end of an edge list.
+   @param beg, end Iterators that point to the beginning and end of an edge list.
 
    @return An integer vector with the sub-network id of each edge. Note that id's start at
    1 and are not guaranteed to be contiguous. */

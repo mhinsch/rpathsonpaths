@@ -86,8 +86,8 @@ SEXP cycles(const DataFrame & edge_list, bool record)
 
 	// convert edge list to table
 	vector<vector<size_t> > outputs(n_nodes);
-	for (size_t i=0; i<from.size(); i++)
-		outputs[el.from(i)].push_back(el.to(i));
+	for (const auto & edge : el)
+		outputs[edge.from].push_back(edge.to);
 
 	Cycles cycles(outputs);
 
