@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <unordered_set>
 
 using std::vector;
 
@@ -222,4 +223,111 @@ vector<int> colour_network(EI beg, EI end)
 	return colour;
 	}
 
+// not pretty
+
+template<class D, class RET = typename D::element>
+RET & at(D & d, size_t x, size_t y)
+	{
+	return d[x][y];
+	}
+
+template<class D, class RET = typename D::element>
+RET at(const D & d, size_t x, size_t y)
+	{
+	return d[x][y];
+	}
+
+// TODO currently not used 
+
+/** Determine pairwise topological distances on a list of nodes.
+ * @tparam CONT Node container type.
+ * @tparam DIST Dist matrix type.
+ * @param nodes Container of pointers to nodes.
+ * @param dists Matrix of distances. Calls element & at(DIST &, size_t, size_t) for 
+ * element access.
+ */
+template<class CONT, class DIST>
+void distances(const CONT & nodes, DIST & dists)
+	{
+	typedef typename CONT::value_type NODEP;
+
+	const bool sorted = is_sorted(nodes.begin(), nodes.end());
+
+	for (size_t i=0; i<nodes.size(); i++)
+		for (size_t j=0; j<nodes.size(); j++)
+			at(dists, i, j) = i==j ? 0 : -1;
+
+	unordered_set<NODEP> visited;
+	vector<NODEP> stack_next, stack_cur;
+
+	// find all distances for each of the leaf nodes
+	for (const auto start : nodes)
+		{
+		size_t dist = 1;
+
+		// new start node, thus clear everything
+		visited.clear();
+		stack_cur.clear();
+		// first one to process		
+		stack_cur.push_back(start);
+
+		const size_t idx_start = (sorted ? 
+				std::lower_bound(nodes.begin(), nodes.end(), start) :
+				std::find(nodes.begin(), nodes.end(), start))
+			- nodes.begin();
+
+		while (stack_cur.size())
+			{
+			for (const auto n : stack_cur)
+				{
+				// there might be cycles, so this is possible
+				if (visited.count(n))
+					continue;
+
+				for (const auto link : n->inputs)
+					{
+					NODEP parent = link->from;
+					// parent has been visited, skip
+					if (visited.count(parent))
+						continue;
+
+					// parents can't be nodes, so just add them to the list
+					stack_next.push_back(parent);
+					}
+
+				for (const auto link : n->outputs)
+					{
+					NODEP child = link->to;
+					// child has been visited, skip
+					if (visited.count(child))
+						continue;
+
+					if (child->is_leaf())
+						{
+						const size_t idx_child = (sorted ?
+								std::lower_bound(nodes.begin(), nodes.end(), child) :
+								std::find(nodes.begin(), nodes.end(), child))
+							- nodes.begin();
+
+						at(dists, idx_start, idx_child) = dist;
+						at(dists, idx_child, idx_start) = dist;
+						}
+
+					stack_next.push_back(child);
+					}
+
+				// we assume there are no links to self, so it should
+				// be fine doing this here
+				visited.insert(n);
+				}
+
+			// next stack becomes current
+			stack_cur.swap(stack_next);
+			// and clear the next one so that we can fill it again
+			stack_next.clear();
+			// one layer out
+			dist++;
+			}
+		}
+	}
 #endif	// NET_UTIL_H

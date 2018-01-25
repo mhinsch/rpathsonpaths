@@ -12,6 +12,7 @@
 
 #include "rpathsonpaths_types.h"
 #include "rcpp_util.h"
+#include "net_util.h"
 
 using namespace std;
 using namespace Rcpp;
@@ -100,5 +101,13 @@ double distance_freq(const Node_t & n1, const Node_t & n2);
 
 /** Expected value of the Hamming distance between two nodes. */
 double distance_EHamming(const Node_t & n1, const Node_t & n2);
+
+/** Template specialization for NumericMatrix. */
+template<>
+double & at(NumericMatrix & m, size_t x, size_t y);
+
+/** Template specialization for NumericMatrix. */
+template<>
+double at(const NumericMatrix & m, size_t x, size_t y);
 
 #endif	// RNET_UTIL_H
