@@ -223,31 +223,22 @@ vector<int> colour_network(EI beg, EI end)
 	return colour;
 	}
 
-// not pretty
 
-template<class D, class RET = typename D::element>
-RET & at(D & d, size_t x, size_t y)
-	{
-	return d[x][y];
-	}
-
-template<class D, class RET = typename D::element>
-RET at(const D & d, size_t x, size_t y)
-	{
-	return d[x][y];
-	}
-
-// TODO currently not used 
+template<class D>
+extern void set_value(D & d, size_t x, size_t y, int v);
 
 /** Determine pairwise topological distances on a list of nodes.
  * @tparam CONT Node container type.
  * @tparam DIST Dist matrix type.
- * @param nodes Container of pointers to nodes.
+ * @param nodes Container of pointers to nodes. If nodes is sorted the function will 
+ * run slightly faster.
  * @param dists Matrix of distances. Calls element & at(DIST &, size_t, size_t) for 
  * element access.
+ * @param leaves_only Save time by generating only distances between leaf nodes. The rest
+ * of the distance matrix is filled with -1 or 0 (diagonal).
  */
 template<class CONT, class DIST>
-void distances(const CONT & nodes, DIST & dists)
+void distances(const CONT & nodes, DIST & dists, bool leaves_only = true)
 	{
 	typedef typename CONT::value_type NODEP;
 
@@ -255,7 +246,7 @@ void distances(const CONT & nodes, DIST & dists)
 
 	for (size_t i=0; i<nodes.size(); i++)
 		for (size_t j=0; j<nodes.size(); j++)
-			at(dists, i, j) = i==j ? 0 : -1;
+			set_value(dists, i, j, i==j ? 0 : -1);
 
 	unordered_set<NODEP> visited;
 	vector<NODEP> stack_next, stack_cur;
@@ -291,7 +282,17 @@ void distances(const CONT & nodes, DIST & dists)
 					if (visited.count(parent))
 						continue;
 
-					// parents can't be nodes, so just add them to the list
+					if (!leaves_only)
+						{
+						const size_t idx_parent = (sorted ?
+								std::lower_bound(nodes.begin(), nodes.end(), parent) :
+								std::find(nodes.begin(), nodes.end(), parent))
+							- nodes.begin();
+
+						set_value(dists, idx_start, idx_parent, dist);
+						set_value(dists, idx_parent, idx_start, dist);
+						}
+
 					stack_next.push_back(parent);
 					}
 
@@ -302,15 +303,15 @@ void distances(const CONT & nodes, DIST & dists)
 					if (visited.count(child))
 						continue;
 
-					if (child->is_leaf())
+					if (!leaves_only || child->is_leaf())
 						{
 						const size_t idx_child = (sorted ?
 								std::lower_bound(nodes.begin(), nodes.end(), child) :
 								std::find(nodes.begin(), nodes.end(), child))
 							- nodes.begin();
 
-						at(dists, idx_start, idx_child) = dist;
-						at(dists, idx_child, idx_start) = dist;
+						set_value(dists, idx_start, idx_child, dist);
+						set_value(dists, idx_child, idx_start, dist);
 						}
 
 					stack_next.push_back(child);

@@ -106,13 +106,7 @@ double distance_EHamming(const Node_t & n1, const Node_t & n2)
 
 
 template<>
-double & at(NumericMatrix & m, size_t x, size_t y)
+void set_value(NumericMatrix & m, size_t x, size_t y, int v)
 	{
-	return m(x, y);
-	}
-
-template<>
-double at(const NumericMatrix & m, size_t x, size_t y)
-	{
-	return m(x, y);
+	m(x, y) = v;
 	}

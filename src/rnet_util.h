@@ -104,10 +104,6 @@ double distance_EHamming(const Node_t & n1, const Node_t & n2);
 
 /** Template specialization for NumericMatrix. */
 template<>
-double & at(NumericMatrix & m, size_t x, size_t y);
-
-/** Template specialization for NumericMatrix. */
-template<>
-double at(const NumericMatrix & m, size_t x, size_t y);
+void set_value(NumericMatrix & m, size_t x, size_t y, int v);
 
 #endif	// RNET_UTIL_H

@@ -599,6 +599,37 @@ DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string)
 	}
 
 
+NumericMatrix distances_topology(const XPtr<Net_t> & p_net, bool leaves_only)
+	{
+	const Net_t * net = p_net.checked_get();
+
+	NumericMatrix res(net->nodes.size(), net->nodes.size());
+
+	R_ASSERT(net->nodes.size(), "empty network detected");
+
+	distances(net->nodes, res, leaves_only);
+
+	// col/row names
+	StringVector cn(net->nodes.size()), rn(net->nodes.size());
+
+	if (net->name_by_id.size())		// factor
+		{
+		// StringVector is clearly missing a constructor here
+		cn = net->name_by_id;
+		rn = net->name_by_id;
+		}
+	// we need to name cols and rows even for non-factors, otherwise
+	// subscripting won't work (0-based vs. 1-based)
+	else							// not factor
+		for (size_t i=0; i<net->nodes.size(); i++)
+			cn(i) = rn(i) = to_string(i);
+
+	colnames(res) = cn;
+	rownames(res) = rn;
+
+	return res;
+	}
+
 NumericMatrix distances_sample(const XPtr<Net_t> & p_net, int n, bool skip_empty)
 	{
 	const Net_t * net = p_net.checked_get();

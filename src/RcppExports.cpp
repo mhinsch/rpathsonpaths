@@ -164,6 +164,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// distances_topology
+NumericMatrix distances_topology(const XPtr<Net_t>& p_net, bool leaves_only);
+RcppExport SEXP _rpathsonpaths_distances_topology(SEXP p_netSEXP, SEXP leaves_onlySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const XPtr<Net_t>& >::type p_net(p_netSEXP);
+    Rcpp::traits::input_parameter< bool >::type leaves_only(leaves_onlySEXP);
+    rcpp_result_gen = Rcpp::wrap(distances_topology(p_net, leaves_only));
+    return rcpp_result_gen;
+END_RCPP
+}
 // distances_freqdist
 NumericMatrix distances_freqdist(const XPtr<Net_t>& p_net, bool skip_empty);
 RcppExport SEXP _rpathsonpaths_distances_freqdist(SEXP p_netSEXP, SEXP skip_emptySEXP) {
@@ -231,6 +243,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rpathsonpaths_draw_alleles", (DL_FUNC) &_rpathsonpaths_draw_alleles, 3},
     {"_rpathsonpaths_edge_list", (DL_FUNC) &_rpathsonpaths_edge_list, 2},
     {"_rpathsonpaths_node_list", (DL_FUNC) &_rpathsonpaths_node_list, 2},
+    {"_rpathsonpaths_distances_topology", (DL_FUNC) &_rpathsonpaths_distances_topology, 2},
     {"_rpathsonpaths_distances_freqdist", (DL_FUNC) &_rpathsonpaths_distances_freqdist, 2},
     {"_rpathsonpaths_distances_sample", (DL_FUNC) &_rpathsonpaths_distances_sample, 3},
     {"_rpathsonpaths_distances_EHamming", (DL_FUNC) &_rpathsonpaths_distances_EHamming, 2},

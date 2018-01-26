@@ -405,6 +405,27 @@ DataFrame edge_list(const XPtr<Net_t> & p_net, bool as_string=false);
 // [[Rcpp::export]]
 DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string=false);
 
+//' @title distances_topology
+//'
+//' @description Calculate topological distances between nodes in a network.
+//' 
+//' @details This function calculates the topological distance (number of edges in
+//' the shortest path) between all pairs of nodes in a network.
+//' 
+//' @param p_net A popsnetwork object.
+//' @param leaves_only Whether to save time by generating only distances between leave nodes.
+//' The rest of the distance matrix will be filled with -1 or 0 (diagonal) in this case.
+//'
+//' @examples
+//' # create network
+//' el <- data.frame(from=c("A", "B", "C"), to=c("C", "C", "D"), rates=c(1.5, 1, 3))
+//' ext <- data.frame(node=c("A", "B"), rate=c(0.3, 0.1))
+//' net <- popsnetwork(el, ext)
+//'
+//' # get distances
+//' distances_topology(net)
+// [[Rcpp::export]]
+NumericMatrix distances_topology(const XPtr<Net_t> & p_net, bool leaves_only = true);
 
 //' @title distances_freqdist
 //'
