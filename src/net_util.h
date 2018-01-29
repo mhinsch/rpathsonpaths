@@ -170,7 +170,7 @@ void net_gen_prefattach(INT_CONT & from, INT_CONT & to, int n_nodes, int n_sourc
 
    @param beg, end Iterators that point to the beginning and end of an edge list.
 
-   @return An integer vector with the sub-network id of each edge. Note that id's start at
+   @return An integer vector with the sub-network id of each node. Note that id's start at
    1 and are not guaranteed to be contiguous. */
 template<class EI>
 vector<int> colour_network(EI beg, EI end)
@@ -214,9 +214,7 @@ vector<int> colour_network(EI beg, EI end)
 			const int oldc = colour[t];
 			const int newc = colour[f];
 
-			for (int & c : colour)
-				if (c == oldc)
-					c = newc;
+			replace(colour.begin(), colour.end(), oldc, newc);
 			}
 		}
 

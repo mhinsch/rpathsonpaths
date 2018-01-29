@@ -62,7 +62,7 @@ IntegerVector colour_network(const DataFrame & edge_list)
 	EdgeList el(from, to);
 
 	// colour of nodes
-	vector<int> colour = colour_network(el.begin(), el.end());
+	const vector<int> colour = colour_network(el.begin(), el.end());
 
 	IntegerVector res(from.size());
 
