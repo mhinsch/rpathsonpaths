@@ -33,21 +33,23 @@ epic_to_edge_list <- function(x) {
     return(out)
 }
 
-#' @title rpop_to_dibbler
-#' 
-#' @description convert an rpopsnetwork object to a dibbler object
-#'
-#' @details This function converts a popsnetwork object into a dibbler object. 
-#' @param network A popsnetwork object.
-#' @return A dibbler object.
-rpop_to_dibbler <- function(network) {
-	if (!requireNamespace("dibbler")){
-		stop("This function requires the dibbler package.")
-	}
-	# get data 
-	edge_data <- edge_list(network)
-	node_data <- node_list(network)
-
-	dibbler::make_dibbler(edge_data, node_data)
-}
+# Deactivated until dibbler is on CRAN.
+#
+# @title rpop_to_dibbler
+# 
+# @description convert an rpopsnetwork object to a dibbler object
+#
+# @details This function converts a popsnetwork object into a dibbler object. 
+# @param network A popsnetwork object.
+# @return A dibbler object.
+#rpop_to_dibbler <- function(network) {
+#	if (!requireNamespace("dibbler")){
+#		stop("This function requires the dibbler package.")
+#	}
+#	# get data 
+#	edge_data <- edge_list(network)
+#	node_data <- node_list(network)
+#
+#	dibbler::make_dibbler(edge_data, node_data)
+#}
 
