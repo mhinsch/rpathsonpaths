@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulate Population Genetics of Food-borne Diseases • rpathsonpaths</title>
+<title>Simulate Population Genetics of Food-Borne Diseases • rpathsonpaths</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -207,10 +207,10 @@ netdir1
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.391984    0.241354    0.138546    0.228117</span>
-<span class="co">#&gt; 2    0.595   2   0.889292    0.00271167  0.0214135   0.0865824</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.321508    0.145322    0.0519131   0.481257</span>
-<span class="co">#&gt; 4    0.668636    1.1 0.405173    0.0994605   0.00219772  0.493168</span>
+<span class="co">#&gt; 1    0.595   1   0.124336    0.0517267   0.401721    0.422216</span>
+<span class="co">#&gt; 2    0.595   2   0.412722    0.201663    0.113295    0.27232</span>
+<span class="co">#&gt; 3    0.6355  0.6 0.00848617  0.157964    0.798069    0.0354805</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.00829951  0.00785586  0.915836    0.0680091</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -229,10 +229,10 @@ netdir2
 <span class="co">#&gt; </span>
 <span class="co">#&gt; id   infected    input   alleles...</span>
 <span class="co">#&gt; 0    0.55    1   0.1 0.3 0.2 0.4</span>
-<span class="co">#&gt; 1    0.595   1   0.00146744  0.368475    0.0874041   0.542653</span>
-<span class="co">#&gt; 2    0.595   2   0.238093    0.74075 0.00776973  0.0133874</span>
-<span class="co">#&gt; 3    0.6355  0.6 0.0159624   0.376754    0.000962602 0.606321</span>
-<span class="co">#&gt; 4    0.668636    1.1 0.113863    0.287818    0.0212001   0.577119</span>
+<span class="co">#&gt; 1    0.595   1   0.0432374   0.191297    0.557884    0.207581</span>
+<span class="co">#&gt; 2    0.595   2   0.0042073   0.296236    0.245074    0.454483</span>
+<span class="co">#&gt; 3    0.6355  0.6 1.07218e-10 0.551464    0.336986    0.11155</span>
+<span class="co">#&gt; 4    0.668636    1.1 0.0173799   0.883302    0.0841003   0.0152173</span>
 <span class="co">#&gt; 5    0.55    1   0.4 0.1 0.2 0.3</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Links:</span>
@@ -253,12 +253,12 @@ netdir2
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samplconf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">nodes=</span><span class="kw">c</span>(2L, 4L), <span class="dt">N=</span><span class="kw">c</span>(10L, 10L))
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir1, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        9        0        0        1</span>
-<span class="co">#&gt; 2    4        2        1        0        7</span>
+<span class="co">#&gt; 1    2        6        3        1        0</span>
+<span class="co">#&gt; 2    4        0        0       10        0</span>
 <span class="kw"><a href="reference/draw_isolates.html">draw_isolates</a></span>(netdir2, samplconf)
 <span class="co">#&gt;   node allele_0 allele_1 allele_2 allele_3</span>
-<span class="co">#&gt; 1    2        4        6        0        0</span>
-<span class="co">#&gt; 2    4        2        3        0        5</span></code></pre></div>
+<span class="co">#&gt; 1    2        0        2        2        6</span>
+<span class="co">#&gt; 2    4        0        9        1        0</span></code></pre></div>
 </div>
 </div>
 <div id="contributors-in-alphabetic-order" class="section level1">

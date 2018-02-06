@@ -105,7 +105,7 @@
     <p>Calculate topological distances between nodes in a network.</p>
     
 
-    <pre class="usage"><span class='fu'>distances_topology</span>(<span class='no'>p_net</span>, <span class='kw'>leaves_only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>distances_topology</span>(<span class='no'>p_net</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -114,12 +114,11 @@
       <th>p_net</th>
       <td><p>A popsnetwork object.</p></td>
     </tr>
-    <tr>
-      <th>leaves_only</th>
-      <td><p>Whether to save time by generating only distances between leave nodes.
-The rest of the distance matrix will be filled with -1 or 0 (diagonal) in this case.</p></td>
-    </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A matrix with distance values.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -134,17 +133,19 @@ the shortest path) between all pairs of nodes in a network.</p>
 <span class='no'>net</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='popsnetwork.html'>popsnetwork</a></span>(<span class='no'>el</span>, <span class='no'>ext</span>)
 
 <span class='co'># get distances</span>
-<span class='fu'>distances_topology</span>(<span class='no'>net</span>)</div><div class='output co'>#&gt;    A  B  C D
-#&gt; A  0 -1 -1 2
-#&gt; B -1  0 -1 2
-#&gt; C -1 -1  0 1
-#&gt; D  2  2  1 0</div></pre>
+<span class='fu'>distances_topology</span>(<span class='no'>net</span>)</div><div class='output co'>#&gt;   A B C D
+#&gt; A 0 2 1 2
+#&gt; B 2 0 1 2
+#&gt; C 1 1 0 1
+#&gt; D 2 2 1 0</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
