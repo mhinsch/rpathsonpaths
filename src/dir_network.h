@@ -413,8 +413,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string=false);
 //' the shortest path) between all pairs of nodes in a network.
 //' 
 //' @param p_net A popsnetwork object.
-//' @param leaves_only Whether to save time by generating only distances between leave nodes.
-//' The rest of the distance matrix will be filled with -1 or 0 (diagonal) in this case.
+//' @return A matrix with distance values.
 //'
 //' @examples
 //' # create network
@@ -425,7 +424,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string=false);
 //' # get distances
 //' distances_topology(net)
 // [[Rcpp::export]]
-NumericMatrix distances_topology(const XPtr<Net_t> & p_net, bool leaves_only = true);
+NumericMatrix distances_topology(const XPtr<Net_t> & p_net);
 
 //' @title distances_freqdist
 //'

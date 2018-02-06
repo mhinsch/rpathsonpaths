@@ -599,7 +599,7 @@ DataFrame node_list(const XPtr<Net_t> & p_net, bool as_string)
 	}
 
 
-NumericMatrix distances_topology(const XPtr<Net_t> & p_net, bool leaves_only)
+NumericMatrix distances_topology(const XPtr<Net_t> & p_net)
 	{
 	const Net_t * net = p_net.checked_get();
 
@@ -607,7 +607,7 @@ NumericMatrix distances_topology(const XPtr<Net_t> & p_net, bool leaves_only)
 
 	R_ASSERT(net->nodes.size(), "empty network detected");
 
-	distances(net->nodes, res, leaves_only);
+	distances(net->nodes, res);
 
 	// col/row names
 	StringVector cn(net->nodes.size()), rn(net->nodes.size());

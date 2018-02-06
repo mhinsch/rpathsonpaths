@@ -184,8 +184,8 @@ vector<int> colour_network(EI beg, EI end)
 		{
 		const size_t f = (*beg).from, t = (*beg).to;
 
-		if (max(f, t) >= colour.size())
-			colour.resize(max(f, t)+1, 0);
+		if (std::max(f, t) >= colour.size())
+			colour.resize(std::max(f, t)+1, 0);
 
 		if (colour[f] == colour[t])
 			{
@@ -222,8 +222,16 @@ vector<int> colour_network(EI beg, EI end)
 	}
 
 
+template<class INP>
+struct ret_type
+	{
+	typedef double T;
+	};
+
+// slightly convoluted, but the only way I've found to make this work for 
+// NumericMatrix *and* boost::multi_array
 template<class D>
-extern void set_value(D & d, size_t x, size_t y, int v);
+typename ret_type<D>::T & at(D & d, size_t x, size_t y);
 
 /** Determine pairwise topological distances on a list of nodes.
  * @tparam CONT Node container type.
@@ -232,92 +240,125 @@ extern void set_value(D & d, size_t x, size_t y, int v);
  * run slightly faster.
  * @param dists Matrix of distances. Calls element & at(DIST &, size_t, size_t) for 
  * element access.
- * @param leaves_only Save time by generating only distances between leaf nodes. The rest
- * of the distance matrix is filled with -1 or 0 (diagonal).
  */
 template<class CONT, class DIST>
-void distances(const CONT & nodes, DIST & dists, bool leaves_only = true)
+void distances(const CONT & nodes, DIST & dists)
 	{
+	// In principle we go through all nodes and for each of them do a full width-first 
+	// search of the network. However, we know that for two nodes A and B and a third node
+	// C the shortest path from A to B either passes through C or it doesn't. If it does
+	// and we know all shortest paths from C as well as the shortest path from A to C, we know
+	// the length of A to B. If it doesn't we will encounter it at some other point in the 
+	// search. In either case, however, there is no need to search beyond C.
+
 	typedef typename CONT::value_type NODEP;
 
 	const bool sorted = is_sorted(nodes.begin(), nodes.end());
 
+	auto get_node_idx = [&nodes, sorted](const NODEP n)
+		{
+		if (sorted)
+			{
+			const auto it = std::lower_bound(nodes.begin(), nodes.end(), n);
+			return (it == nodes.end() || *it != n ? nodes.end() : it) - nodes.begin();
+			}
+
+		return std::find(nodes.begin(), nodes.end(), n) - nodes.begin();
+		};
+
+	static std::unordered_set<NODEP> skip;
+	static std::unordered_set<NODEP> done_NIM;
+	static vector<NODEP> stack_next, stack_cur;
+	stack_next.clear();
+
+	auto process_node = [&] (const NODEP node, size_t idx_start, int dist)
+		{
+		// only needed here because it won't ever be stacked
+		if (skip.count(node))
+			return;
+
+		const size_t idx_node = get_node_idx(node);
+		// has been processed before
+		// NOTE: never triggers for nodes not included in nodes list 
+		// (e.g. non-leaves if only leaves are processed)
+		if (idx_start < nodes.size() && idx_node < idx_start)
+			{
+			for (size_t j=0; j<nodes.size(); j++)
+				{
+				const auto d = at(dists, idx_node, j);
+				if (d > 0)
+					{
+					auto & e = at(dists, idx_start, j);
+					if (e < 0 || e > d+dist)
+						{
+						e = d+dist;
+						at(dists, j, idx_start) = d+dist;
+						}
+					}
+				}
+
+			// ignore from now on
+			skip.insert(node);
+			return;
+			}
+
+		// node not in list => we can't use matrix to check if we did it already
+		if (idx_node == nodes.size())
+			{
+			if (!done_NIM.count(node))
+				{
+				stack_next.push_back(node);
+				done_NIM.insert(node);
+				}
+			return;
+			}
+
+		auto & v = at(dists, idx_start, idx_node);
+
+		// either not set or higher => set and process next turn
+		if (v < 0 || v > dist)
+			{
+			v = dist;
+			at(dists, idx_node, idx_start) = dist;
+			stack_next.push_back(node);
+			}
+		};
+
 	for (size_t i=0; i<nodes.size(); i++)
 		for (size_t j=0; j<nodes.size(); j++)
-			set_value(dists, i, j, i==j ? 0 : -1);
+			at(dists, i, j) = i==j ? 0 : -1;
 
-	unordered_set<NODEP> visited;
-	vector<NODEP> stack_next, stack_cur;
-
-	// find all distances for each of the leaf nodes
-	for (const auto start : nodes)
+	// find all distances for each of the nodes
+	for (auto i=nodes.begin(); i!=nodes.end(); i++)
 		{
 		size_t dist = 1;
 
+		skip.clear();
+		done_NIM.clear();
 		// new start node, thus clear everything
-		visited.clear();
 		stack_cur.clear();
 		// first one to process		
-		stack_cur.push_back(start);
-
-		const size_t idx_start = (sorted ? 
-				std::lower_bound(nodes.begin(), nodes.end(), start) :
-				std::find(nodes.begin(), nodes.end(), start))
-			- nodes.begin();
+		stack_cur.push_back(*i);
+		const size_t idx_start = i - nodes.begin();
+		// not in matrix => remember this one is done
+		if (i == nodes.end())
+			done_NIM.insert(*i);
 
 		while (stack_cur.size())
 			{
 			for (const auto n : stack_cur)
 				{
-				// there might be cycles, so this is possible
-				if (visited.count(n))
-					continue;
-
 				for (const auto link : n->inputs)
 					{
-					NODEP parent = link->from;
-					// parent has been visited, skip
-					if (visited.count(parent))
-						continue;
-
-					if (!leaves_only)
-						{
-						const size_t idx_parent = (sorted ?
-								std::lower_bound(nodes.begin(), nodes.end(), parent) :
-								std::find(nodes.begin(), nodes.end(), parent))
-							- nodes.begin();
-
-						set_value(dists, idx_start, idx_parent, dist);
-						set_value(dists, idx_parent, idx_start, dist);
-						}
-
-					stack_next.push_back(parent);
+					const NODEP parent = link->from;
+					process_node(parent, idx_start, dist);
 					}
 
 				for (const auto link : n->outputs)
 					{
-					NODEP child = link->to;
-					// child has been visited, skip
-					if (visited.count(child))
-						continue;
-
-					if (!leaves_only || child->is_leaf())
-						{
-						const size_t idx_child = (sorted ?
-								std::lower_bound(nodes.begin(), nodes.end(), child) :
-								std::find(nodes.begin(), nodes.end(), child))
-							- nodes.begin();
-
-						set_value(dists, idx_start, idx_child, dist);
-						set_value(dists, idx_child, idx_start, dist);
-						}
-
-					stack_next.push_back(child);
+					const NODEP child = link->to;
+					process_node(child, idx_start, dist);
 					}
-
-				// we assume there are no links to self, so it should
-				// be fine doing this here
-				visited.insert(n);
 				}
 
 			// next stack becomes current

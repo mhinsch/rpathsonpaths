@@ -33,9 +33,9 @@ test_that("trees are correct and distances are calculated correctly", {
 	expect_equal(m3[nrow(m3), nrow(m3)-7], 6)
 	expect_equal(m5[nrow(m5), nrow(m5)-31], 10)
 
-	m1 <- distances_topology(n1, FALSE)
-	m3 <- distances_topology(n3, FALSE)
-	m5 <- distances_topology(n5, FALSE)
+	m1 <- distances_topology(n1)
+	m3 <- distances_topology(n3)
+	m5 <- distances_topology(n5)
 
 	expect_false(any(m1==-1))
 	expect_false(any(m3==-1))

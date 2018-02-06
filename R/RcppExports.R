@@ -408,8 +408,7 @@ node_list <- function(p_net, as_string = FALSE) {
 #' the shortest path) between all pairs of nodes in a network.
 #' 
 #' @param p_net A popsnetwork object.
-#' @param leaves_only Whether to save time by generating only distances between leave nodes.
-#' The rest of the distance matrix will be filled with -1 or 0 (diagonal) in this case.
+#' @return A matrix with distance values.
 #'
 #' @examples
 #' # create network
@@ -419,8 +418,8 @@ node_list <- function(p_net, as_string = FALSE) {
 #'
 #' # get distances
 #' distances_topology(net)
-distances_topology <- function(p_net, leaves_only = TRUE) {
-    .Call('_rpathsonpaths_distances_topology', PACKAGE = 'rpathsonpaths', p_net, leaves_only)
+distances_topology <- function(p_net) {
+    .Call('_rpathsonpaths_distances_topology', PACKAGE = 'rpathsonpaths', p_net)
 }
 
 #' @title distances_freqdist

@@ -104,9 +104,3 @@ double distance_EHamming(const Node_t & n1, const Node_t & n2)
 	return 1.0 - d;
 	}
 
-
-template<>
-void set_value(NumericMatrix & m, size_t x, size_t y, int v)
-	{
-	m(x, y) = v;
-	}

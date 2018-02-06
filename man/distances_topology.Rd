@@ -4,13 +4,13 @@
 \alias{distances_topology}
 \title{distances_topology}
 \usage{
-distances_topology(p_net, leaves_only = TRUE)
+distances_topology(p_net)
 }
 \arguments{
 \item{p_net}{A popsnetwork object.}
-
-\item{leaves_only}{Whether to save time by generating only distances between leave nodes.
-The rest of the distance matrix will be filled with -1 or 0 (diagonal) in this case.}
+}
+\value{
+A matrix with distance values.
 }
 \description{
 Calculate topological distances between nodes in a network.
